@@ -1,0 +1,59 @@
+[
+  {
+    "event_id": "evt_001",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-23T14:32:00Z",
+    "raw_values": {
+      "vibration_rms": 12.4,
+      "vibration_peak": 28.7,
+      "temperature_c": 78.3,
+      "current_amps": 14.2,
+      "rpm": 1750
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "accel_A3_01",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "evt_002",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "temperature_rise",
+    "timestamp": "2026-03-23T14:35:00Z",
+    "raw_values": {
+      "vibration_rms": 3.1,
+      "vibration_peak": 6.8,
+      "temperature_c": 92.1,
+      "current_amps": 22.5,
+      "rpm": 900
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "temp_B1_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "evt_003",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-23T14:40:00Z",
+    "raw_values": {
+      "vibration_rms": 0.2,
+      "vibration_peak": 0.5,
+      "temperature_c": 45.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "stoppage_reason": "hydraulic_pressure_loss",
+      "duration_seconds": 340
+    }
+  }
+]
