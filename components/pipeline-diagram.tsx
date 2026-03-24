@@ -29,17 +29,15 @@ export function PipelineDiagram() {
           </p>
         </div>
 
-        <div className="relative">
-          <div className="absolute left-0 right-0 top-1/2 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          
-          <div className="relative flex justify-between items-center gap-2 overflow-x-auto pb-8">
+        <div className="relative overflow-x-auto pb-8">
+          <div className="mx-auto flex min-w-[940px] items-start justify-between gap-3">
             {pipelineStages.map((stage, index) => (
-              <motion.div
-                key={stage.id}
-                className="relative flex flex-col items-center"
-                onMouseEnter={() => setActiveStage(index)}
-                onMouseLeave={() => setActiveStage(null)}
-              >
+              <div key={stage.id} className="flex items-center gap-3">
+                <motion.div
+                  className="relative flex flex-col items-center"
+                  onMouseEnter={() => setActiveStage(index)}
+                  onMouseLeave={() => setActiveStage(null)}
+                >
                 <motion.div
                   className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-2 text-2xl"
                   style={{ 
@@ -79,21 +77,18 @@ export function PipelineDiagram() {
                     {stage.description}
                   </motion.div>
                 )}
+                </motion.div>
 
                 {index < pipelineStages.length - 1 && (
-                  <div className="absolute left-full top-8 z-0 flex items-center">
-                    <svg width="40" height="12" viewBox="0 0 40 12">
-                      <path
-                        d="M0 6 L30 6 L35 1 L40 6 L35 11 L30 6"
-                        fill="none"
-                        stroke={stage.color}
-                        strokeWidth="1"
-                        opacity="0.5"
-                      />
-                    </svg>
+                  <div className="flex min-w-10 items-center">
+                    <div className="h-px w-7" style={{ backgroundColor: `${stage.color}99` }} />
+                    <div
+                      className="h-2 w-2 rotate-45 border-r border-t"
+                      style={{ borderColor: `${stage.color}99` }}
+                    />
                   </div>
                 )}
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

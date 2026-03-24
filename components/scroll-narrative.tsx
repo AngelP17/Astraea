@@ -26,9 +26,9 @@ export function ScrollNarrative() {
                 {narrativeSteps.map((step) => (
                   <div key={step.step} className="flex items-start gap-4 border border-white/5 bg-black/30 p-4">
                     <div className="font-headline text-2xl font-black text-primary/80">{step.step}</div>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-neutral-500">{step.eyebrow}</div>
-                      <div className="mt-2 font-headline text-xl font-bold uppercase">{step.title}</div>
+                      <div className="mt-2 font-headline text-lg font-bold uppercase leading-tight md:text-xl [overflow-wrap:anywhere]">{step.title}</div>
                     </div>
                   </div>
                 ))}
@@ -80,7 +80,7 @@ function NarrativeCard({
         <div className="mb-5 flex items-center justify-between gap-6">
           <div>
             <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">{eyebrow}</div>
-            <h3 className="mt-3 font-headline text-3xl font-black uppercase tracking-[-0.04em] md:text-5xl">
+            <h3 className="mt-3 font-headline text-3xl font-black uppercase tracking-[-0.04em] leading-[0.95] md:text-5xl">
               {title}
             </h3>
           </div>
@@ -93,7 +93,7 @@ function NarrativeCard({
           {metrics.map((metric) => (
             <div key={metric} className="border border-white/5 bg-surface-low p-4">
               <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">Signal</div>
-              <div className="mt-3 font-headline text-xl font-bold uppercase">{metric}</div>
+              <div className="mt-3 font-headline text-base font-bold uppercase leading-tight md:text-lg [overflow-wrap:anywhere]">{metric}</div>
             </div>
           ))}
         </div>
