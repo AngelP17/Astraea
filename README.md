@@ -57,10 +57,6 @@ At 02:13 AM on March 23, Astraea detected abnormal vibration patterns on Press_0
 
 ![Pipeline Section](screenshots/02-pipeline-section.png)
 
-![System Metrics](screenshots/03-system-metrics.png)
-
-![Streaming Timeline](screenshots/04-streaming-timeline.png)
-
 ![Case Study](screenshots/05-case-study.png)
 
 ---
@@ -221,5 +217,3 @@ Astraea addresses three fundamental tensions in operational decision systems:
 
 ---
 
-**Built for MSc applications and production industrial deployments.**
-**100% deterministic. 100% auditable. Zero surprises.**
