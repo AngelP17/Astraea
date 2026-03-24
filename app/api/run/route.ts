@@ -6,10 +6,15 @@ import path from "path";
 export async function POST() {
   try {
     const cwd = process.cwd();
+    
     execSync("python3 run_pipeline.py", { cwd, stdio: "pipe" });
 
     const resultsDir = path.join(cwd, "artifacts/results");
     const files = fs.readdirSync(resultsDir).filter((f) => f.endsWith(".json"));
+
+    if (files.length === 0) {
+      return NextResponse.json({ error: "No results generated" }, { status: 500 });
+    }
 
     const latestFile = files.sort().pop();
     if (!latestFile) {
@@ -23,7 +28,7 @@ export async function POST() {
   } catch (error) {
     console.error("Pipeline run failed:", error);
     return NextResponse.json(
-      { error: "Pipeline execution failed" },
+      { error: "Pipeline execution failed", details: String(error) },
       { status: 500 }
     );
   }

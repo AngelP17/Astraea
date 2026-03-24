@@ -82,12 +82,12 @@
   "prioritized_case": {
     "case_id": "case_evt_003",
     "event_id": "evt_003",
-    "priority_score": 0.5498,
+    "priority_score": 0.4807,
     "confidence_band": "low",
     "severity": "medium",
     "rationale": [
       "critical event type: stoppage",
-      "prolonged duration exceeded 300 seconds",
+      "prolonged duration exceeded threshold",
       "manual review required due to uncertainty band"
     ],
     "requires_action": true,
@@ -101,7 +101,7 @@
     "owner": "reliability_engineer",
     "justification": [
       "critical event type: stoppage",
-      "prolonged duration exceeded 300 seconds",
+      "prolonged duration exceeded threshold",
       "manual review required due to uncertainty band"
     ],
     "next_steps": [
@@ -214,12 +214,12 @@
     "prioritization_snapshot": {
       "case_id": "case_evt_003",
       "event_id": "evt_003",
-      "priority_score": 0.5498,
+      "priority_score": 0.4807,
       "confidence_band": "low",
       "severity": "medium",
       "rationale": [
         "critical event type: stoppage",
-        "prolonged duration exceeded 300 seconds",
+        "prolonged duration exceeded threshold",
         "manual review required due to uncertainty band"
       ],
       "requires_action": true,
@@ -233,7 +233,7 @@
       "owner": "reliability_engineer",
       "justification": [
         "critical event type: stoppage",
-        "prolonged duration exceeded 300 seconds",
+        "prolonged duration exceeded threshold",
         "manual review required due to uncertainty band"
       ],
       "next_steps": [
@@ -263,7 +263,7 @@
         "Case case_evt_003 queued for human review"
       ]
     },
-    "deterministic_hash": "997e4d4022acade4abd0b7e3589b5749a284c1642bc5b4ba5b1074d6ed46880d",
-    "timestamp": "2026-03-24T16:02:23.091531+00:00"
+    "deterministic_hash": "f85cee8725930ab179d457da0a87f201984c6d032d47d0546e83f0480f54e894",
+    "timestamp": "2026-03-24T21:39:06.732412+00:00"
   }
 }

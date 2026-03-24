@@ -84,11 +84,12 @@
   "prioritized_case": {
     "case_id": "case_evt_002",
     "event_id": "evt_002",
-    "priority_score": 0.4817,
+    "priority_score": 0.4661,
     "confidence_band": "low",
     "severity": "medium",
     "rationale": [
-      "manual review required due to uncertainty band"
+      "manual review required due to uncertainty band",
+      "strong correlation with recent events (0.70)"
     ],
     "requires_action": true,
     "review_required": true,
@@ -100,7 +101,8 @@
     "urgency": "medium",
     "owner": "reliability_engineer",
     "justification": [
-      "manual review required due to uncertainty band"
+      "manual review required due to uncertainty band",
+      "strong correlation with recent events (0.70)"
     ],
     "next_steps": [
       "Add to maintenance queue",
@@ -214,11 +216,12 @@
     "prioritization_snapshot": {
       "case_id": "case_evt_002",
       "event_id": "evt_002",
-      "priority_score": 0.4817,
+      "priority_score": 0.4661,
       "confidence_band": "low",
       "severity": "medium",
       "rationale": [
-        "manual review required due to uncertainty band"
+        "manual review required due to uncertainty band",
+        "strong correlation with recent events (0.70)"
       ],
       "requires_action": true,
       "review_required": true,
@@ -230,7 +233,8 @@
       "urgency": "medium",
       "owner": "reliability_engineer",
       "justification": [
-        "manual review required due to uncertainty band"
+        "manual review required due to uncertainty band",
+        "strong correlation with recent events (0.70)"
       ],
       "next_steps": [
         "Add to maintenance queue",
@@ -259,7 +263,7 @@
         "Case case_evt_002 queued for human review"
       ]
     },
-    "deterministic_hash": "5461a57b572030e3dce9dd31f621a13e71399b875c9b9f5885800d9dec6aaba9",
-    "timestamp": "2026-03-24T16:02:23.090782+00:00"
+    "deterministic_hash": "9e8950c37d0018aa033c9a3c97b2c1d7e55ef0add48900579f6ceb637dbd09cb",
+    "timestamp": "2026-03-24T21:39:06.731351+00:00"
   }
 }

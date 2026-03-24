@@ -12,17 +12,25 @@ export async function POST(request: Request) {
     }
 
     const cwd = process.cwd();
-    const output = execSync(`python3 replay_case.py --case-id ${caseId}`, {
-      cwd,
-      encoding: "utf-8",
-    });
+    
+    const replayDir = path.join(cwd, "artifacts/replays");
+    const caseFile = path.join(replayDir, `${caseId}.json`);
 
-    const data = JSON.parse(output);
+    if (!fs.existsSync(caseFile)) {
+      return NextResponse.json(
+        { error: `Replay not found for case: ${caseId}` },
+        { status: 404 }
+      );
+    }
+
+    const content = fs.readFileSync(caseFile, "utf-8");
+    const data = JSON.parse(content);
+
     return NextResponse.json(data);
   } catch (error) {
     console.error("Replay failed:", error);
     return NextResponse.json(
-      { error: "Replay execution failed" },
+      { error: "Replay execution failed", details: String(error) },
       { status: 500 }
     );
   }

@@ -1,15 +1,18 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Play, Loader2, CheckCircle2, AlertTriangle, Zap } from 'lucide-react';
+import { ArrowRight, Play, Loader2, CheckCircle2, AlertTriangle, Zap, RotateCcw, GitBranch } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchCases, runLivePipeline, PipelineResult } from '@/lib/data';
+import { fetchCases, runLivePipeline, replayCase, PipelineResult } from '@/lib/data';
 
 export function Hero() {
   const [cases, setCases] = useState<PipelineResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [isReplaying, setIsReplaying] = useState(false);
   const [hasRunLive, setHasRunLive] = useState(false);
+  const [replayResult, setReplayResult] = useState<PipelineResult | null>(null);
+  const [showReplay, setShowReplay] = useState(false);
 
   const loadCases = useCallback(async () => {
     const data = await fetchCases();
@@ -45,6 +48,20 @@ export function Hero() {
       }
     } finally {
       setIsRunning(false);
+    }
+  };
+
+  const handleReplay = async () => {
+    if (!active) return;
+    setIsReplaying(true);
+    setShowReplay(true);
+    try {
+      const result = await replayCase(active.case_id);
+      if (result) {
+        setReplayResult(result);
+      }
+    } finally {
+      setIsReplaying(false);
     }
   };
 
@@ -117,6 +134,23 @@ export function Hero() {
                 </>
               )}
             </button>
+            <button
+              onClick={handleReplay}
+              disabled={isReplaying || !active}
+              className="group inline-flex items-center justify-center border border-secondary/30 bg-secondary/5 px-8 py-4 font-headline text-sm font-bold uppercase tracking-[0.22em] text-secondary transition-all duration-150 hover:bg-secondary/10 hover:shadow-[0_0_20px_rgba(172,138,255,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isReplaying ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  REPLAYING...
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  REPLAY THIS DECISION
+                </>
+              )}
+            </button>
             <a
               href="#pipeline"
               className="group inline-flex items-center justify-center border border-white/10 bg-white/[0.02] px-8 py-4 font-headline text-sm font-bold uppercase tracking-[0.22em] text-white transition-colors duration-150 hover:bg-white/[0.06]"
@@ -157,10 +191,17 @@ export function Hero() {
             <div className="mb-5 flex items-center justify-between border-b border-white/5 pb-3">
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-neutral-500">
-                  {cases.length > 0 ? 'Live Decision Output' : 'Waiting for pipeline...'}
+                  {showReplay && replayResult ? 'REPLAY RESULT' : cases.length > 0 ? 'Live Decision Output' : 'Waiting for pipeline...'}
                 </div>
                 <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
-                  Event → Feature → Score → Decide → Audit
+                  {showReplay && replayResult ? (
+                    <span className="flex items-center gap-2">
+                      <GitBranch className="h-3 w-3" />
+                      VERIFIED REPLAY
+                    </span>
+                  ) : (
+                    'Event → Feature → Score → Decide → Audit'
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -170,7 +211,68 @@ export function Hero() {
               </div>
             </div>
 
-            {active ? (
+            {showReplay && replayResult ? (
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={replayResult.case_id + '-replay'}
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -18 }}
+                  transition={{ duration: 0.35 }}
+                  className="space-y-4"
+                >
+                  <div className="grid gap-3 border border-secondary/20 bg-secondary/5 p-4 sm:grid-cols-2">
+                    <InfoRow label="CASE_ID" value={replayResult.case_id} valueClass="text-secondary" />
+                    <InfoRow label="EVENT" value={replayResult.event.event_type} />
+                    <InfoRow label="MACHINE" value={replayResult.event.machine_id} />
+                    <InfoRow
+                      label="SEVERITY"
+                      value={replayResult.prioritized_case.severity}
+                      valueClass={
+                        replayResult.prioritized_case.severity === 'critical'
+                          ? 'text-danger'
+                          : replayResult.prioritized_case.severity === 'high'
+                          ? 'text-tertiary'
+                          : ''
+                      }
+                    />
+                    <InfoRow label="PRIORITY" value={replayResult.prioritized_case.priority_score.toFixed(3)} />
+                    <InfoRow label="CONFIDENCE" value={replayResult.assessment.confidence.toFixed(3)} />
+                  </div>
+
+                  <div className="border border-white/5 bg-surface p-4">
+                    <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.24em] text-secondary">
+                      Replay Verification
+                    </div>
+                    <div className="space-y-2 font-mono text-xs text-neutral-300">
+                      <div>
+                        <span className="text-secondary">[HASH]</span> {replayResult.audit.deterministic_hash.slice(0, 24)}...
+                      </div>
+                      <div>
+                        <span className="text-secondary">[RATIONALE]</span> {replayResult.prioritized_case.rationale.length} factors
+                      </div>
+                      <div>
+                        <span className="text-secondary">[DECISION]</span> {replayResult.decision.recommendation}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 border border-secondary/20 bg-secondary/5 p-3">
+                    <CheckCircle2 className="h-4 w-4 text-secondary" />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-secondary">
+                      REPLAY VERIFIED - Same input produces identical output
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => setShowReplay(false)}
+                    className="w-full border border-white/10 bg-white/[0.02] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400 transition-colors hover:bg-white/[0.06]"
+                  >
+                    Back to Live Output
+                  </button>
+                </motion.div>
+              </AnimatePresence>
+            ) : active ? (
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active.case_id}

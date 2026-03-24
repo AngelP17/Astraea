@@ -87,11 +87,11 @@
   "prioritized_case": {
     "case_id": "case_evt_001",
     "event_id": "evt_001",
-    "priority_score": 0.7388,
+    "priority_score": 0.6117,
     "confidence_band": "medium",
-    "severity": "high",
+    "severity": "medium",
     "rationale": [
-      "high anomaly score",
+      "high anomaly score detected",
       "elevated failure probability",
       "high-confidence abnormal interval",
       "critical event type: vibration_spike",
@@ -103,28 +103,27 @@
   },
   "decision": {
     "case_id": "case_evt_001",
-    "recommendation": "Inspect within 1 hour",
-    "urgency": "high",
+    "recommendation": "Plan intervention during next maintenance window",
+    "urgency": "medium",
     "owner": "reliability_engineer",
     "justification": [
-      "high anomaly score",
+      "high anomaly score detected",
       "elevated failure probability",
       "high-confidence abnormal interval",
       "critical event type: vibration_spike",
       "manual review required due to uncertainty band"
     ],
     "next_steps": [
-      "Schedule technician visit",
-      "Increase telemetry watch",
-      "Stage spare parts if applicable"
+      "Add to maintenance queue",
+      "Review trend progression"
     ],
     "action_plan": [
       {
-        "step": "schedule_visit",
+        "step": "queue_maintenance",
         "status": "pending"
       },
       {
-        "step": "monitor_feed",
+        "step": "review_trend",
         "status": "pending"
       }
     ]
@@ -229,11 +228,11 @@
     "prioritization_snapshot": {
       "case_id": "case_evt_001",
       "event_id": "evt_001",
-      "priority_score": 0.7388,
+      "priority_score": 0.6117,
       "confidence_band": "medium",
-      "severity": "high",
+      "severity": "medium",
       "rationale": [
-        "high anomaly score",
+        "high anomaly score detected",
         "elevated failure probability",
         "high-confidence abnormal interval",
         "critical event type: vibration_spike",
@@ -245,28 +244,27 @@
     },
     "decision_snapshot": {
       "case_id": "case_evt_001",
-      "recommendation": "Inspect within 1 hour",
-      "urgency": "high",
+      "recommendation": "Plan intervention during next maintenance window",
+      "urgency": "medium",
       "owner": "reliability_engineer",
       "justification": [
-        "high anomaly score",
+        "high anomaly score detected",
         "elevated failure probability",
         "high-confidence abnormal interval",
         "critical event type: vibration_spike",
         "manual review required due to uncertainty band"
       ],
       "next_steps": [
-        "Schedule technician visit",
-        "Increase telemetry watch",
-        "Stage spare parts if applicable"
+        "Add to maintenance queue",
+        "Review trend progression"
       ],
       "action_plan": [
         {
-          "step": "schedule_visit",
+          "step": "queue_maintenance",
           "status": "pending"
         },
         {
-          "step": "monitor_feed",
+          "step": "review_trend",
           "status": "pending"
         }
       ]
@@ -283,7 +281,7 @@
         "Case case_evt_001 queued for human review"
       ]
     },
-    "deterministic_hash": "cfced6c04a3320315dfed8f52d4cfd4e6211702de2e1036430042fc894eade7f",
-    "timestamp": "2026-03-24T16:02:23.090130+00:00"
+    "deterministic_hash": "ac8e8869b151e52b8ddec47add5c197e61416e3dc94942f8edbc651dafc45c22",
+    "timestamp": "2026-03-24T21:39:06.730641+00:00"
   }
 }
