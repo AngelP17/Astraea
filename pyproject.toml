@@ -4,7 +4,13 @@ version = "0.1.0"
 description = "Deterministic explainable decision engine for event-driven industrial systems"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.0",
+    "celery>=5.4.0",
+    "redis>=5.2.0",
+]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

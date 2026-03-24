@@ -13,6 +13,9 @@ const pipelineStages = [
   { id: 'audit', label: 'Audit', icon: '🔐', color: '#a1faff', description: 'Hash verification' },
 ];
 
+const STAGE_WIDTH = 64;
+const CONNECTOR_WIDTH = 40;
+
 export function PipelineDiagram() {
   const [activeStage, setActiveStage] = useState<number | null>(null);
 
@@ -24,72 +27,110 @@ export function PipelineDiagram() {
           <h2 className="mt-5 font-headline text-4xl font-black uppercase tracking-[-0.04em] md:text-5xl">
             7-Stage Deterministic Pipeline
           </h2>
-          <p className="mt-6 max-w-2xl mx-auto text-lg leading-8 text-neutral-400">
+          <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-neutral-400">
             Every decision flows through a deterministic control loop. No randomness. No black boxes. Full auditability.
           </p>
         </div>
 
-        <div className="relative overflow-x-auto pb-8">
-          <div className="mx-auto flex min-w-[940px] items-start justify-between gap-3">
-            {pipelineStages.map((stage, index) => (
-              <div key={stage.id} className="flex items-center gap-3">
+        <div className="relative">
+          <div className="absolute left-0 right-0 top-1/2 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          
+          <div className="relative mx-auto" style={{ width: `${STAGE_WIDTH * 7 + CONNECTOR_WIDTH * 6 + 48}`, maxWidth: '100%' }}>
+            <svg 
+              className="absolute top-8 left-0 w-full h-16 pointer-events-none" 
+              viewBox={`0 0 ${STAGE_WIDTH * 7 + CONNECTOR_WIDTH * 6 + 48} 64`}
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <defs>
+                <marker id="arrowhead-dark" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#494847" />
+                </marker>
+              </defs>
+              {pipelineStages.slice(0, -1).map((stage, index) => {
+                const startX = 32 + index * (STAGE_WIDTH + CONNECTOR_WIDTH) + STAGE_WIDTH;
+                const endX = 32 + (index + 1) * (STAGE_WIDTH + CONNECTOR_WIDTH);
+                const midX = startX + (endX - startX) / 2;
+                return (
+                  <g key={`connector-${stage.id}`}>
+                    <line 
+                      x1={startX} 
+                      y1="32" 
+                      x2={midX - 4} 
+                      y2="32" 
+                      stroke={stage.color} 
+                      strokeWidth="1" 
+                      opacity="0.5"
+                    />
+                    <path
+                      d={`M${midX - 4} 32 L${midX + 4} 27 L${midX + 4} 37 Z`}
+                      fill={stage.color}
+                      opacity="0.5"
+                    />
+                    <line 
+                      x1={midX + 4} 
+                      y1="32" 
+                      x2={endX} 
+                      y2="32" 
+                      stroke="#494847" 
+                      strokeWidth="1" 
+                      strokeDasharray="2 2"
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+
+            <div className="relative flex justify-between items-center gap-2 overflow-x-auto pb-8">
+              {pipelineStages.map((stage, index) => (
                 <motion.div
-                  className="relative flex flex-col items-center"
+                  key={stage.id}
+                  className="relative flex flex-col items-center shrink-0"
                   onMouseEnter={() => setActiveStage(index)}
                   onMouseLeave={() => setActiveStage(null)}
+                  style={{ width: STAGE_WIDTH }}
                 >
-                <motion.div
-                  className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-2 text-2xl"
-                  style={{ 
-                    borderColor: stage.color,
-                    backgroundColor: activeStage === index ? `${stage.color}20` : 'rgba(10,10,10,0.8)',
-                  }}
-                  animate={{
-                    scale: activeStage === index ? 1.15 : 1,
-                    boxShadow: activeStage === index ? `0 0 30px ${stage.color}40` : 'none',
-                  }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {stage.icon}
-                </motion.div>
-                
-                <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] whitespace-nowrap" style={{ color: stage.color }}>
-                  {stage.label}
-                </div>
-                
-                <div className="mt-1 h-1 w-12 rounded-full bg-white/10">
-                  <motion.div 
-                    className="h-full rounded-full"
-                    style={{ backgroundColor: stage.color }}
-                    initial={{ width: '0%' }}
-                    whileInView={{ width: '100%' }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: index * 0.1 }}
-                  />
-                </div>
-
-                {activeStage === index && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="absolute top-full mt-4 whitespace-nowrap rounded border border-white/10 bg-black/90 px-3 py-2 font-mono text-[10px] text-neutral-300"
+                    className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-2 text-2xl shrink-0"
+                    style={{ 
+                      borderColor: stage.color,
+                      backgroundColor: activeStage === index ? `${stage.color}20` : 'rgba(10,10,10,0.8)',
+                    }}
+                    animate={{
+                      scale: activeStage === index ? 1.15 : 1,
+                      boxShadow: activeStage === index ? `0 0 30px ${stage.color}40` : 'none',
+                    }}
+                    transition={{ duration: 0.2 }}
                   >
-                    {stage.description}
+                    {stage.icon}
                   </motion.div>
-                )}
-                </motion.div>
-
-                {index < pipelineStages.length - 1 && (
-                  <div className="flex min-w-10 items-center">
-                    <div className="h-px w-7" style={{ backgroundColor: `${stage.color}99` }} />
-                    <div
-                      className="h-2 w-2 rotate-45 border-r border-t"
-                      style={{ borderColor: `${stage.color}99` }}
+                  
+                  <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] whitespace-nowrap" style={{ color: stage.color }}>
+                    {stage.label}
+                  </div>
+                  
+                  <div className="mt-1 h-1 w-12 rounded-full bg-white/10">
+                    <motion.div 
+                      className="h-full rounded-full"
+                      style={{ backgroundColor: stage.color }}
+                      initial={{ width: '0%' }}
+                      whileInView={{ width: '100%' }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, delay: index * 0.1 }}
                     />
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {activeStage === index && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="absolute top-full mt-4 whitespace-nowrap rounded border border-white/10 bg-black/90 px-3 py-2 font-mono text-[10px] text-neutral-300 z-20"
+                    >
+                      {stage.description}
+                    </motion.div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
 

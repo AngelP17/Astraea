@@ -39,9 +39,9 @@ export function DataFlowDiagram() {
               transition={{ duration: 1 }}
             >
               <rect x="20" y="40" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#a1faff" strokeWidth="2" />
-              <text x="110" y="70" textAnchor="middle" fill="#a1faff" fontSize="12" fontFamily="monospace">RAW EVENT</text>
-              <text x="110" y="90" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">sensor_id: accel_01</text>
-              <text x="110" y="105" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">vibration: 12.4</text>
+              <text x="110" y="70" textAnchor="middle" fill="#a1faff" fontSize="12" className="font-mono">RAW EVENT</text>
+              <text x="110" y="90" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">sensor_id: accel_01</text>
+              <text x="110" y="105" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">vibration: 12.4</text>
             </motion.g>
 
             <motion.g
@@ -50,7 +50,7 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.2 }}
             >
               <path d="M200 80 L280 80" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="240" y="70" textAnchor="middle" fill="#666" fontSize="9" fontFamily="monospace">normalize</text>
+              <text x="240" y="70" textAnchor="middle" fill="#666" fontSize="9" className="font-mono">normalize</text>
             </motion.g>
 
             <motion.g
@@ -59,9 +59,9 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.3 }}
             >
               <rect x="280" y="40" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#ac8aff" strokeWidth="2" />
-              <text x="370" y="70" textAnchor="middle" fill="#ac8aff" fontSize="12" fontFamily="monospace">FEATURE VECTOR</text>
-              <text x="370" y="90" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">delta_vib: +4.4</text>
-              <text x="370" y="105" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">ratio_vib: 1.55</text>
+              <text x="370" y="70" textAnchor="middle" fill="#ac8aff" fontSize="12" className="font-mono">FEATURE VECTOR</text>
+              <text x="370" y="90" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">delta_vib: +4.4</text>
+              <text x="370" y="105" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">ratio_vib: 1.55</text>
             </motion.g>
 
             <motion.g
@@ -70,7 +70,7 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.4 }}
             >
               <path d="M460 80 L540 80" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="500" y="70" textAnchor="middle" fill="#666" fontSize="9" fontFamily="monospace">score</text>
+              <text x="500" y="70" textAnchor="middle" fill="#666" fontSize="9" className="font-mono">score</text>
             </motion.g>
 
             <motion.g
@@ -79,9 +79,9 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.5 }}
             >
               <rect x="540" y="40" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#ff716c" strokeWidth="2" />
-              <text x="630" y="70" textAnchor="middle" fill="#ff716c" fontSize="12" fontFamily="monospace">ASSESSMENT</text>
-              <text x="630" y="90" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">anomaly: 0.74</text>
-              <text x="630" y="105" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">uncertainty: [0.61, 0.87]</text>
+              <text x="630" y="70" textAnchor="middle" fill="#ff716c" fontSize="12" className="font-mono">ASSESSMENT</text>
+              <text x="630" y="90" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">anomaly: 0.74</text>
+              <text x="630" y="105" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">uncertainty: [0.61, 0.87]</text>
             </motion.g>
 
             <motion.g
@@ -90,7 +90,7 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.6 }}
             >
               <path d="M630 120 L630 200" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="645" y="160" fill="#666" fontSize="9" fontFamily="monospace">decide</text>
+              <text x="645" y="160" fill="#666" fontSize="9" className="font-mono">decide</text>
             </motion.g>
 
             <motion.g
@@ -99,9 +99,9 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.7 }}
             >
               <rect x="540" y="200" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#ffd16f" strokeWidth="2" />
-              <text x="630" y="230" textAnchor="middle" fill="#ffd16f" fontSize="12" fontFamily="monospace">DECISION</text>
-              <text x="630" y="250" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">action: Inspect</text>
-              <text x="630" y="265" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">urgency: HIGH</text>
+              <text x="630" y="230" textAnchor="middle" fill="#ffd16f" fontSize="12" className="font-mono">DECISION</text>
+              <text x="630" y="250" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">action: Inspect</text>
+              <text x="630" y="265" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">urgency: HIGH</text>
             </motion.g>
 
             <motion.g
@@ -110,7 +110,7 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.8 }}
             >
               <path d="M540 240 L460 240" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="500" y="230" textAnchor="middle" fill="#666" fontSize="9" fontFamily="monospace">audit</text>
+              <text x="500" y="230" textAnchor="middle" fill="#666" fontSize="9" className="font-mono">audit</text>
             </motion.g>
 
             <motion.g
@@ -119,9 +119,9 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 0.9 }}
             >
               <rect x="280" y="200" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#a1faff" strokeWidth="2" />
-              <text x="370" y="230" textAnchor="middle" fill="#a1faff" fontSize="12" fontFamily="monospace">AUDIT BUNDLE</text>
-              <text x="370" y="250" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">hash: cfced6c0...</text>
-              <text x="370" y="265" textAnchor="middle" fill="#666" fontSize="10" fontFamily="monospace">replay: VERIFIED</text>
+              <text x="370" y="230" textAnchor="middle" fill="#a1faff" fontSize="12" className="font-mono">AUDIT BUNDLE</text>
+              <text x="370" y="250" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">hash: cfced6c0...</text>
+              <text x="370" y="265" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">replay: VERIFIED</text>
             </motion.g>
 
             <motion.g
@@ -130,7 +130,7 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 1 }}
             >
               <path d="M280 280 L280 360" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="295" y="320" fill="#666" fontSize="9" fontFamily="monospace">store</text>
+              <text x="295" y="320" fill="#666" fontSize="9" className="font-mono">store</text>
             </motion.g>
 
             <motion.g
@@ -139,9 +139,9 @@ export function DataFlowDiagram() {
               transition={{ duration: 1, delay: 1.1 }}
             >
               <rect x="180" y="360" width="200" height="100" rx="8" fill="#0e0e0e" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" />
-              <text x="280" y="390" textAnchor="middle" fill="#666" fontSize="12" fontFamily="monospace">ARTIFACTS</text>
-              <text x="280" y="415" textAnchor="middle" fill="#555" fontSize="10" fontFamily="monospace">results/case_evt_001.json</text>
-              <text x="280" y="435" textAnchor="middle" fill="#555" fontSize="10" fontFamily="monospace">replays/case_evt_001.json</text>
+              <text x="280" y="390" textAnchor="middle" fill="#666" fontSize="12" className="font-mono">ARTIFACTS</text>
+              <text x="280" y="415" textAnchor="middle" fill="#555" fontSize="10" className="font-mono">results/case_evt_001.json</text>
+              <text x="280" y="435" textAnchor="middle" fill="#555" fontSize="10" className="font-mono">replays/case_evt_001.json</text>
             </motion.g>
 
             <motion.g
@@ -151,7 +151,7 @@ export function DataFlowDiagram() {
             >
               <path d="M380 410 L460 410" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
               <path d="M460 410 L460 320" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="420" y="400" textAnchor="middle" fill="#555" fontSize="9" fontFamily="monospace">replay</text>
+              <text x="420" y="400" textAnchor="middle" fill="#555" fontSize="9" className="font-mono">replay</text>
             </motion.g>
 
             <motion.circle
@@ -161,8 +161,8 @@ export function DataFlowDiagram() {
               animate={{ strokeDasharray: "377 0", strokeDashoffset: [0, -377] }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             />
-            <text x="720" y="445" textAnchor="middle" fill="#00f4fe" fontSize="10" fontFamily="monospace">DETER-</text>
-            <text x="720" y="460" textAnchor="middle" fill="#00f4fe" fontSize="10" fontFamily="monospace">MINISTIC</text>
+            <text x="720" y="445" textAnchor="middle" fill="#00f4fe" fontSize="10" className="font-mono">DETER-</text>
+            <text x="720" y="460" textAnchor="middle" fill="#00f4fe" fontSize="10" className="font-mono">MINISTIC</text>
           </svg>
         </div>
 

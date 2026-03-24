@@ -8,6 +8,13 @@ interface AuditVisualizationProps {
   result: PipelineResult;
 }
 
+const colorMap = {
+  primary: { bg: 'bg-primary/10', text: 'text-primary', border: 'border-primary/30' },
+  secondary: { bg: 'bg-secondary/10', text: 'text-secondary', border: 'border-secondary/30' },
+  danger: { bg: 'bg-danger/10', text: 'text-danger', border: 'border-danger/30' },
+  tertiary: { bg: 'bg-tertiary/10', text: 'text-tertiary', border: 'border-tertiary/30' },
+};
+
 export function AuditVisualization({ result }: AuditVisualizationProps) {
   const { audit } = result;
 
@@ -63,7 +70,7 @@ export function AuditVisualization({ result }: AuditVisualizationProps) {
       </div>
 
       <div className="space-y-3">
-        {layers.map((layer, index) => (
+          {layers.map((layer, index) => (
           <motion.div
             key={layer.id}
             initial={{ opacity: 0, y: 10 }}
@@ -71,8 +78,8 @@ export function AuditVisualization({ result }: AuditVisualizationProps) {
             transition={{ delay: index * 0.08 }}
             className="flex items-center gap-3 border border-white/5 bg-surface-low p-3"
           >
-            <div className={`flex h-8 w-8 items-center justify-center rounded bg-${layer.color}/10`}>
-              <layer.icon className={`h-4 w-4 text-${layer.color}`} />
+            <div className={`flex h-8 w-8 items-center justify-center rounded ${colorMap[layer.color as keyof typeof colorMap].bg}`}>
+              <layer.icon className={`h-4 w-4 ${colorMap[layer.color as keyof typeof colorMap].text}`} />
             </div>
             <div className="flex-1">
               <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">

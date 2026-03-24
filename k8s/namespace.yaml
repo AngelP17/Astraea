@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+    app.kubernetes.io/component: namespace

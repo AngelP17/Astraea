@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: astraea-service-account
+  namespace: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: astraea-pod-reader
+  namespace: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services", "configmaps", "secrets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: astraea-pod-reader-binding
+  namespace: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: astraea-pod-reader
+subjects:
+  - kind: ServiceAccount
+    name: astraea-service-account
+    namespace: astraea

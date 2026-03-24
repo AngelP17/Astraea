@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: astraea-api
+  namespace: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+    app.kubernetes.io/component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: astraea-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: astraea-api
+        app.kubernetes.io/component: api
+    spec:
+      containers:
+        - name: api
+          image: astraea/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: ENVIRONMENT
+              value: "production"
+            - name: API_WORKERS
+              value: "4"
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: astraea-api-config
+                  key: LOG_LEVEL
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: astraea-api-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: astraea-api-config
+                  key: REDIS_PORT
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: astraea-secrets
+                  key: SECRET_KEY
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: astraea-secrets
+                  key: DB_HOST
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: astraea-secrets
+                  key: DB_PASSWORD
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: artifacts-volume
+              mountPath: /app/artifacts
+      volumes:
+        - name: artifacts-volume
+          persistentVolumeClaim:
+            claimName: astraea-artifacts-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: astraea-api
+  namespace: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+    app.kubernetes.io/component: api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: astraea-api
