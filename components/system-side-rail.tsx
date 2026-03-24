@@ -15,10 +15,10 @@ export function SystemSideRail() {
       initial={{ x: -24, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.7, delay: 0.15 }}
-      className="fixed left-4 top-1/2 z-40 hidden w-12 -translate-y-1/2 flex-col items-center gap-6 border border-white/10 bg-black/50 py-8 shadow-panel backdrop-blur-md xl:flex"
+      className="fixed left-4 top-1/2 z-40 hidden min-w-[48px] max-w-[48px] -translate-y-1/2 flex-col items-center gap-6 border border-white/10 bg-black/50 py-8 shadow-panel backdrop-blur-md xl:flex"
     >
       <div className="mb-8 w-48 origin-center rotate-[-90deg] whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] text-neutral-500">
-        ASTRAEA LINKS
+        ASTRAEA
       </div>
 
       {items.map(({ icon: Icon, label, href }) => (
@@ -31,7 +31,7 @@ export function SystemSideRail() {
           className="group relative p-2 text-neutral-500 transition-all duration-150 hover:bg-white/5 hover:text-primary"
         >
           <Icon className="h-5 w-5" />
-          <span className="pointer-events-none absolute left-full top-1/2 ml-4 -translate-y-1/2 whitespace-nowrap truncate rounded border border-white/10 bg-black px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+          <span className="pointer-events-none absolute left-full top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap truncate rounded border border-white/10 bg-black px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100">
             {label}
           </span>
         </a>
