@@ -48,13 +48,13 @@ export function Hero() {
   const active = cases[activeIndex];
 
   return (
-    <section id="top" className="relative flex min-h-screen items-center overflow-hidden border-b border-white/5 pt-24">
+    <section id="top" className="relative min-h-screen overflow-hidden border-b border-white/5 pt-20">
       <div className="absolute inset-0 grid-bg opacity-50" />
       <div className="absolute left-[10%] top-[15%] h-72 w-72 rounded-full bg-secondary/10 blur-[140px]" />
       <div className="absolute right-[8%] top-[30%] h-96 w-96 rounded-full bg-primary/10 blur-[160px]" />
       <div className="absolute bottom-[10%] left-[30%] h-64 w-64 rounded-full bg-tertiary/10 blur-[120px]" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-14 px-6 pb-20 pt-10 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-6 pb-16 pt-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-10 lg:pt-12">
         <div className="flex flex-col justify-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -76,7 +76,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.08 }}
-            className="font-headline text-[4.4rem] font-black uppercase leading-[0.86] tracking-[-0.06em] text-white md:text-[7rem] lg:text-[9rem]"
+            className="font-headline text-[3.5rem] font-black uppercase leading-[0.86] tracking-[-0.06em] text-white md:text-[5rem] lg:text-[6.5rem]"
           >
             ASTRAEA
             <span className="block text-white/25">Decision Infrastructure</span>
@@ -86,7 +86,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.16 }}
-            className="mt-8 max-w-2xl text-left font-body text-lg leading-8 text-neutral-400 lg:text-xl"
+            className="mt-6 max-w-2xl text-left font-body text-base leading-7 text-neutral-400 lg:text-lg"
           >
             A deterministic decision engine for event-driven systems. Every input is traceable. Every decision is explainable. Every outcome is reproducible.
           </motion.p>
@@ -95,7 +95,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.22 }}
-            className="mt-10 flex flex-col gap-4 sm:flex-row"
+            className="mt-8 flex flex-col gap-4 sm:flex-row"
           >
             <button
               onClick={handleRunLive}
@@ -127,7 +127,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.28 }}
-            className="mt-6 flex items-center gap-6 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500"
+            className="mt-5 flex items-center gap-6 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500"
           >
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-primary" />
