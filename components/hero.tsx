@@ -32,16 +32,19 @@ export function Hero() {
 
   const handleRunLive = async () => {
     setIsRunning(true);
-    const result = await runLivePipeline();
-    setIsRunning(false);
-    if (result) {
-      setCases((prev) => {
-        const exists = prev.find((c) => c.case_id === result.case_id);
-        if (exists) return prev;
-        return [...prev, result];
-      });
-      setActiveIndex(cases.length);
-      setHasRunLive(true);
+    try {
+      const result = await runLivePipeline();
+      if (result) {
+        setCases((prev) => {
+          const exists = prev.find((c) => c.case_id === result.case_id);
+          if (exists) return prev;
+          return [...prev, result];
+        });
+        setActiveIndex((prev) => prev + 1);
+        setHasRunLive(true);
+      }
+    } finally {
+      setIsRunning(false);
     }
   };
 
