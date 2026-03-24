@@ -131,6 +131,23 @@
       "Case case_evt_003 queued for human review"
     ]
   },
+  "consequence": {
+    "case_id": "case_evt_003",
+    "downtime_avoided_minutes": 13.0,
+    "risk_level": "MODERATE",
+    "escalation_required": true,
+    "safety_impact": "HIGH",
+    "production_impact": "CRITICAL",
+    "cost_estimate_usd": 3000.0,
+    "mtbf_impact_hours": 2,
+    "reasoning": [
+      "Based on medium severity classification",
+      "Estimated downtime avoided: 13 minutes",
+      "Escalation triggered per safety protocol",
+      "Safety impact: HIGH - personnel risk present",
+      "Production impact: CRITICAL - line stoppage imminent"
+    ]
+  },
   "audit": {
     "case_id": "case_evt_003",
     "event_snapshot": {
@@ -264,6 +281,6 @@
       ]
     },
     "deterministic_hash": "f85cee8725930ab179d457da0a87f201984c6d032d47d0546e83f0480f54e894",
-    "timestamp": "2026-03-24T21:39:06.732412+00:00"
+    "timestamp": "2026-03-24T21:53:49.066428+00:00"
   }
 }

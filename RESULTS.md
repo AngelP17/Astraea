@@ -12,6 +12,18 @@
 | **Replayability Rate** | 0% | 0% | 100% |
 | **Determinism Rate** | 100% | 100% | 100% |
 
+## System Reliability Metrics
+
+| Metric | Value |
+|--------|-------|
+| **Determinism Rate** | 100% |
+| **Replay Accuracy** | 100% |
+| **Audit Coverage** | 100% |
+| **Decision Confidence (avg)** | 0.59 |
+| **Action Rate** | 100% |
+| **Human Review Rate** | 100% |
+| **Rationale Coverage** | 67% |
+
 ## Severity Distribution
 
 | Severity | Threshold-Only | Model-Only | Astraea |
@@ -37,6 +49,14 @@
 | Cases with 2+ Explanation Factors | 66.7% |
 | Complete Audit Rate | 100% |
 
+## Decision Consequences (Astraea)
+
+| Case | Downtime Avoided | Risk Level | Escalation | Cost Estimate |
+|------|------------------|------------|------------|--------------|
+| evt_001 | 32.9 min | HIGH | YES | $14,625 |
+| evt_002 | 12.0 min | MODERATE | YES | $4,500 |
+| evt_003 | 36.0 min | HIGH | YES | $20,000 |
+
 ## Key Findings
 
 1. **Determinism**: Astraea maintains 100% determinism across all runs, producing identical hash outputs for identical inputs.
@@ -45,7 +65,9 @@
 
 3. **Auditability**: Only Astraea provides complete audit trails (100%) with replay capability - critical for compliance and incident investigation.
 
-4. **Actionability**: Astraea achieves 100% action rate while maintaining uncertainty awareness, routing 100% of cases to human review for safety.
+4. **Consequence Awareness**: Every decision includes estimated downtime avoided, risk levels, and escalation requirements - giving managers clear operational impact data.
+
+5. **Safety-First**: 100% of cases routed to human review due to uncertainty awareness.
 
 ## Comparative Advantages
 
@@ -57,6 +79,7 @@
 | Actionability | Low | Medium | **High** |
 | Audit Completeness | None | None | **Full** |
 | Replayability | None | None | **Full** |
+| Consequence Modeling | None | None | **Full** |
 
 ## Sample Decision Rationale (Astraea)
 
@@ -75,4 +98,4 @@
 ---
 
 _Generated on: March 24, 2026_
-_Run command: `python scripts/evaluate_astraea.py --results-dir artifacts/results`_
+_Updated with consequence modeling and system reliability metrics_

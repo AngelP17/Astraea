@@ -3,6 +3,7 @@ from __future__ import annotations
 from backend.audit.recorder import AuditRecorder
 from backend.decision.engine import DecisionEngine
 from backend.decision.prioritizer import DecisionPrioritizationEngine
+from backend.execution.consequence import ConsequenceCalculator
 from backend.execution.dispatcher import ExecutionDispatcher
 from backend.ml.anomaly_detector import AnomalyDetector
 from backend.pipeline.feature_engine import FeatureEngine
@@ -17,6 +18,7 @@ class AstraeaPipeline:
         self.decision_engine = DecisionEngine()
         self.dispatcher = ExecutionDispatcher()
         self.audit_recorder = AuditRecorder()
+        self.consequence_calculator = ConsequenceCalculator()
 
     def process(self, event: Event) -> PipelineResult:
         features = self.feature_engine.extract(event)
@@ -24,6 +26,7 @@ class AstraeaPipeline:
         case = self.prioritizer.prioritize(event, assessment)
         decision = self.decision_engine.resolve(case)
         execution = self.dispatcher.dispatch(case, decision)
+        consequence = self.consequence_calculator.calculate(case, decision, assessment, event)
         audit = self.audit_recorder.record(
             event=event,
             features=features,
@@ -42,5 +45,6 @@ class AstraeaPipeline:
             prioritized_case=case.to_dict(),
             decision=decision.to_dict(),
             execution=execution.to_dict(),
+            consequence=consequence.to_dict(),
             audit=audit.to_dict(),
         )

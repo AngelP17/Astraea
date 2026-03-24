@@ -56,6 +56,17 @@ export interface PipelineResult {
     commands: string[];
     notifications: string[];
   };
+  consequence: {
+    case_id: string;
+    downtime_avoided_minutes: number;
+    risk_level: string;
+    escalation_required: boolean;
+    safety_impact: string;
+    production_impact: string;
+    cost_estimate_usd: number;
+    mtbf_impact_hours: number;
+    reasoning: string[];
+  };
   audit: {
     case_id: string;
     event_snapshot: Record<string, unknown>;

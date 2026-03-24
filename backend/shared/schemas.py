@@ -95,6 +95,22 @@ class ExecutionPlan:
 
 
 @dataclass
+class DecisionConsequence:
+    case_id: str
+    downtime_avoided_minutes: float
+    risk_level: str
+    escalation_required: bool
+    safety_impact: str
+    production_impact: str
+    cost_estimate_usd: float
+    mtbf_impact_hours: float
+    reasoning: List[str]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
 class AuditRecord:
     case_id: str
     event_snapshot: Dict[str, Any]
@@ -122,6 +138,7 @@ class PipelineResult:
     prioritized_case: Dict[str, Any]
     decision: Dict[str, Any]
     execution: Dict[str, Any]
+    consequence: Dict[str, Any]
     audit: Dict[str, Any]
 
     def to_dict(self) -> Dict[str, Any]:

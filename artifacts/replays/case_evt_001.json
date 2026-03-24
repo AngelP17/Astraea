@@ -140,6 +140,21 @@
       "Case case_evt_001 queued for human review"
     ]
   },
+  "consequence": {
+    "case_id": "case_evt_001",
+    "downtime_avoided_minutes": 9.4,
+    "risk_level": "HIGH",
+    "escalation_required": true,
+    "safety_impact": "MEDIUM",
+    "production_impact": "HIGH",
+    "cost_estimate_usd": 1950.0,
+    "mtbf_impact_hours": 2,
+    "reasoning": [
+      "Based on medium severity classification",
+      "Elevated risk warrants proactive inspection",
+      "Escalation triggered per safety protocol"
+    ]
+  },
   "audit": {
     "case_id": "case_evt_001",
     "event_snapshot": {
@@ -282,6 +297,6 @@
       ]
     },
     "deterministic_hash": "ac8e8869b151e52b8ddec47add5c197e61416e3dc94942f8edbc651dafc45c22",
-    "timestamp": "2026-03-24T21:39:06.730641+00:00"
+    "timestamp": "2026-03-24T21:53:49.065259+00:00"
   }
 }
