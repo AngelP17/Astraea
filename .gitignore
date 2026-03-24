@@ -11,3 +11,4 @@ build/
 raw_all/
 .snapshots/
 node_modules/
+.next/

@@ -25,9 +25,9 @@ const config: Config = {
         danger: '#ff716c',
       },
       fontFamily: {
-        headline: ['var(--font-space-grotesk)'],
-        body: ['var(--font-inter)'],
-        mono: ['var(--font-jetbrains-mono)'],
+        headline: ['Space Grotesk', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       boxShadow: {
         glow: '0 0 40px rgba(161,250,255,0.08)',
