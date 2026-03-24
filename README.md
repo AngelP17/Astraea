@@ -57,7 +57,6 @@ At 02:13 AM on March 23, Astraea detected abnormal vibration patterns on Press_0
 
 ![Pipeline Section](screenshots/02-pipeline-section.png)
 
-![Case Study](screenshots/05-case-study.png)
 
 ---
 
