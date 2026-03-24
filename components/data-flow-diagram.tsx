@@ -13,8 +13,8 @@ export function DataFlowDiagram() {
           </h2>
         </div>
 
-        <div className="relative">
-        <svg className="w-full" viewBox="0 0 800 600" fill="none">
+        <div className="relative overflow-x-auto">
+        <svg className="mx-auto min-w-[860px]" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" fill="none">
           <defs>
             <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#a1faff" />
@@ -49,7 +49,7 @@ export function DataFlowDiagram() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <path d="M200 80 L280 80" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" />
+              <path d="M200 80 L280 80" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
               <text x="240" y="70" textAnchor="middle" fill="#666" fontSize="9" fontFamily="monospace">normalize</text>
             </motion.g>
 
@@ -69,7 +69,7 @@ export function DataFlowDiagram() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.4 }}
             >
-              <path d="M460 80 L540 80" stroke="url(#flowGradient)" strokeWidth="2" />
+              <path d="M460 80 L540 80" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
               <text x="500" y="70" textAnchor="middle" fill="#666" fontSize="9" fontFamily="monospace">score</text>
             </motion.g>
 
@@ -89,7 +89,7 @@ export function DataFlowDiagram() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.6 }}
             >
-              <path d="M630 120 L630 200" stroke="url(#flowGradient)" strokeWidth="2" />
+              <path d="M630 120 L630 200" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
               <text x="645" y="160" fill="#666" fontSize="9" fontFamily="monospace">decide</text>
             </motion.g>
 
@@ -109,7 +109,7 @@ export function DataFlowDiagram() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.8 }}
             >
-              <path d="M540 240 L460 240" stroke="url(#flowGradient)" strokeWidth="2" />
+              <path d="M540 240 L460 240" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
               <text x="500" y="230" textAnchor="middle" fill="#666" fontSize="9" fontFamily="monospace">audit</text>
             </motion.g>
 
@@ -129,7 +129,7 @@ export function DataFlowDiagram() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1 }}
             >
-              <path d="M280 280 L280 360" stroke="url(#flowGradient)" strokeWidth="2" />
+              <path d="M280 280 L280 360" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
               <text x="295" y="320" fill="#666" fontSize="9" fontFamily="monospace">store</text>
             </motion.g>
 
@@ -149,8 +149,8 @@ export function DataFlowDiagram() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1.2 }}
             >
-              <path d="M380 410 L460 410" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" />
-              <path d="M460 410 L460 320" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" />
+              <path d="M380 410 L460 410" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
+              <path d="M460 410 L460 320" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
               <text x="420" y="400" textAnchor="middle" fill="#555" fontSize="9" fontFamily="monospace">replay</text>
             </motion.g>
 
