@@ -1,0 +1,223 @@
+{
+  "summary": {
+    "threshold_only": {
+      "system": "threshold_only",
+      "num_cases": 3,
+      "severity_distribution": {
+        "high": 2,
+        "critical": 1
+      },
+      "action_rate": 1.0,
+      "mean_priority_score": 0.7999999999999999,
+      "mean_rationale_count": 1.3333333333333333,
+      "complete_audit_rate": 0.0,
+      "replayable_rate": 0.0,
+      "deterministic_rate": 1.0
+    },
+    "model_only": {
+      "system": "model_only",
+      "num_cases": 3,
+      "severity_distribution": {
+        "high": 1,
+        "medium": 1,
+        "low": 1
+      },
+      "action_rate": 0.6666666666666666,
+      "mean_priority_score": 0.5186999999999999,
+      "mean_rationale_count": 1,
+      "complete_audit_rate": 0.0,
+      "replayable_rate": 0.0,
+      "deterministic_rate": 1.0
+    },
+    "astraea": {
+      "system": "astraea",
+      "num_cases": 3,
+      "severity_distribution": {
+        "high": 1,
+        "medium": 2
+      },
+      "action_rate": 1.0,
+      "mean_priority_score": 0.5901,
+      "mean_rationale_count": 3,
+      "complete_audit_rate": 1.0,
+      "replayable_rate": 1.0,
+      "deterministic_rate": 1.0
+    }
+  },
+  "cases": {
+    "threshold_only": [
+      {
+        "case_id": "threshold_evt_001",
+        "severity": "high",
+        "recommendation": "Inspect machine",
+        "requires_action": true,
+        "rationale_count": 1,
+        "reasons": [
+          "vibration_rms above threshold"
+        ],
+        "priority_score": 0.7,
+        "has_audit": false,
+        "has_replay": false,
+        "deterministic": true
+      },
+      {
+        "case_id": "threshold_evt_002",
+        "severity": "high",
+        "recommendation": "Review electrical load",
+        "requires_action": true,
+        "rationale_count": 2,
+        "reasons": [
+          "temperature_c above threshold",
+          "current_amps above threshold"
+        ],
+        "priority_score": 0.7,
+        "has_audit": false,
+        "has_replay": false,
+        "deterministic": true
+      },
+      {
+        "case_id": "threshold_evt_003",
+        "severity": "critical",
+        "recommendation": "Immediate operator response",
+        "requires_action": true,
+        "rationale_count": 1,
+        "reasons": [
+          "stoppage event"
+        ],
+        "priority_score": 1.0,
+        "has_audit": false,
+        "has_replay": false,
+        "deterministic": true
+      }
+    ],
+    "model_only": [
+      {
+        "case_id": "model_evt_001",
+        "severity": "high",
+        "recommendation": "Inspect soon",
+        "requires_action": true,
+        "rationale_count": 1,
+        "reasons": [
+          "anomaly_score=0.6378"
+        ],
+        "priority_score": 0.6378,
+        "has_audit": false,
+        "has_replay": false,
+        "deterministic": true
+      },
+      {
+        "case_id": "model_evt_002",
+        "severity": "medium",
+        "recommendation": "Review signal",
+        "requires_action": true,
+        "rationale_count": 1,
+        "reasons": [
+          "anomaly_score=0.5286"
+        ],
+        "priority_score": 0.5286,
+        "has_audit": false,
+        "has_replay": false,
+        "deterministic": true
+      },
+      {
+        "case_id": "model_evt_003",
+        "severity": "low",
+        "recommendation": "Monitor only",
+        "requires_action": false,
+        "rationale_count": 1,
+        "reasons": [
+          "anomaly_score=0.3897"
+        ],
+        "priority_score": 0.3897,
+        "has_audit": false,
+        "has_replay": false,
+        "deterministic": true
+      }
+    ],
+    "astraea": [
+      {
+        "case_id": "case_evt_001",
+        "severity": "high",
+        "recommendation": "Inspect within 1 hour",
+        "requires_action": true,
+        "rationale_count": 5,
+        "reasons": [
+          "high anomaly score",
+          "elevated failure probability",
+          "high-confidence abnormal interval",
+          "critical event type: vibration_spike",
+          "manual review required due to uncertainty band"
+        ],
+        "priority_score": 0.7388,
+        "has_audit": true,
+        "has_replay": true,
+        "deterministic": true
+      },
+      {
+        "case_id": "case_evt_002",
+        "severity": "medium",
+        "recommendation": "Plan intervention during next maintenance window",
+        "requires_action": true,
+        "rationale_count": 1,
+        "reasons": [
+          "manual review required due to uncertainty band"
+        ],
+        "priority_score": 0.4817,
+        "has_audit": true,
+        "has_replay": true,
+        "deterministic": true
+      },
+      {
+        "case_id": "case_evt_003",
+        "severity": "medium",
+        "recommendation": "Plan intervention during next maintenance window",
+        "requires_action": true,
+        "rationale_count": 3,
+        "reasons": [
+          "critical event type: stoppage",
+          "prolonged duration exceeded 300 seconds",
+          "manual review required due to uncertainty band"
+        ],
+        "priority_score": 0.5498,
+        "has_audit": true,
+        "has_replay": true,
+        "deterministic": true
+      }
+    ]
+  },
+  "interpretation_template": {
+    "expected_strengths": {
+      "threshold_only": [
+        "simple",
+        "deterministic",
+        "easy to explain"
+      ],
+      "model_only": [
+        "flexible scoring",
+        "compact logic"
+      ],
+      "astraea": [
+        "deterministic",
+        "auditable",
+        "replayable",
+        "higher actionability"
+      ]
+    },
+    "expected_weaknesses": {
+      "threshold_only": [
+        "brittle",
+        "limited context",
+        "no audit bundle"
+      ],
+      "model_only": [
+        "thin explanations",
+        "no replay",
+        "score-only behavior"
+      ],
+      "astraea": [
+        "more complex implementation",
+        "requires structured pipeline maintenance"
+      ]
+    }
+  }
+}

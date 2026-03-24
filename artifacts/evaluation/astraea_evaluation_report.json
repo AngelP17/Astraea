@@ -1,0 +1,22 @@
+{
+  "single_run": {
+    "num_cases": 3,
+    "decision_distribution": {
+      "Inspect within 1 hour": 1,
+      "Plan intervention during next maintenance window": 2
+    },
+    "severity_distribution": {
+      "high": 1,
+      "medium": 2
+    },
+    "routing_distribution": {
+      "human_review": 3
+    },
+    "mean_priority_score": 0.5901,
+    "mean_rationale_count": 3,
+    "mean_explanation_factor_count": 2.6666666666666665,
+    "cases_with_at_least_2_reasons_rate": 0.6666666666666666,
+    "cases_with_at_least_2_explanation_factors_rate": 0.6666666666666666,
+    "complete_audit_rate": 1.0
+  }
+}
