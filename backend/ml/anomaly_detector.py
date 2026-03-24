@@ -1,139 +1,130 @@
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from __future__ import annotations
+
+from typing import List, Tuple
 
 from backend.shared.schemas import FeatureVector, ModelAssessment
 
 
-class ConfidenceBand(Enum):
-    HIGH_CONFidence_ANOMALY = "high_confidence_anomaly"
-    REVIEW_NEEDED = "review_needed"
-    HIGH_CONFIDENCE_NORMAL = "high_confidence_normal"
-
-
-@dataclass
-class ConformalResult:
-    calibrated_score: float
-    confidence_band: ConfidenceBand
-    interval_low: float
-    interval_high: float
-
-
 class AnomalyDetector:
-    VERSION = "conformal_v1"
+    VERSION = "astraea_det_v2"
 
-    def __init__(self, alpha: float = 0.05):
+    def __init__(self, alpha: float = 0.10):
         self.alpha = alpha
-        self.q_hat: Optional[float] = None
-        self._calibration_scores: List[float] = []
-        self._calibration_labels: List[int] = []
-        self._fitted = False
-
-    def calibrate(self, scores: List[float], labels: List[int]) -> "AnomalyDetector":
-        nonconf = [abs(s - l) for s, l in zip(scores, labels)]
-        n = len(nonconf)
-        if n == 0:
-            self.q_hat = 0.5
-            self._fitted = True
-            return self
-
-        q_level = min((n + 1) * (1 - self.alpha) / n, 1.0)
-        sorted_scores = sorted(nonconf)
-        q_idx = min(int(q_level * n), n - 1)
-        self.q_hat = sorted_scores[q_idx]
-        self._calibration_scores = scores
-        self._calibration_labels = labels
-        self._fitted = True
-        return self
 
     def assess(self, fv: FeatureVector) -> ModelAssessment:
         anomaly_score = self._score_anomaly(fv)
-        failure_prob = self._score_failure(fv)
-        confidence = min(anomaly_score + 0.1, 1.0)
-        top = self._top_features(fv)
+        failure_probability = self._score_failure(fv)
+        confidence = self._score_confidence(fv, anomaly_score, failure_probability)
+        interval_low, interval_high = self._uncertainty_interval(
+            anomaly_score=anomaly_score,
+            confidence=confidence,
+        )
+        top_features = self._top_features(fv)
+        explanation_factors = self._explanation_factors(
+            fv, anomaly_score, failure_probability
+        )
 
         return ModelAssessment(
             event_id=fv.event_id,
             anomaly_score=round(anomaly_score, 4),
-            failure_probability=round(failure_prob, 4),
+            failure_probability=round(failure_probability, 4),
             confidence=round(confidence, 4),
+            uncertainty_low=round(interval_low, 4),
+            uncertainty_high=round(interval_high, 4),
             model_version=self.VERSION,
-            top_features=top,
+            top_features=top_features,
+            explanation_factors=explanation_factors,
         )
-
-    def assess_with_uncertainty(
-        self, fv: FeatureVector
-    ) -> Tuple[ModelAssessment, ConformalResult]:
-        assessment = self.assess(fv)
-
-        if self.q_hat is not None:
-            calibrated = assessment.anomaly_score
-            interval_low = max(0.0, calibrated - self.q_hat)
-            interval_high = min(1.0, calibrated + self.q_hat)
-
-            includes_high = interval_high > 0.6
-            includes_low = interval_low < 0.4
-
-            if includes_high and not includes_low:
-                band = ConfidenceBand.HIGH_CONFidence_ANOMALY
-            elif includes_low and not includes_high:
-                band = ConfidenceBand.HIGH_CONFIDENCE_NORMAL
-            else:
-                band = ConfidenceBand.REVIEW_NEEDED
-
-            conformal_result = ConformalResult(
-                calibrated_score=calibrated,
-                confidence_band=band,
-                interval_low=round(interval_low, 4),
-                interval_high=round(interval_high, 4),
-            )
-        else:
-            conformal_result = ConformalResult(
-                calibrated_score=assessment.anomaly_score,
-                confidence_band=ConfidenceBand.REVIEW_NEEDED,
-                interval_low=0.0,
-                interval_high=1.0,
-            )
-
-        return assessment, conformal_result
 
     def _score_anomaly(self, fv: FeatureVector) -> float:
-        above = sum(
-            1 for k, v in fv.context.items() if k.endswith("_above_threshold") and v
+        triggered = [
+            key
+            for key, value in fv.context.items()
+            if key.endswith("_above_threshold") and value is True
+        ]
+        total_checks = len([k for k in fv.context if k.endswith("_above_threshold")])
+
+        if total_checks == 0:
+            threshold_component = 0.20
+        else:
+            threshold_component = len(triggered) / total_checks
+
+        event_bias = float(fv.context.get("baseline_severity", 0.4))
+        duration_bonus = 0.10 if fv.context.get("extended_duration", False) else 0.0
+        ratio_bonus = min(float(fv.features.get("ratio_max", 0.0)) * 0.10, 0.20)
+
+        score = (
+            0.45 * threshold_component
+            + 0.35 * event_bias
+            + duration_bonus
+            + ratio_bonus
         )
-        total = sum(1 for k in fv.context if k.endswith("_above_threshold"))
-        if total == 0:
-            return 0.3
-
-        base = above / total
-
-        event_type = fv.context.get("event_type", "")
-        if event_type == "vibration_spike":
-            base = min(base + 0.25, 1.0)
-        elif event_type == "temperature_rise":
-            base = min(base + 0.15, 1.0)
-        elif event_type == "stoppage":
-            base = min(base + 0.3, 1.0)
-
-        return base
+        return min(max(score, 0.0), 1.0)
 
     def _score_failure(self, fv: FeatureVector) -> float:
-        ratios = [v for k, v in fv.features.items() if k.startswith("ratio_")]
-        if not ratios:
-            return 0.2
+        ratio_max = float(fv.features.get("ratio_max", 0.0))
+        delta_max = float(fv.features.get("delta_max", 0.0))
+        duration_seconds = float(fv.features.get("duration_seconds", 0.0))
 
-        max_ratio = max(ratios)
-        severity_weight = 1.0
+        duration_factor = min(duration_seconds / 600.0, 1.0)
+        ratio_factor = min(ratio_max / 2.0, 1.0)
+        delta_factor = min(max(delta_max, 0.0) / 25.0, 1.0)
 
-        if fv.context.get("event_type") == "vibration_spike":
-            severity_weight = 1.2
-        elif fv.context.get("event_type") == "stoppage":
-            severity_weight = 1.3
+        score = 0.45 * ratio_factor + 0.35 * delta_factor + 0.20 * duration_factor
+        return min(max(score, 0.0), 1.0)
 
-        return min(max_ratio * 0.8 * severity_weight, 1.0)
+    def _score_confidence(
+        self,
+        fv: FeatureVector,
+        anomaly_score: float,
+        failure_probability: float,
+    ) -> float:
+        top_signal = max(anomaly_score, failure_probability)
+        source = str(fv.context.get("source", "")).lower()
+
+        source_bonus = 0.05 if source in {"sensor_gateway", "plc_monitor"} else 0.0
+        consistency_bonus = (
+            0.05 if abs(anomaly_score - failure_probability) < 0.25 else 0.0
+        )
+
+        confidence = 0.65 * top_signal + source_bonus + consistency_bonus
+        return min(max(confidence, 0.0), 1.0)
+
+    def _uncertainty_interval(
+        self, anomaly_score: float, confidence: float
+    ) -> Tuple[float, float]:
+        spread = max(0.05, 0.30 * (1.0 - confidence))
+        low = max(0.0, anomaly_score - spread)
+        high = min(1.0, anomaly_score + spread)
+        return low, high
 
     def _top_features(self, fv: FeatureVector) -> List[str]:
-        sorted_feats = sorted(
-            fv.features.items(), key=lambda x: abs(x[1]), reverse=True
+        ranked = sorted(
+            fv.features.items(),
+            key=lambda item: abs(float(item[1])),
+            reverse=True,
         )
-        return [k for k, _ in sorted_feats[:3]]
+        return [name for name, _ in ranked[:5]]
+
+    def _explanation_factors(
+        self,
+        fv: FeatureVector,
+        anomaly_score: float,
+        failure_probability: float,
+    ) -> List[str]:
+        factors: List[str] = []
+
+        for key, value in fv.context.items():
+            if key.endswith("_above_threshold") and value is True:
+                factors.append(key.replace("_above_threshold", "") + " above threshold")
+
+        if fv.context.get("extended_duration", False):
+            factors.append("extended fault duration")
+
+        if anomaly_score >= 0.7:
+            factors.append("high anomaly concentration")
+
+        if failure_probability >= 0.6:
+            factors.append("elevated failure probability")
+
+        return factors[:6]

@@ -15,7 +15,8 @@
     "source": "sensor_gateway",
     "metadata": {
       "sensor_id": "accel_A3_01",
-      "location": "bearing_housing"
+      "location": "bearing_housing",
+      "duration_seconds": 0
     }
   },
   {
@@ -34,7 +35,8 @@
     "source": "sensor_gateway",
     "metadata": {
       "sensor_id": "temp_B1_03",
-      "location": "motor_winding"
+      "location": "motor_winding",
+      "duration_seconds": 0
     }
   },
   {

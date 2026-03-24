@@ -1,0 +1,20 @@
+[project]
+name = "astraea"
+version = "0.1.0"
+description = "Deterministic explainable decision engine for event-driven industrial systems"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.black]
+line-length = 100

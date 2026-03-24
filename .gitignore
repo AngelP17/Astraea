@@ -10,3 +10,4 @@ dist/
 build/
 raw_all/
 .snapshots/
+node_modules/

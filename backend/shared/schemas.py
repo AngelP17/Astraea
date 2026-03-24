@@ -1,6 +1,8 @@
-from dataclasses import dataclass, field
+from __future__ import annotations
+
+from dataclasses import dataclass, field, asdict
 from datetime import datetime
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
 
 @dataclass
@@ -12,7 +14,12 @@ class Event:
     timestamp: datetime
     raw_values: Dict[str, float]
     source: str
-    metadata: Dict = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> Dict[str, Any]:
+        payload = asdict(self)
+        payload["timestamp"] = self.timestamp.isoformat()
+        return payload
 
 
 @dataclass
@@ -23,6 +30,11 @@ class FeatureVector:
     features: Dict[str, float]
     context: Dict[str, Any]
 
+    def to_dict(self) -> Dict[str, Any]:
+        payload = asdict(self)
+        payload["timestamp"] = self.timestamp.isoformat()
+        return payload
+
 
 @dataclass
 class ModelAssessment:
@@ -30,8 +42,14 @@ class ModelAssessment:
     anomaly_score: float
     failure_probability: float
     confidence: float
+    uncertainty_low: float
+    uncertainty_high: float
     model_version: str
     top_features: List[str]
+    explanation_factors: List[str]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
 
 
 @dataclass
@@ -43,6 +61,11 @@ class PrioritizedCase:
     severity: str
     rationale: List[str]
     requires_action: bool
+    review_required: bool
+    routing_bucket: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
 
 
 @dataclass
@@ -53,14 +76,57 @@ class Decision:
     owner: Optional[str]
     justification: List[str]
     next_steps: List[str]
+    action_plan: List[Dict[str, Any]]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class ExecutionPlan:
+    case_id: str
+    dispatch_status: str
+    assigned_team: Optional[str]
+    commands: List[str]
+    notifications: List[str]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
 
 
 @dataclass
 class AuditRecord:
     case_id: str
-    event_snapshot: Dict
-    feature_snapshot: Dict
-    model_snapshot: Dict
-    prioritization_snapshot: Dict
-    decision_snapshot: Dict
+    event_snapshot: Dict[str, Any]
+    feature_snapshot: Dict[str, Any]
+    model_snapshot: Dict[str, Any]
+    prioritization_snapshot: Dict[str, Any]
+    decision_snapshot: Dict[str, Any]
+    execution_snapshot: Dict[str, Any]
+    deterministic_hash: str
     timestamp: datetime
+
+    def to_dict(self) -> Dict[str, Any]:
+        payload = asdict(self)
+        payload["timestamp"] = self.timestamp.isoformat()
+        return payload
+
+
+@dataclass
+class PipelineResult:
+    event_id: str
+    case_id: str
+    event: Dict[str, Any]
+    features: Dict[str, Any]
+    assessment: Dict[str, Any]
+    prioritized_case: Dict[str, Any]
+    decision: Dict[str, Any]
+    execution: Dict[str, Any]
+    audit: Dict[str, Any]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+
+def create_case_id(event_id: str) -> str:
+    return f"case_{event_id}"

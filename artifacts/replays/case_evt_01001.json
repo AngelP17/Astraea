@@ -1,0 +1,263 @@
+{
+  "event_id": "evt_01001",
+  "case_id": "case_evt_01001",
+  "event": {
+    "event_id": "evt_01001",
+    "machine_id": "motor_02",
+    "line_id": "line_2",
+    "event_type": "temperature_rise",
+    "timestamp": "2026-03-22T15:07:00+00:00",
+    "raw_values": {
+      "vibration_rms": 3.9,
+      "vibration_peak": 8.4,
+      "temperature_c": 95.35000000000001,
+      "current_amps": 8.4,
+      "rpm": 800.4
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "sensor_id": "sensor_motor_02_1",
+      "location": "bearing_2",
+      "duration_seconds": 0
+    }
+  },
+  "features": {
+    "event_id": "evt_01001",
+    "machine_id": "motor_02",
+    "timestamp": "2026-03-22T15:07:00+00:00",
+    "features": {
+      "raw_vibration_rms": 3.9,
+      "delta_vibration_rms": -4.1,
+      "ratio_vibration_rms": 0.4875,
+      "raw_vibration_peak": 8.4,
+      "delta_vibration_peak": -11.6,
+      "ratio_vibration_peak": 0.42,
+      "raw_temperature_c": 95.35000000000001,
+      "delta_temperature_c": 10.35,
+      "ratio_temperature_c": 1.121765,
+      "raw_current_amps": 8.4,
+      "delta_current_amps": -11.6,
+      "ratio_current_amps": 0.42,
+      "raw_rpm": 800.4,
+      "delta_rpm": -399.6,
+      "ratio_rpm": 0.667,
+      "ratio_max": 1.121765,
+      "ratio_mean": 0.623253,
+      "delta_max": 10.35,
+      "delta_mean": -83.31,
+      "duration_seconds": 0.0
+    },
+    "context": {
+      "vibration_rms_above_threshold": false,
+      "vibration_peak_above_threshold": false,
+      "temperature_c_above_threshold": true,
+      "current_amps_above_threshold": false,
+      "rpm_above_threshold": false,
+      "event_type": "temperature_rise",
+      "machine_id": "motor_02",
+      "line_id": "line_2",
+      "source": "plc_monitor",
+      "baseline_severity": 0.75,
+      "extended_duration": false
+    }
+  },
+  "assessment": {
+    "event_id": "evt_01001",
+    "anomaly_score": 0.4647,
+    "failure_probability": 0.3973,
+    "confidence": 0.402,
+    "uncertainty_low": 0.2853,
+    "uncertainty_high": 0.6441,
+    "model_version": "astraea_det_v2",
+    "top_features": [
+      "raw_rpm",
+      "delta_rpm",
+      "raw_temperature_c",
+      "delta_mean",
+      "delta_vibration_peak"
+    ],
+    "explanation_factors": [
+      "temperature_c above threshold"
+    ]
+  },
+  "prioritized_case": {
+    "case_id": "case_evt_01001",
+    "event_id": "evt_01001",
+    "priority_score": 0.4608,
+    "confidence_band": "low",
+    "severity": "medium",
+    "rationale": [
+      "manual review required due to uncertainty band"
+    ],
+    "requires_action": true,
+    "review_required": true,
+    "routing_bucket": "human_review"
+  },
+  "decision": {
+    "case_id": "case_evt_01001",
+    "recommendation": "Plan intervention during next maintenance window",
+    "urgency": "medium",
+    "owner": "reliability_engineer",
+    "justification": [
+      "manual review required due to uncertainty band"
+    ],
+    "next_steps": [
+      "Add to maintenance queue",
+      "Review trend progression"
+    ],
+    "action_plan": [
+      {
+        "step": "queue_maintenance",
+        "status": "pending"
+      },
+      {
+        "step": "review_trend",
+        "status": "pending"
+      }
+    ]
+  },
+  "execution": {
+    "case_id": "case_evt_01001",
+    "dispatch_status": "queued_for_review",
+    "assigned_team": "reliability_engineering",
+    "commands": [
+      "create_review_ticket",
+      "attach_audit_bundle"
+    ],
+    "notifications": [
+      "Case case_evt_01001 queued for human review"
+    ]
+  },
+  "audit": {
+    "case_id": "case_evt_01001",
+    "event_snapshot": {
+      "event_id": "evt_01001",
+      "machine_id": "motor_02",
+      "line_id": "line_2",
+      "event_type": "temperature_rise",
+      "timestamp": "2026-03-22T15:07:00+00:00",
+      "raw_values": {
+        "vibration_rms": 3.9,
+        "vibration_peak": 8.4,
+        "temperature_c": 95.35000000000001,
+        "current_amps": 8.4,
+        "rpm": 800.4
+      },
+      "source": "plc_monitor",
+      "metadata": {
+        "sensor_id": "sensor_motor_02_1",
+        "location": "bearing_2",
+        "duration_seconds": 0
+      }
+    },
+    "feature_snapshot": {
+      "event_id": "evt_01001",
+      "machine_id": "motor_02",
+      "timestamp": "2026-03-22T15:07:00+00:00",
+      "features": {
+        "raw_vibration_rms": 3.9,
+        "delta_vibration_rms": -4.1,
+        "ratio_vibration_rms": 0.4875,
+        "raw_vibration_peak": 8.4,
+        "delta_vibration_peak": -11.6,
+        "ratio_vibration_peak": 0.42,
+        "raw_temperature_c": 95.35000000000001,
+        "delta_temperature_c": 10.35,
+        "ratio_temperature_c": 1.121765,
+        "raw_current_amps": 8.4,
+        "delta_current_amps": -11.6,
+        "ratio_current_amps": 0.42,
+        "raw_rpm": 800.4,
+        "delta_rpm": -399.6,
+        "ratio_rpm": 0.667,
+        "ratio_max": 1.121765,
+        "ratio_mean": 0.623253,
+        "delta_max": 10.35,
+        "delta_mean": -83.31,
+        "duration_seconds": 0.0
+      },
+      "context": {
+        "vibration_rms_above_threshold": false,
+        "vibration_peak_above_threshold": false,
+        "temperature_c_above_threshold": true,
+        "current_amps_above_threshold": false,
+        "rpm_above_threshold": false,
+        "event_type": "temperature_rise",
+        "machine_id": "motor_02",
+        "line_id": "line_2",
+        "source": "plc_monitor",
+        "baseline_severity": 0.75,
+        "extended_duration": false
+      }
+    },
+    "model_snapshot": {
+      "event_id": "evt_01001",
+      "anomaly_score": 0.4647,
+      "failure_probability": 0.3973,
+      "confidence": 0.402,
+      "uncertainty_low": 0.2853,
+      "uncertainty_high": 0.6441,
+      "model_version": "astraea_det_v2",
+      "top_features": [
+        "raw_rpm",
+        "delta_rpm",
+        "raw_temperature_c",
+        "delta_mean",
+        "delta_vibration_peak"
+      ],
+      "explanation_factors": [
+        "temperature_c above threshold"
+      ]
+    },
+    "prioritization_snapshot": {
+      "case_id": "case_evt_01001",
+      "event_id": "evt_01001",
+      "priority_score": 0.4608,
+      "confidence_band": "low",
+      "severity": "medium",
+      "rationale": [
+        "manual review required due to uncertainty band"
+      ],
+      "requires_action": true,
+      "review_required": true,
+      "routing_bucket": "human_review"
+    },
+    "decision_snapshot": {
+      "case_id": "case_evt_01001",
+      "recommendation": "Plan intervention during next maintenance window",
+      "urgency": "medium",
+      "owner": "reliability_engineer",
+      "justification": [
+        "manual review required due to uncertainty band"
+      ],
+      "next_steps": [
+        "Add to maintenance queue",
+        "Review trend progression"
+      ],
+      "action_plan": [
+        {
+          "step": "queue_maintenance",
+          "status": "pending"
+        },
+        {
+          "step": "review_trend",
+          "status": "pending"
+        }
+      ]
+    },
+    "execution_snapshot": {
+      "case_id": "case_evt_01001",
+      "dispatch_status": "queued_for_review",
+      "assigned_team": "reliability_engineering",
+      "commands": [
+        "create_review_ticket",
+        "attach_audit_bundle"
+      ],
+      "notifications": [
+        "Case case_evt_01001 queued for human review"
+      ]
+    },
+    "deterministic_hash": "aac1dd1a8e6e7eacbdf29f2f9b630e5f8b100dec06fd58b608090e17c4d90224",
+    "timestamp": "2026-03-24T15:31:27.397509+00:00"
+  }
+}

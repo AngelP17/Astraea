@@ -1,0 +1,259 @@
+{
+  "event_id": "evt_01002",
+  "case_id": "case_evt_01002",
+  "event": {
+    "event_id": "evt_01002",
+    "machine_id": "motor_03",
+    "line_id": "line_3",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-21T16:14:00+00:00",
+    "raw_values": {
+      "vibration_rms": 4.3,
+      "vibration_peak": 8.799999999999999,
+      "temperature_c": 45.800000000000004,
+      "current_amps": 8.799999999999999,
+      "rpm": 800.8000000000001
+    },
+    "source": "scada_system",
+    "metadata": {
+      "sensor_id": "sensor_motor_03_2",
+      "location": "bearing_3",
+      "duration_seconds": 300
+    }
+  },
+  "features": {
+    "event_id": "evt_01002",
+    "machine_id": "motor_03",
+    "timestamp": "2026-03-21T16:14:00+00:00",
+    "features": {
+      "raw_vibration_rms": 4.3,
+      "delta_vibration_rms": -3.7,
+      "ratio_vibration_rms": 0.5375,
+      "raw_vibration_peak": 8.799999999999999,
+      "delta_vibration_peak": -11.2,
+      "ratio_vibration_peak": 0.44,
+      "raw_temperature_c": 45.800000000000004,
+      "delta_temperature_c": -39.2,
+      "ratio_temperature_c": 0.538824,
+      "raw_current_amps": 8.799999999999999,
+      "delta_current_amps": -11.2,
+      "ratio_current_amps": 0.44,
+      "raw_rpm": 800.8000000000001,
+      "delta_rpm": -399.2,
+      "ratio_rpm": 0.667333,
+      "ratio_max": 0.667333,
+      "ratio_mean": 0.5247314,
+      "delta_max": -3.7,
+      "delta_mean": -92.9,
+      "duration_seconds": 300.0
+    },
+    "context": {
+      "vibration_rms_above_threshold": false,
+      "vibration_peak_above_threshold": false,
+      "temperature_c_above_threshold": false,
+      "current_amps_above_threshold": false,
+      "rpm_above_threshold": false,
+      "event_type": "stoppage",
+      "machine_id": "motor_03",
+      "line_id": "line_3",
+      "source": "scada_system",
+      "baseline_severity": 0.95,
+      "extended_duration": false
+    }
+  },
+  "assessment": {
+    "event_id": "evt_01002",
+    "anomaly_score": 0.3992,
+    "failure_probability": 0.2501,
+    "confidence": 0.3095,
+    "uncertainty_low": 0.1921,
+    "uncertainty_high": 0.6064,
+    "model_version": "astraea_det_v2",
+    "top_features": [
+      "raw_rpm",
+      "delta_rpm",
+      "duration_seconds",
+      "delta_mean",
+      "raw_temperature_c"
+    ],
+    "explanation_factors": []
+  },
+  "prioritized_case": {
+    "case_id": "case_evt_01002",
+    "event_id": "evt_01002",
+    "priority_score": 0.4423,
+    "confidence_band": "low",
+    "severity": "low",
+    "rationale": [
+      "critical event type: stoppage",
+      "manual review required due to uncertainty band",
+      "below active intervention threshold"
+    ],
+    "requires_action": false,
+    "review_required": true,
+    "routing_bucket": "human_review"
+  },
+  "decision": {
+    "case_id": "case_evt_01002",
+    "recommendation": "Monitor only",
+    "urgency": "low",
+    "owner": "reliability_engineer",
+    "justification": [
+      "critical event type: stoppage",
+      "manual review required due to uncertainty band",
+      "below active intervention threshold"
+    ],
+    "next_steps": [
+      "Continue passive monitoring",
+      "Re-evaluate if signal worsens"
+    ],
+    "action_plan": [
+      {
+        "step": "monitor_only",
+        "status": "passive"
+      }
+    ]
+  },
+  "execution": {
+    "case_id": "case_evt_01002",
+    "dispatch_status": "queued_for_review",
+    "assigned_team": "reliability_engineering",
+    "commands": [
+      "create_review_ticket",
+      "attach_audit_bundle"
+    ],
+    "notifications": [
+      "Case case_evt_01002 queued for human review"
+    ]
+  },
+  "audit": {
+    "case_id": "case_evt_01002",
+    "event_snapshot": {
+      "event_id": "evt_01002",
+      "machine_id": "motor_03",
+      "line_id": "line_3",
+      "event_type": "stoppage",
+      "timestamp": "2026-03-21T16:14:00+00:00",
+      "raw_values": {
+        "vibration_rms": 4.3,
+        "vibration_peak": 8.799999999999999,
+        "temperature_c": 45.800000000000004,
+        "current_amps": 8.799999999999999,
+        "rpm": 800.8000000000001
+      },
+      "source": "scada_system",
+      "metadata": {
+        "sensor_id": "sensor_motor_03_2",
+        "location": "bearing_3",
+        "duration_seconds": 300
+      }
+    },
+    "feature_snapshot": {
+      "event_id": "evt_01002",
+      "machine_id": "motor_03",
+      "timestamp": "2026-03-21T16:14:00+00:00",
+      "features": {
+        "raw_vibration_rms": 4.3,
+        "delta_vibration_rms": -3.7,
+        "ratio_vibration_rms": 0.5375,
+        "raw_vibration_peak": 8.799999999999999,
+        "delta_vibration_peak": -11.2,
+        "ratio_vibration_peak": 0.44,
+        "raw_temperature_c": 45.800000000000004,
+        "delta_temperature_c": -39.2,
+        "ratio_temperature_c": 0.538824,
+        "raw_current_amps": 8.799999999999999,
+        "delta_current_amps": -11.2,
+        "ratio_current_amps": 0.44,
+        "raw_rpm": 800.8000000000001,
+        "delta_rpm": -399.2,
+        "ratio_rpm": 0.667333,
+        "ratio_max": 0.667333,
+        "ratio_mean": 0.5247314,
+        "delta_max": -3.7,
+        "delta_mean": -92.9,
+        "duration_seconds": 300.0
+      },
+      "context": {
+        "vibration_rms_above_threshold": false,
+        "vibration_peak_above_threshold": false,
+        "temperature_c_above_threshold": false,
+        "current_amps_above_threshold": false,
+        "rpm_above_threshold": false,
+        "event_type": "stoppage",
+        "machine_id": "motor_03",
+        "line_id": "line_3",
+        "source": "scada_system",
+        "baseline_severity": 0.95,
+        "extended_duration": false
+      }
+    },
+    "model_snapshot": {
+      "event_id": "evt_01002",
+      "anomaly_score": 0.3992,
+      "failure_probability": 0.2501,
+      "confidence": 0.3095,
+      "uncertainty_low": 0.1921,
+      "uncertainty_high": 0.6064,
+      "model_version": "astraea_det_v2",
+      "top_features": [
+        "raw_rpm",
+        "delta_rpm",
+        "duration_seconds",
+        "delta_mean",
+        "raw_temperature_c"
+      ],
+      "explanation_factors": []
+    },
+    "prioritization_snapshot": {
+      "case_id": "case_evt_01002",
+      "event_id": "evt_01002",
+      "priority_score": 0.4423,
+      "confidence_band": "low",
+      "severity": "low",
+      "rationale": [
+        "critical event type: stoppage",
+        "manual review required due to uncertainty band",
+        "below active intervention threshold"
+      ],
+      "requires_action": false,
+      "review_required": true,
+      "routing_bucket": "human_review"
+    },
+    "decision_snapshot": {
+      "case_id": "case_evt_01002",
+      "recommendation": "Monitor only",
+      "urgency": "low",
+      "owner": "reliability_engineer",
+      "justification": [
+        "critical event type: stoppage",
+        "manual review required due to uncertainty band",
+        "below active intervention threshold"
+      ],
+      "next_steps": [
+        "Continue passive monitoring",
+        "Re-evaluate if signal worsens"
+      ],
+      "action_plan": [
+        {
+          "step": "monitor_only",
+          "status": "passive"
+        }
+      ]
+    },
+    "execution_snapshot": {
+      "case_id": "case_evt_01002",
+      "dispatch_status": "queued_for_review",
+      "assigned_team": "reliability_engineering",
+      "commands": [
+        "create_review_ticket",
+        "attach_audit_bundle"
+      ],
+      "notifications": [
+        "Case case_evt_01002 queued for human review"
+      ]
+    },
+    "deterministic_hash": "f78757a236cf9326b368c7ec63761e22a1c6b4a518d63a5ad6d49f3c6a45442f",
+    "timestamp": "2026-03-24T15:31:27.399409+00:00"
+  }
+}

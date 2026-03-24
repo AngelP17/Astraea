@@ -1,0 +1,289 @@
+{
+  "event_id": "evt_001",
+  "case_id": "case_evt_001",
+  "event": {
+    "event_id": "evt_001",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-23T14:32:00+00:00",
+    "raw_values": {
+      "vibration_rms": 12.4,
+      "vibration_peak": 28.7,
+      "temperature_c": 78.3,
+      "current_amps": 14.2,
+      "rpm": 1750.0
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "accel_A3_01",
+      "location": "bearing_housing",
+      "duration_seconds": 0
+    }
+  },
+  "features": {
+    "event_id": "evt_001",
+    "machine_id": "feeder_motor_A3",
+    "timestamp": "2026-03-23T14:32:00+00:00",
+    "features": {
+      "raw_vibration_rms": 12.4,
+      "delta_vibration_rms": 4.4,
+      "ratio_vibration_rms": 1.55,
+      "raw_vibration_peak": 28.7,
+      "delta_vibration_peak": 8.7,
+      "ratio_vibration_peak": 1.435,
+      "raw_temperature_c": 78.3,
+      "delta_temperature_c": -6.7,
+      "ratio_temperature_c": 0.921176,
+      "raw_current_amps": 14.2,
+      "delta_current_amps": -5.8,
+      "ratio_current_amps": 0.71,
+      "raw_rpm": 1750.0,
+      "delta_rpm": 550.0,
+      "ratio_rpm": 1.458333,
+      "ratio_max": 1.55,
+      "ratio_mean": 1.2149018,
+      "delta_max": 550.0,
+      "delta_mean": 110.12,
+      "duration_seconds": 0.0
+    },
+    "context": {
+      "vibration_rms_above_threshold": true,
+      "vibration_peak_above_threshold": true,
+      "temperature_c_above_threshold": false,
+      "current_amps_above_threshold": false,
+      "rpm_above_threshold": true,
+      "event_type": "vibration_spike",
+      "machine_id": "feeder_motor_A3",
+      "line_id": "line_7",
+      "source": "sensor_gateway",
+      "baseline_severity": 0.9,
+      "extended_duration": false
+    }
+  },
+  "assessment": {
+    "event_id": "evt_001",
+    "anomaly_score": 0.74,
+    "failure_probability": 0.6987,
+    "confidence": 0.581,
+    "uncertainty_low": 0.6143,
+    "uncertainty_high": 0.8657,
+    "model_version": "astraea_det_v2",
+    "top_features": [
+      "raw_rpm",
+      "delta_rpm",
+      "delta_max",
+      "delta_mean",
+      "raw_temperature_c"
+    ],
+    "explanation_factors": [
+      "vibration_rms above threshold",
+      "vibration_peak above threshold",
+      "rpm above threshold",
+      "high anomaly concentration",
+      "elevated failure probability"
+    ]
+  },
+  "prioritized_case": {
+    "case_id": "case_evt_001",
+    "event_id": "evt_001",
+    "priority_score": 0.7388,
+    "confidence_band": "medium",
+    "severity": "high",
+    "rationale": [
+      "high anomaly score",
+      "elevated failure probability",
+      "high-confidence abnormal interval",
+      "critical event type: vibration_spike",
+      "manual review required due to uncertainty band"
+    ],
+    "requires_action": true,
+    "review_required": true,
+    "routing_bucket": "human_review"
+  },
+  "decision": {
+    "case_id": "case_evt_001",
+    "recommendation": "Inspect within 1 hour",
+    "urgency": "high",
+    "owner": "reliability_engineer",
+    "justification": [
+      "high anomaly score",
+      "elevated failure probability",
+      "high-confidence abnormal interval",
+      "critical event type: vibration_spike",
+      "manual review required due to uncertainty band"
+    ],
+    "next_steps": [
+      "Schedule technician visit",
+      "Increase telemetry watch",
+      "Stage spare parts if applicable"
+    ],
+    "action_plan": [
+      {
+        "step": "schedule_visit",
+        "status": "pending"
+      },
+      {
+        "step": "monitor_feed",
+        "status": "pending"
+      }
+    ]
+  },
+  "execution": {
+    "case_id": "case_evt_001",
+    "dispatch_status": "queued_for_review",
+    "assigned_team": "reliability_engineering",
+    "commands": [
+      "create_review_ticket",
+      "attach_audit_bundle"
+    ],
+    "notifications": [
+      "Case case_evt_001 queued for human review"
+    ]
+  },
+  "audit": {
+    "case_id": "case_evt_001",
+    "event_snapshot": {
+      "event_id": "evt_001",
+      "machine_id": "feeder_motor_A3",
+      "line_id": "line_7",
+      "event_type": "vibration_spike",
+      "timestamp": "2026-03-23T14:32:00+00:00",
+      "raw_values": {
+        "vibration_rms": 12.4,
+        "vibration_peak": 28.7,
+        "temperature_c": 78.3,
+        "current_amps": 14.2,
+        "rpm": 1750.0
+      },
+      "source": "sensor_gateway",
+      "metadata": {
+        "sensor_id": "accel_A3_01",
+        "location": "bearing_housing",
+        "duration_seconds": 0
+      }
+    },
+    "feature_snapshot": {
+      "event_id": "evt_001",
+      "machine_id": "feeder_motor_A3",
+      "timestamp": "2026-03-23T14:32:00+00:00",
+      "features": {
+        "raw_vibration_rms": 12.4,
+        "delta_vibration_rms": 4.4,
+        "ratio_vibration_rms": 1.55,
+        "raw_vibration_peak": 28.7,
+        "delta_vibration_peak": 8.7,
+        "ratio_vibration_peak": 1.435,
+        "raw_temperature_c": 78.3,
+        "delta_temperature_c": -6.7,
+        "ratio_temperature_c": 0.921176,
+        "raw_current_amps": 14.2,
+        "delta_current_amps": -5.8,
+        "ratio_current_amps": 0.71,
+        "raw_rpm": 1750.0,
+        "delta_rpm": 550.0,
+        "ratio_rpm": 1.458333,
+        "ratio_max": 1.55,
+        "ratio_mean": 1.2149018,
+        "delta_max": 550.0,
+        "delta_mean": 110.12,
+        "duration_seconds": 0.0
+      },
+      "context": {
+        "vibration_rms_above_threshold": true,
+        "vibration_peak_above_threshold": true,
+        "temperature_c_above_threshold": false,
+        "current_amps_above_threshold": false,
+        "rpm_above_threshold": true,
+        "event_type": "vibration_spike",
+        "machine_id": "feeder_motor_A3",
+        "line_id": "line_7",
+        "source": "sensor_gateway",
+        "baseline_severity": 0.9,
+        "extended_duration": false
+      }
+    },
+    "model_snapshot": {
+      "event_id": "evt_001",
+      "anomaly_score": 0.74,
+      "failure_probability": 0.6987,
+      "confidence": 0.581,
+      "uncertainty_low": 0.6143,
+      "uncertainty_high": 0.8657,
+      "model_version": "astraea_det_v2",
+      "top_features": [
+        "raw_rpm",
+        "delta_rpm",
+        "delta_max",
+        "delta_mean",
+        "raw_temperature_c"
+      ],
+      "explanation_factors": [
+        "vibration_rms above threshold",
+        "vibration_peak above threshold",
+        "rpm above threshold",
+        "high anomaly concentration",
+        "elevated failure probability"
+      ]
+    },
+    "prioritization_snapshot": {
+      "case_id": "case_evt_001",
+      "event_id": "evt_001",
+      "priority_score": 0.7388,
+      "confidence_band": "medium",
+      "severity": "high",
+      "rationale": [
+        "high anomaly score",
+        "elevated failure probability",
+        "high-confidence abnormal interval",
+        "critical event type: vibration_spike",
+        "manual review required due to uncertainty band"
+      ],
+      "requires_action": true,
+      "review_required": true,
+      "routing_bucket": "human_review"
+    },
+    "decision_snapshot": {
+      "case_id": "case_evt_001",
+      "recommendation": "Inspect within 1 hour",
+      "urgency": "high",
+      "owner": "reliability_engineer",
+      "justification": [
+        "high anomaly score",
+        "elevated failure probability",
+        "high-confidence abnormal interval",
+        "critical event type: vibration_spike",
+        "manual review required due to uncertainty band"
+      ],
+      "next_steps": [
+        "Schedule technician visit",
+        "Increase telemetry watch",
+        "Stage spare parts if applicable"
+      ],
+      "action_plan": [
+        {
+          "step": "schedule_visit",
+          "status": "pending"
+        },
+        {
+          "step": "monitor_feed",
+          "status": "pending"
+        }
+      ]
+    },
+    "execution_snapshot": {
+      "case_id": "case_evt_001",
+      "dispatch_status": "queued_for_review",
+      "assigned_team": "reliability_engineering",
+      "commands": [
+        "create_review_ticket",
+        "attach_audit_bundle"
+      ],
+      "notifications": [
+        "Case case_evt_001 queued for human review"
+      ]
+    },
+    "deterministic_hash": "cfced6c04a3320315dfed8f52d4cfd4e6211702de2e1036430042fc894eade7f",
+    "timestamp": "2026-03-24T15:32:02.420382+00:00"
+  }
+}

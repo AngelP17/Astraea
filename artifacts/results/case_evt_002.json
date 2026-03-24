@@ -1,0 +1,265 @@
+{
+  "event_id": "evt_002",
+  "case_id": "case_evt_002",
+  "event": {
+    "event_id": "evt_002",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "temperature_rise",
+    "timestamp": "2026-03-23T14:35:00+00:00",
+    "raw_values": {
+      "vibration_rms": 3.1,
+      "vibration_peak": 6.8,
+      "temperature_c": 92.1,
+      "current_amps": 22.5,
+      "rpm": 900.0
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "temp_B1_03",
+      "location": "motor_winding",
+      "duration_seconds": 0
+    }
+  },
+  "features": {
+    "event_id": "evt_002",
+    "machine_id": "conveyor_drive_B1",
+    "timestamp": "2026-03-23T14:35:00+00:00",
+    "features": {
+      "raw_vibration_rms": 3.1,
+      "delta_vibration_rms": -4.9,
+      "ratio_vibration_rms": 0.3875,
+      "raw_vibration_peak": 6.8,
+      "delta_vibration_peak": -13.2,
+      "ratio_vibration_peak": 0.34,
+      "raw_temperature_c": 92.1,
+      "delta_temperature_c": 7.1,
+      "ratio_temperature_c": 1.083529,
+      "raw_current_amps": 22.5,
+      "delta_current_amps": 2.5,
+      "ratio_current_amps": 1.125,
+      "raw_rpm": 900.0,
+      "delta_rpm": -300.0,
+      "ratio_rpm": 0.75,
+      "ratio_max": 1.125,
+      "ratio_mean": 0.7372058,
+      "delta_max": 7.1,
+      "delta_mean": -61.7,
+      "duration_seconds": 0.0
+    },
+    "context": {
+      "vibration_rms_above_threshold": false,
+      "vibration_peak_above_threshold": false,
+      "temperature_c_above_threshold": true,
+      "current_amps_above_threshold": true,
+      "rpm_above_threshold": false,
+      "event_type": "temperature_rise",
+      "machine_id": "conveyor_drive_B1",
+      "line_id": "line_7",
+      "source": "sensor_gateway",
+      "baseline_severity": 0.75,
+      "extended_duration": false
+    }
+  },
+  "assessment": {
+    "event_id": "evt_002",
+    "anomaly_score": 0.555,
+    "failure_probability": 0.3525,
+    "confidence": 0.4608,
+    "uncertainty_low": 0.3932,
+    "uncertainty_high": 0.7168,
+    "model_version": "astraea_det_v2",
+    "top_features": [
+      "raw_rpm",
+      "delta_rpm",
+      "raw_temperature_c",
+      "delta_mean",
+      "raw_current_amps"
+    ],
+    "explanation_factors": [
+      "temperature_c above threshold",
+      "current_amps above threshold"
+    ]
+  },
+  "prioritized_case": {
+    "case_id": "case_evt_002",
+    "event_id": "evt_002",
+    "priority_score": 0.4817,
+    "confidence_band": "low",
+    "severity": "medium",
+    "rationale": [
+      "manual review required due to uncertainty band"
+    ],
+    "requires_action": true,
+    "review_required": true,
+    "routing_bucket": "human_review"
+  },
+  "decision": {
+    "case_id": "case_evt_002",
+    "recommendation": "Plan intervention during next maintenance window",
+    "urgency": "medium",
+    "owner": "reliability_engineer",
+    "justification": [
+      "manual review required due to uncertainty band"
+    ],
+    "next_steps": [
+      "Add to maintenance queue",
+      "Review trend progression"
+    ],
+    "action_plan": [
+      {
+        "step": "queue_maintenance",
+        "status": "pending"
+      },
+      {
+        "step": "review_trend",
+        "status": "pending"
+      }
+    ]
+  },
+  "execution": {
+    "case_id": "case_evt_002",
+    "dispatch_status": "queued_for_review",
+    "assigned_team": "reliability_engineering",
+    "commands": [
+      "create_review_ticket",
+      "attach_audit_bundle"
+    ],
+    "notifications": [
+      "Case case_evt_002 queued for human review"
+    ]
+  },
+  "audit": {
+    "case_id": "case_evt_002",
+    "event_snapshot": {
+      "event_id": "evt_002",
+      "machine_id": "conveyor_drive_B1",
+      "line_id": "line_7",
+      "event_type": "temperature_rise",
+      "timestamp": "2026-03-23T14:35:00+00:00",
+      "raw_values": {
+        "vibration_rms": 3.1,
+        "vibration_peak": 6.8,
+        "temperature_c": 92.1,
+        "current_amps": 22.5,
+        "rpm": 900.0
+      },
+      "source": "sensor_gateway",
+      "metadata": {
+        "sensor_id": "temp_B1_03",
+        "location": "motor_winding",
+        "duration_seconds": 0
+      }
+    },
+    "feature_snapshot": {
+      "event_id": "evt_002",
+      "machine_id": "conveyor_drive_B1",
+      "timestamp": "2026-03-23T14:35:00+00:00",
+      "features": {
+        "raw_vibration_rms": 3.1,
+        "delta_vibration_rms": -4.9,
+        "ratio_vibration_rms": 0.3875,
+        "raw_vibration_peak": 6.8,
+        "delta_vibration_peak": -13.2,
+        "ratio_vibration_peak": 0.34,
+        "raw_temperature_c": 92.1,
+        "delta_temperature_c": 7.1,
+        "ratio_temperature_c": 1.083529,
+        "raw_current_amps": 22.5,
+        "delta_current_amps": 2.5,
+        "ratio_current_amps": 1.125,
+        "raw_rpm": 900.0,
+        "delta_rpm": -300.0,
+        "ratio_rpm": 0.75,
+        "ratio_max": 1.125,
+        "ratio_mean": 0.7372058,
+        "delta_max": 7.1,
+        "delta_mean": -61.7,
+        "duration_seconds": 0.0
+      },
+      "context": {
+        "vibration_rms_above_threshold": false,
+        "vibration_peak_above_threshold": false,
+        "temperature_c_above_threshold": true,
+        "current_amps_above_threshold": true,
+        "rpm_above_threshold": false,
+        "event_type": "temperature_rise",
+        "machine_id": "conveyor_drive_B1",
+        "line_id": "line_7",
+        "source": "sensor_gateway",
+        "baseline_severity": 0.75,
+        "extended_duration": false
+      }
+    },
+    "model_snapshot": {
+      "event_id": "evt_002",
+      "anomaly_score": 0.555,
+      "failure_probability": 0.3525,
+      "confidence": 0.4608,
+      "uncertainty_low": 0.3932,
+      "uncertainty_high": 0.7168,
+      "model_version": "astraea_det_v2",
+      "top_features": [
+        "raw_rpm",
+        "delta_rpm",
+        "raw_temperature_c",
+        "delta_mean",
+        "raw_current_amps"
+      ],
+      "explanation_factors": [
+        "temperature_c above threshold",
+        "current_amps above threshold"
+      ]
+    },
+    "prioritization_snapshot": {
+      "case_id": "case_evt_002",
+      "event_id": "evt_002",
+      "priority_score": 0.4817,
+      "confidence_band": "low",
+      "severity": "medium",
+      "rationale": [
+        "manual review required due to uncertainty band"
+      ],
+      "requires_action": true,
+      "review_required": true,
+      "routing_bucket": "human_review"
+    },
+    "decision_snapshot": {
+      "case_id": "case_evt_002",
+      "recommendation": "Plan intervention during next maintenance window",
+      "urgency": "medium",
+      "owner": "reliability_engineer",
+      "justification": [
+        "manual review required due to uncertainty band"
+      ],
+      "next_steps": [
+        "Add to maintenance queue",
+        "Review trend progression"
+      ],
+      "action_plan": [
+        {
+          "step": "queue_maintenance",
+          "status": "pending"
+        },
+        {
+          "step": "review_trend",
+          "status": "pending"
+        }
+      ]
+    },
+    "execution_snapshot": {
+      "case_id": "case_evt_002",
+      "dispatch_status": "queued_for_review",
+      "assigned_team": "reliability_engineering",
+      "commands": [
+        "create_review_ticket",
+        "attach_audit_bundle"
+      ],
+      "notifications": [
+        "Case case_evt_002 queued for human review"
+      ]
+    },
+    "deterministic_hash": "5461a57b572030e3dce9dd31f621a13e71399b875c9b9f5885800d9dec6aaba9",
+    "timestamp": "2026-03-24T15:32:02.422020+00:00"
+  }
+}

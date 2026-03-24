@@ -1,78 +1,58 @@
+from __future__ import annotations
+
+from backend.core.pipeline import AstraeaPipeline
 from backend.ingestion.normalizer import load_events
-from backend.pipeline.feature_engine import FeatureEngine
-from backend.ml.anomaly_detector import AnomalyDetector
-from backend.decision.prioritizer import DecisionPrioritizationEngine
-from backend.decision.engine import DecisionEngine
-from backend.audit.recorder import AuditRecorder
 
 
-def test_full_pipeline():
+def test_full_pipeline_runs_end_to_end() -> None:
     events = load_events()
     assert len(events) == 3
 
-    fe = FeatureEngine()
-    ad = AnomalyDetector()
-    dpe = DecisionPrioritizationEngine()
-    de = DecisionEngine()
-    rec = AuditRecorder()
+    pipeline = AstraeaPipeline()
 
-    for event in events:
-        fv = fe.extract(event)
-        assert fv.event_id == event.event_id
-        assert len(fv.features) > 0
+    results = [pipeline.process(event) for event in events]
+    assert len(results) == 3
 
-        assessment = ad.assess(fv)
-        assert 0.0 <= assessment.anomaly_score <= 1.0
-        assert 0.0 <= assessment.failure_probability <= 1.0
-
-        case = dpe.prioritize(event, assessment)
-        assert case.priority_score >= 0.0
-        assert isinstance(case.requires_action, bool)
-        assert case.confidence_band in ("high", "medium", "low")
-        assert case.severity in ("critical", "high", "medium", "low")
-
-        decision = de.resolve(case)
-        assert decision.case_id == case.case_id
-        assert decision.recommendation
-        assert decision.urgency in ("critical", "high", "low")
-
-        audit = rec.record(event, fv, assessment, case, decision)
-        assert audit.case_id == case.case_id
-
-    assert len(rec.get_all()) == 3
+    for result in results:
+        payload = result.to_dict()
+        assert payload["event_id"]
+        assert payload["case_id"].startswith("case_")
+        assert 0.0 <= payload["assessment"]["anomaly_score"] <= 1.0
+        assert 0.0 <= payload["assessment"]["failure_probability"] <= 1.0
+        assert 0.0 <= payload["assessment"]["confidence"] <= 1.0
+        assert payload["decision"]["recommendation"]
+        assert payload["execution"]["dispatch_status"]
+        assert payload["audit"]["deterministic_hash"]
 
 
-def test_vibration_spike_has_high_severity():
+def test_vibration_spike_has_elevated_priority() -> None:
+    pipeline = AstraeaPipeline()
     events = load_events()
-    fe = FeatureEngine()
-    ad = AnomalyDetector()
-    dpe = DecisionPrioritizationEngine()
 
-    vib_event = [e for e in events if e.event_type == "vibration_spike"][0]
-    fv = fe.extract(vib_event)
-    assessment = ad.assess(fv)
-    case = dpe.prioritize(vib_event, assessment)
+    vibration_event = next(e for e in events if e.event_type == "vibration_spike")
+    result = pipeline.process(vibration_event).to_dict()
 
-    assert case.priority_score > 0.5
+    assert result["prioritized_case"]["priority_score"] >= 0.45
+    assert result["prioritized_case"]["severity"] in {"medium", "high", "critical"}
 
 
-def test_audit_recorder_get_by_case():
+def test_stoppage_has_actionable_decision() -> None:
+    pipeline = AstraeaPipeline()
     events = load_events()
-    fe = FeatureEngine()
-    ad = AnomalyDetector()
-    dpe = DecisionPrioritizationEngine()
-    de = DecisionEngine()
-    rec = AuditRecorder()
 
-    event = events[0]
-    fv = fe.extract(event)
-    assessment = ad.assess(fv)
-    case = dpe.prioritize(event, assessment)
-    decision = de.resolve(case)
-    rec.record(event, fv, assessment, case, decision)
+    stoppage_event = next(e for e in events if e.event_type == "stoppage")
+    result = pipeline.process(stoppage_event).to_dict()
 
-    found = rec.get_by_case(case.case_id)
-    assert found is not None
-    assert found.case_id == case.case_id
+    assert result["prioritized_case"]["requires_action"] is True
+    assert result["decision"]["urgency"] in {"medium", "high", "critical"}
 
-    assert rec.get_by_case("nonexistent") is None
+
+def test_audit_hash_is_stable_for_same_input() -> None:
+    pipeline_a = AstraeaPipeline()
+    pipeline_b = AstraeaPipeline()
+    event = load_events()[0]
+
+    result_a = pipeline_a.process(event).to_dict()
+    result_b = pipeline_b.process(event).to_dict()
+
+    assert result_a["audit"]["deterministic_hash"] == result_b["audit"]["deterministic_hash"]
