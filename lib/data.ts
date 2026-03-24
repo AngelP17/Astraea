@@ -203,3 +203,21 @@ export async function replayCase(caseId: string): Promise<PipelineResult | null>
     return null;
   }
 }
+
+export interface DemoResult {
+  count: number;
+  results: PipelineResult[];
+}
+
+export async function runDemoMode(): Promise<DemoResult | null> {
+  try {
+    const res = await fetch("/api/demo", {
+      method: "POST",
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}

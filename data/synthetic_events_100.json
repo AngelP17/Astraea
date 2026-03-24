@@ -1,0 +1,1817 @@
+[
+  {
+    "event_id": "demo_0001",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:00:00+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "sensor_id": "accel_robot_03",
+      "location": "drive_shaft"
+    }
+  },
+  {
+    "event_id": "demo_0002",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "temperature_rise",
+    "timestamp": "2026-03-24T08:00:11+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "temp_sprayer_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0003",
+    "machine_id": "stamping_press_J1",
+    "line_id": "line_6",
+    "event_type": "rpm_deviation",
+    "timestamp": "2026-03-24T08:00:22+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 960
+    },
+    "source": "safety_system",
+    "metadata": {
+      "expected_rpm": 900,
+      "actual_rpm": 724
+    }
+  },
+  {
+    "event_id": "demo_0004",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:01:54+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "temp_belt_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0005",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:02:20+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "accel_robot_01",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0006",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:01:00+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 14.4,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0007",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:02:24+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "safety_system",
+    "metadata": {
+      "stoppage_reason": "hydraulic_pressure_loss",
+      "duration_seconds": 2281
+    }
+  },
+  {
+    "event_id": "demo_0008",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:01:38+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0009",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:04:32+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "sensor_id": "temp_sprayer_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0010",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T08:03:18+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "stoppage_reason": "hydraulic_pressure_loss",
+      "duration_seconds": 2774
+    }
+  },
+  {
+    "event_id": "demo_0011",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:07:20+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "stoppage_reason": "emergency_stop",
+      "duration_seconds": 1390
+    }
+  },
+  {
+    "event_id": "demo_0012",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T08:04:46+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "stoppage_reason": "power_surge",
+      "duration_seconds": 1074
+    }
+  },
+  {
+    "event_id": "demo_0013",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:03:00+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0014",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-24T08:02:36+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "accel_drive_03",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0015",
+    "machine_id": "stamping_press_J1",
+    "line_id": "line_6",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T08:03:30+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "stoppage_reason": "emergency_stop",
+      "duration_seconds": 1769
+    }
+  },
+  {
+    "event_id": "demo_0016",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:09:00+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "safety_system",
+    "metadata": {
+      "stoppage_reason": "power_surge",
+      "duration_seconds": 2364
+    }
+  },
+  {
+    "event_id": "demo_0017",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:03:28+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "temp_drive_01",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0018",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:06:14+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "stoppage_reason": "hydraulic_pressure_loss",
+      "duration_seconds": 296
+    }
+  },
+  {
+    "event_id": "demo_0019",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-24T08:03:54+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "accel_unit_01",
+      "location": "motor_frame"
+    }
+  },
+  {
+    "event_id": "demo_0020",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "rpm_deviation",
+    "timestamp": "2026-03-24T08:06:39+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 912
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "expected_rpm": 900,
+      "actual_rpm": 484
+    }
+  },
+  {
+    "event_id": "demo_0021",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-24T08:15:00+00:00",
+    "raw_values": {
+      "vibration_rms": 4.1,
+      "vibration_peak": 8.6,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "accel_unit_01",
+      "location": "motor_frame"
+    }
+  },
+  {
+    "event_id": "demo_0022",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "overcurrent_event",
+    "timestamp": "2026-03-24T08:03:30+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 17.2,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0023",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:06:36+00:00",
+    "raw_values": {
+      "vibration_rms": 4.7,
+      "vibration_peak": 9.7,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "accel_arm_01",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0024",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T08:17:15+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "stoppage_reason": "power_surge",
+      "duration_seconds": 2537
+    }
+  },
+  {
+    "event_id": "demo_0025",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "temperature_rise",
+    "timestamp": "2026-03-24T08:14:24+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 90.3,
+      "current_amps": 15.5,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "temp_arm_02",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0026",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "bearing_wear_detected",
+    "timestamp": "2026-03-24T08:18:20+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0027",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "pressure_drop",
+    "timestamp": "2026-03-24T08:07:48+00:00",
+    "raw_values": {
+      "vibration_rms": 3.1,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "sensor_id": "pressure_belt_02",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 1580
+    }
+  },
+  {
+    "event_id": "demo_0028",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:09:27+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "temp_pump_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0029",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "pressure_critical",
+    "timestamp": "2026-03-24T08:07:56+00:00",
+    "raw_values": {
+      "vibration_rms": 2.8,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "pressure_robot_03",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 2391
+    }
+  },
+  {
+    "event_id": "demo_0030",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:21:45+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "accel_fan_03",
+      "location": "drive_shaft"
+    }
+  },
+  {
+    "event_id": "demo_0031",
+    "machine_id": "stamping_press_J1",
+    "line_id": "line_6",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:19:00+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "accel_press_01",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0032",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T08:22:13+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "stoppage_reason": "sensor_malfunction",
+      "duration_seconds": 1698
+    }
+  },
+  {
+    "event_id": "demo_0033",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:18:08+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "accel_drive_03",
+      "location": "drive_shaft"
+    }
+  },
+  {
+    "event_id": "demo_0034",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:23:39+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 22.7,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0035",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:18:08+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 19.2,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0036",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:23:55+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 14.4,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0037",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:18:00+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 14.4,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0038",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T08:09:15+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "safety_system",
+    "metadata": {
+      "stoppage_reason": "emergency_stop",
+      "duration_seconds": 3477
+    }
+  },
+  {
+    "event_id": "demo_0039",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:05:04+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 73.1,
+      "current_amps": 13.8,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "temp_sprayer_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0040",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "bearing_wear_detected",
+    "timestamp": "2026-03-24T08:22:06+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0041",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "pressure_drop",
+    "timestamp": "2026-03-24T08:14:40+00:00",
+    "raw_values": {
+      "vibration_rms": 3.0,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "pressure_unit_01",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 2007
+    }
+  },
+  {
+    "event_id": "demo_0042",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:19:08+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0043",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T08:09:06+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "stoppage_reason": "hydraulic_pressure_loss",
+      "duration_seconds": 1751
+    }
+  },
+  {
+    "event_id": "demo_0044",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:10:02+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "accel_drive_02",
+      "location": "motor_frame"
+    }
+  },
+  {
+    "event_id": "demo_0045",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:31:32+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "sensor_id": "temp_pump_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0046",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:27:45+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 82.7,
+      "current_amps": 14.8,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "temp_unit_01",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0047",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "pressure_drop",
+    "timestamp": "2026-03-24T08:20:42+00:00",
+    "raw_values": {
+      "vibration_rms": 2.8,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "pressure_fan_02",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 1823
+    }
+  },
+  {
+    "event_id": "demo_0048",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "rpm_deviation",
+    "timestamp": "2026-03-24T08:26:38+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 960
+    },
+    "source": "safety_system",
+    "metadata": {
+      "expected_rpm": 900,
+      "actual_rpm": 685
+    }
+  },
+  {
+    "event_id": "demo_0049",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "rpm_deviation",
+    "timestamp": "2026-03-24T08:24:00+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 916
+    },
+    "source": "safety_system",
+    "metadata": {
+      "expected_rpm": 900,
+      "actual_rpm": 698
+    }
+  },
+  {
+    "event_id": "demo_0050",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:11:26+00:00",
+    "raw_values": {
+      "vibration_rms": 4.8,
+      "vibration_peak": 9.9,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "accel_sprayer_01",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0051",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:37:30+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "stoppage_reason": "emergency_stop",
+      "duration_seconds": 2793
+    }
+  },
+  {
+    "event_id": "demo_0052",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:28:54+00:00",
+    "raw_values": {
+      "vibration_rms": 4.4,
+      "vibration_peak": 9.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "accel_belt_03",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0053",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-24T08:24:16+00:00",
+    "raw_values": {
+      "vibration_rms": 4.0,
+      "vibration_peak": 8.4,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "sensor_id": "accel_robot_03",
+      "location": "drive_shaft"
+    }
+  },
+  {
+    "event_id": "demo_0054",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "pressure_drop",
+    "timestamp": "2026-03-24T08:09:43+00:00",
+    "raw_values": {
+      "vibration_rms": 3.6,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "pressure_arm_03",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 1868
+    }
+  },
+  {
+    "event_id": "demo_0055",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:25:12+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "safety_system",
+    "metadata": {
+      "stoppage_reason": "sensor_malfunction",
+      "duration_seconds": 1338
+    }
+  },
+  {
+    "event_id": "demo_0056",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "overcurrent_event",
+    "timestamp": "2026-03-24T08:19:15+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 17.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0057",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-24T08:40:08+00:00",
+    "raw_values": {
+      "vibration_rms": 3.2,
+      "vibration_peak": 6.8,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "accel_drive_02",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0058",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:30:24+00:00",
+    "raw_values": {
+      "vibration_rms": 4.1,
+      "vibration_peak": 8.5,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "accel_pump_03",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0059",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "imminent_failure",
+    "timestamp": "2026-03-24T08:31:54+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "safety_system",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0060",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "bearing_wear_detected",
+    "timestamp": "2026-03-24T08:25:34+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0061",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "pressure_drop",
+    "timestamp": "2026-03-24T08:10:00+00:00",
+    "raw_values": {
+      "vibration_rms": 2.8,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "pressure_drive_01",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 2094
+    }
+  },
+  {
+    "event_id": "demo_0062",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:43:43+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 18.2,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0063",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "pressure_critical",
+    "timestamp": "2026-03-24T08:33:04+00:00",
+    "raw_values": {
+      "vibration_rms": 3.7,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "pressure_unit_02",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 2021
+    }
+  },
+  {
+    "event_id": "demo_0064",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:10:30+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 82.7,
+      "current_amps": 14.8,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "temp_unit_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0065",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "rpm_deviation",
+    "timestamp": "2026-03-24T08:22:24+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 855
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "expected_rpm": 900,
+      "actual_rpm": 555
+    }
+  },
+  {
+    "event_id": "demo_0066",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:22:45+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0067",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "bearing_wear_detected",
+    "timestamp": "2026-03-24T08:44:00+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0068",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "bearing_wear_detected",
+    "timestamp": "2026-03-24T08:45:47+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0069",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "vibration_spike",
+    "timestamp": "2026-03-24T08:31:44+00:00",
+    "raw_values": {
+      "vibration_rms": 4.8,
+      "vibration_peak": 9.9,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "accel_sprayer_03",
+      "location": "bearing_housing"
+    }
+  },
+  {
+    "event_id": "demo_0070",
+    "machine_id": "stamping_press_J1",
+    "line_id": "line_6",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:16:06+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0071",
+    "machine_id": "conveyor_drive_B1",
+    "line_id": "line_7",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:18:40+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 20.7,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0072",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:17:45+00:00",
+    "raw_values": {
+      "vibration_rms": 5.8,
+      "vibration_peak": 12.1,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "accel_belt_01",
+      "location": "drive_shaft"
+    }
+  },
+  {
+    "event_id": "demo_0073",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "vibration_amplification",
+    "timestamp": "2026-03-24T08:18:00+00:00",
+    "raw_values": {
+      "vibration_rms": 4.4,
+      "vibration_peak": 9.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "accel_fan_01",
+      "location": "drive_shaft"
+    }
+  },
+  {
+    "event_id": "demo_0074",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:21:54+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0075",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "pressure_drop",
+    "timestamp": "2026-03-24T08:51:48+00:00",
+    "raw_values": {
+      "vibration_rms": 3.1,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "pressure_fan_02",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 1946
+    }
+  },
+  {
+    "event_id": "demo_0076",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "pressure_critical",
+    "timestamp": "2026-03-24T08:37:30+00:00",
+    "raw_values": {
+      "vibration_rms": 3.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "pressure_unit_01",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 1448
+    }
+  },
+  {
+    "event_id": "demo_0077",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "rpm_deviation",
+    "timestamp": "2026-03-24T08:31:40+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 916
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "expected_rpm": 900,
+      "actual_rpm": 715
+    }
+  },
+  {
+    "event_id": "demo_0078",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "overcurrent_event",
+    "timestamp": "2026-03-24T08:21:49+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 19.2,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0079",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "imminent_failure",
+    "timestamp": "2026-03-24T08:37:42+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0080",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:56:37+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 67.5,
+      "current_amps": 13.3,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "temp_pump_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0081",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:33:20+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 20.2,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0082",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "temperature_rise",
+    "timestamp": "2026-03-24T08:49:57+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 67.2,
+      "current_amps": 13.2,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "temp_robot_01",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0083",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "overcurrent_event",
+    "timestamp": "2026-03-24T08:58:46+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 18.9,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0084",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:58:06+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0085",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:56:00+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 17.0,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0086",
+    "machine_id": "press_unit_C2",
+    "line_id": "line_3",
+    "event_type": "bearing_wear_detected",
+    "timestamp": "2026-03-24T08:14:10+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0087",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "current_surge",
+    "timestamp": "2026-03-24T08:27:14+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 19.2,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0088",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:17:24+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 73.1,
+      "current_amps": 13.8,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "temp_sprayer_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0089",
+    "machine_id": "hydraulic_pump_D4",
+    "line_id": "line_3",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:42:32+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "sensor_id": "temp_pump_01",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0090",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "bearing_wear_detected",
+    "timestamp": "2026-03-24T08:38:34+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0091",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "pressure_critical",
+    "timestamp": "2026-03-24T08:16:30+00:00",
+    "raw_values": {
+      "vibration_rms": 3.3,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "pressure_sprayer_03",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 1114
+    }
+  },
+  {
+    "event_id": "demo_0092",
+    "machine_id": "conveyor_belt_I9",
+    "line_id": "line_2",
+    "event_type": "overcurrent_event",
+    "timestamp": "2026-03-24T08:36:24+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 27.3,
+      "rpm": 1000
+    },
+    "source": "plc_monitor",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0093",
+    "machine_id": "feeder_motor_A3",
+    "line_id": "line_7",
+    "event_type": "temperature_rise",
+    "timestamp": "2026-03-24T08:53:40+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 61.0,
+      "current_amps": 12.6,
+      "rpm": 1000
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "sensor_id": "temp_motor_03",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0094",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "stoppage",
+    "timestamp": "2026-03-24T09:00:27+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "stoppage_reason": "emergency_stop",
+      "duration_seconds": 3027
+    }
+  },
+  {
+    "event_id": "demo_0095",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "temperature_critical",
+    "timestamp": "2026-03-24T08:14:06+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 82.4,
+      "current_amps": 14.7,
+      "rpm": 1000
+    },
+    "source": "maintenance_terminal",
+    "metadata": {
+      "sensor_id": "temp_robot_01",
+      "location": "motor_winding"
+    }
+  },
+  {
+    "event_id": "demo_0096",
+    "machine_id": "welding_arm_G7",
+    "line_id": "line_9",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:33:15+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "stoppage_reason": "hydraulic_pressure_loss",
+      "duration_seconds": 2697
+    }
+  },
+  {
+    "event_id": "demo_0097",
+    "machine_id": "cooling_fan_E5",
+    "line_id": "line_5",
+    "event_type": "cooling_reduced",
+    "timestamp": "2026-03-24T08:17:36+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {}
+  },
+  {
+    "event_id": "demo_0098",
+    "machine_id": "stamping_press_J1",
+    "line_id": "line_6",
+    "event_type": "rpm_deviation",
+    "timestamp": "2026-03-24T08:19:24+00:00",
+    "raw_values": {
+      "vibration_rms": 2.5,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 867
+    },
+    "source": "plc_monitor",
+    "metadata": {
+      "expected_rpm": 900,
+      "actual_rpm": 705
+    }
+  },
+  {
+    "event_id": "demo_0099",
+    "machine_id": "packaging_robot_F6",
+    "line_id": "line_1",
+    "event_type": "pressure_drop",
+    "timestamp": "2026-03-24T08:22:52+00:00",
+    "raw_values": {
+      "vibration_rms": 3.6,
+      "vibration_peak": 5.2,
+      "temperature_c": 55.0,
+      "current_amps": 12.0,
+      "rpm": 1000
+    },
+    "source": "safety_system",
+    "metadata": {
+      "sensor_id": "pressure_robot_03",
+      "location": "hydraulic_manifold",
+      "pressure_psi": 1534
+    }
+  },
+  {
+    "event_id": "demo_0100",
+    "machine_id": "paint_sprayer_H8",
+    "line_id": "line_4",
+    "event_type": "stoppage_extended",
+    "timestamp": "2026-03-24T08:47:51+00:00",
+    "raw_values": {
+      "vibration_rms": 0.1,
+      "vibration_peak": 0.3,
+      "temperature_c": 55.0,
+      "current_amps": 0.0,
+      "rpm": 0
+    },
+    "source": "sensor_gateway",
+    "metadata": {
+      "stoppage_reason": "power_surge",
+      "duration_seconds": 1890
+    }
+  }
+]

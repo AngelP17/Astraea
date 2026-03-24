@@ -1,18 +1,28 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Play, Loader2, CheckCircle2, AlertTriangle, Zap, RotateCcw, GitBranch } from 'lucide-react';
+import { ArrowRight, Play, Loader2, CheckCircle2, AlertTriangle, Zap, RotateCcw, GitBranch, Shield, FileCheck, RotateCcwIcon, Activity, Waves } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchCases, runLivePipeline, replayCase, PipelineResult } from '@/lib/data';
+import { fetchCases, runLivePipeline, replayCase, runDemoMode, PipelineResult, DemoResult } from '@/lib/data';
+
+const trustSignals = [
+  { label: 'DETERMINISM', value: '100%', icon: Shield, color: '#a1faff' },
+  { label: 'REPLAY', value: 'VERIFIED', icon: RotateCcwIcon, color: '#ac8aff' },
+  { label: 'AUDIT', value: 'COMPLETE', icon: FileCheck, color: '#00f4fe' },
+];
 
 export function Hero() {
   const [cases, setCases] = useState<PipelineResult[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
+  const [isDemoRunning, setIsDemoRunning] = useState(false);
+  const [demoProgress, setDemoProgress] = useState(0);
   const [hasRunLive, setHasRunLive] = useState(false);
   const [replayResult, setReplayResult] = useState<PipelineResult | null>(null);
   const [showReplay, setShowReplay] = useState(false);
+  const [showDemoResults, setShowDemoResults] = useState(false);
+  const [demoResult, setDemoResult] = useState<DemoResult | null>(null);
 
   const loadCases = useCallback(async () => {
     const data = await fetchCases();
@@ -65,6 +75,32 @@ export function Hero() {
     }
   };
 
+  const handleRunDemo = async () => {
+    setIsDemoRunning(true);
+    setDemoProgress(0);
+    setShowDemoResults(false);
+    try {
+      const progressInterval = setInterval(() => {
+        setDemoProgress(p => Math.min(p + 5, 95));
+      }, 200);
+      
+      const result = await runDemoMode();
+      
+      clearInterval(progressInterval);
+      setDemoProgress(100);
+      
+      if (result) {
+        setDemoResult(result);
+        setCases(result.results);
+        setActiveIndex(0);
+        setShowDemoResults(true);
+        setHasRunLive(true);
+      }
+    } finally {
+      setIsDemoRunning(false);
+    }
+  };
+
   const active = cases[activeIndex];
 
   return (
@@ -80,7 +116,31 @@ export function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mb-6 font-mono text-xs uppercase tracking-[0.32em] text-primary"
+            className="mb-6"
+          >
+            <div className="mb-4 flex flex-wrap gap-4">
+              {trustSignals.map((signal) => (
+                <div
+                  key={signal.label}
+                  className="flex items-center gap-2 border border-white/10 bg-white/[0.02] px-3 py-2"
+                >
+                  <signal.icon className="h-4 w-4" style={{ color: signal.color }} />
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                    {signal.label}:
+                  </span>
+                  <span className="font-headline text-xs font-bold uppercase" style={{ color: signal.color }}>
+                    {signal.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-2 font-mono text-xs uppercase tracking-[0.32em] text-primary"
           >
             {hasRunLive ? (
               <span className="flex items-center gap-2">
@@ -99,7 +159,6 @@ export function Hero() {
             className="font-headline text-[2.8rem] font-black uppercase leading-[0.86] tracking-[-0.06em] text-white md:text-[4rem] lg:text-[5rem]"
           >
             ASTRAEA
-            <span className="block text-white/25">Decision Infrastructure</span>
           </motion.h1>
 
           <motion.p
@@ -108,7 +167,18 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.16 }}
             className="mt-6 max-w-2xl text-left font-body text-base leading-7 text-neutral-400 lg:text-lg"
           >
-            A deterministic decision engine for event-driven systems. Every input is traceable. Every decision is explainable. Every outcome is reproducible.
+            A deterministic decision engine that transforms event streams into 
+            explainable, replayable, and auditable actions.
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mt-4 max-w-2xl text-left font-mono text-xs leading-6 text-neutral-500"
+          >
+            It combines anomaly detection, graph reasoning, and execution planning 
+            to produce decisions that can be verified and reproduced exactly.
           </motion.p>
 
           <motion.div
@@ -119,7 +189,7 @@ export function Hero() {
           >
             <button
               onClick={handleRunLive}
-              disabled={isRunning}
+              disabled={isRunning || isDemoRunning}
               className="group inline-flex items-center justify-center bg-primary-container px-8 py-4 font-headline text-sm font-bold uppercase tracking-[0.22em] text-[#004346] transition-all duration-150 hover:shadow-[0_0_20px_rgba(0,244,254,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isRunning ? (
@@ -135,8 +205,25 @@ export function Hero() {
               )}
             </button>
             <button
+              onClick={handleRunDemo}
+              disabled={isDemoRunning || isRunning}
+              className="group inline-flex items-center justify-center border border-tertiary/30 bg-tertiary/5 px-8 py-4 font-headline text-sm font-bold uppercase tracking-[0.22em] text-tertiary transition-all duration-150 hover:bg-tertiary/10 hover:shadow-[0_0_20px_rgba(0,244,254,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isDemoRunning ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  STREAMING {demoProgress}%
+                </>
+              ) : (
+                <>
+                  <Waves className="mr-2 h-4 w-4" />
+                  RUN 100-EVENT DEMO
+                </>
+              )}
+            </button>
+            <button
               onClick={handleReplay}
-              disabled={isReplaying || !active}
+              disabled={isReplaying || !active || showDemoResults}
               className="group inline-flex items-center justify-center border border-secondary/30 bg-secondary/5 px-8 py-4 font-headline text-sm font-bold uppercase tracking-[0.22em] text-secondary transition-all duration-150 hover:bg-secondary/10 hover:shadow-[0_0_20px_rgba(172,138,255,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isReplaying ? (
@@ -191,10 +278,15 @@ export function Hero() {
             <div className="mb-5 flex items-center justify-between border-b border-white/5 pb-3">
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-neutral-500">
-                  {showReplay && replayResult ? 'REPLAY RESULT' : cases.length > 0 ? 'Live Decision Output' : 'Waiting for pipeline...'}
+                  {showDemoResults ? 'DEMO MODE - 100 EVENTS' : showReplay && replayResult ? 'REPLAY RESULT' : cases.length > 0 ? 'Live Decision Output' : 'Waiting for pipeline...'}
                 </div>
                 <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
-                  {showReplay && replayResult ? (
+                  {showDemoResults ? (
+                    <span className="flex items-center gap-2">
+                      <Waves className="h-3 w-3" />
+                      STREAMING PIPELINE COMPLETE
+                    </span>
+                  ) : showReplay && replayResult ? (
                     <span className="flex items-center gap-2">
                       <GitBranch className="h-3 w-3" />
                       VERIFIED REPLAY
@@ -326,6 +418,34 @@ export function Hero() {
                       </div>
                     </div>
                   </div>
+
+                  {active.consequence && (
+                    <div className="border border-tertiary/20 bg-tertiary/5 p-4">
+                      <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.24em] text-tertiary">
+                        Consequence
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <div className="font-mono text-[10px] uppercase text-neutral-500">Downtime Avoided</div>
+                          <div className="font-headline text-lg font-bold uppercase text-tertiary">
+                            {active.consequence.downtime_avoided_minutes} min
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-mono text-[10px] uppercase text-neutral-500">Risk Level</div>
+                          <div className="font-headline text-lg font-bold uppercase text-danger">
+                            {active.consequence.risk_level}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-mono text-[10px] uppercase text-neutral-500">Escalation</div>
+                          <div className="font-headline text-lg font-bold uppercase text-white">
+                            {active.consequence.escalation_required ? 'YES' : 'NO'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex items-center gap-2 border border-primary/20 bg-primary/5 p-3">
                     <AlertTriangle className="h-4 w-4 text-primary" />
