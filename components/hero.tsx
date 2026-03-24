@@ -48,13 +48,13 @@ export function Hero() {
   const active = cases[activeIndex];
 
   return (
-    <section id="top" className="relative min-h-screen overflow-hidden border-b border-white/5 pt-20">
+    <section id="top" className="relative flex min-h-screen items-center overflow-hidden border-b border-white/5 pt-20">
       <div className="absolute inset-0 grid-bg opacity-50" />
       <div className="absolute left-[10%] top-[15%] h-72 w-72 rounded-full bg-secondary/10 blur-[140px]" />
       <div className="absolute right-[8%] top-[30%] h-96 w-96 rounded-full bg-primary/10 blur-[160px]" />
       <div className="absolute bottom-[10%] left-[30%] h-64 w-64 rounded-full bg-tertiary/10 blur-[120px]" />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-6 pb-16 pt-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-10 lg:pt-12">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-8 px-6 pb-12 pt-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
         <div className="flex flex-col justify-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -76,7 +76,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.08 }}
-            className="font-headline text-[3.5rem] font-black uppercase leading-[0.86] tracking-[-0.06em] text-white md:text-[5rem] lg:text-[6.5rem]"
+            className="font-headline text-[2.8rem] font-black uppercase leading-[0.86] tracking-[-0.06em] text-white md:text-[4rem] lg:text-[5rem]"
           >
             ASTRAEA
             <span className="block text-white/25">Decision Infrastructure</span>
