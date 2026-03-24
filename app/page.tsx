@@ -1,5 +1,6 @@
 import { ArtifactsSection } from '@/components/artifacts-section';
 import { AuditSection } from '@/components/audit-section';
+import { CaseStudy } from '@/components/case-study';
 import { CursorGlow } from '@/components/cursor-glow';
 import { DataFlowDiagram } from '@/components/data-flow-diagram';
 import { FailureScenario } from '@/components/failure-scenario';
@@ -20,6 +21,7 @@ export default function Page() {
       <Nav />
       <SystemSideRail />
       <Hero />
+      <CaseStudy />
       <SystemMetrics />
       <PipelineDiagram />
       <DataFlowDiagram />

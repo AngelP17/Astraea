@@ -48,9 +48,9 @@ export function AuditSection() {
                 transition={{ duration: 0.5, delay: index * 0.08 }}
                 className="border border-white/5 bg-surface-low p-6"
               >
-                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">{metric.label}</div>
-                <div className="mt-4 font-headline text-4xl font-black uppercase text-white">{metric.value}</div>
-                <div className="mt-3 text-sm text-neutral-500">{metric.hint}</div>
+                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500 truncate">{metric.label}</div>
+                <div className="mt-4 font-headline text-2xl font-black uppercase text-white truncate">{metric.value}</div>
+                <div className="mt-3 text-sm text-neutral-500 truncate">{metric.hint}</div>
               </motion.div>
             ))}
           </div>

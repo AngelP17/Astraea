@@ -39,20 +39,20 @@ export function FailureScenario() {
                   Event A: feeder_motor_A3
                 </div>
                 <div className="space-y-2 font-mono text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Event Type</span>
-                    <span className="text-white">vibration_spike</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Event Type</span>
+                    <span className="text-white truncate">vibration_spike</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Anomaly Score</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Anomaly Score</span>
                     <span className="text-danger">0.82</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Failure Probability</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Failure Probability</span>
                     <span className="text-danger">0.74</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Signal</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Signal</span>
                     <span className="text-danger">HIGH</span>
                   </div>
                 </div>
@@ -63,20 +63,20 @@ export function FailureScenario() {
                   Event B: conveyor_drive_B1
                 </div>
                 <div className="space-y-2 font-mono text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Event Type</span>
-                    <span className="text-white">temperature_rise</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Event Type</span>
+                    <span className="text-white truncate">temperature_rise</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Anomaly Score</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Anomaly Score</span>
                     <span className="text-secondary">0.31</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Failure Probability</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Failure Probability</span>
                     <span className="text-secondary">0.28</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-neutral-500">Signal</span>
+                  <div className="flex justify-between gap-2">
+                    <span className="text-neutral-500 shrink-0">Signal</span>
                     <span className="text-secondary">NORMAL</span>
                   </div>
                 </div>

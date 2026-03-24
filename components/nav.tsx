@@ -34,7 +34,7 @@ export function Nav() {
           ))}
         </div>
 
-        <div className="hidden border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary lg:block">
+        <div className="hidden max-w-[200px] truncate border border-primary/20 bg-primary/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.24em] text-primary lg:block">
           Deterministic Decision Infrastructure
         </div>
       </div>

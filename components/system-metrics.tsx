@@ -55,16 +55,16 @@ export function SystemMetrics() {
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="border border-white/10 bg-black/40 p-6"
             >
-              <div className="mb-4 flex items-center justify-between">
-                <metric.icon className="h-8 w-8" style={{ color: metric.color }} />
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <metric.icon className="h-8 w-8 shrink-0" style={{ color: metric.color }} />
                 <span 
-                  className="font-headline text-4xl font-black uppercase"
+                  className="font-headline text-2xl font-black uppercase truncate"
                   style={{ color: metric.color }}
                 >
                   {metric.value}
                 </span>
               </div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
+              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400 truncate">
                 {metric.label}
               </div>
               <div className="mt-2 font-mono text-[9px] text-neutral-600">

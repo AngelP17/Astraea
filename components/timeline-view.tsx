@@ -122,16 +122,16 @@ export function TimelineView() {
                         backgroundColor: isActive ? `${stage.color}05` : undefined,
                       }}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-mono text-[10px] uppercase tracking-[0.2em]" style={{ color: stage.color }}>
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="font-mono text-[10px] uppercase tracking-[0.2em] truncate" style={{ color: stage.color }}>
                             {stage.label}
                           </div>
-                          <div className="mt-1 font-headline text-lg font-bold uppercase text-white">
+                          <div className="mt-1 font-headline text-lg font-bold uppercase text-white truncate">
                             {stage.description}
                           </div>
                         </div>
-                        <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-neutral-500">
+                        <div className="font-mono text-[10px] uppercase tracking-[0.1em] text-neutral-500 shrink-0">
                           {isActive ? 'COMPLETE' : 'PENDING'}
                         </div>
                       </div>

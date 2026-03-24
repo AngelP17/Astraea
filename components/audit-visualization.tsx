@@ -101,12 +101,12 @@ export function AuditVisualization({ result }: AuditVisualizationProps) {
         className="rounded border border-primary/30 bg-primary/5 p-4"
       >
         <div className="mb-3 flex items-center gap-2">
-          <Hash className="h-5 w-5 text-primary" />
+          <Hash className="h-5 w-5 shrink-0 text-primary" />
           <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
             Deterministic Hash
           </span>
         </div>
-        <div className="break-all font-mono text-xs text-primary">
+        <div className="break-all font-mono text-xs text-primary truncate">
           {audit.deterministic_hash}
         </div>
         <div className="mt-3 border-t border-primary/20 pt-3 font-mono text-[10px] text-neutral-500">

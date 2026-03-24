@@ -275,24 +275,24 @@ export function Hero() {
           className="panel relative overflow-hidden p-1"
         >
           <div className="border border-white/5 bg-black/70 p-5 scanline">
-            <div className="mb-5 flex items-center justify-between border-b border-white/5 pb-3">
-              <div>
-                <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-neutral-500">
+            <div className="mb-5 flex items-center justify-between gap-4 border-b border-white/5 pb-3">
+              <div className="min-w-0">
+                <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-neutral-500 truncate">
                   {showDemoResults ? 'DEMO MODE - 100 EVENTS' : showReplay && replayResult ? 'REPLAY RESULT' : cases.length > 0 ? 'Live Decision Output' : 'Waiting for pipeline...'}
                 </div>
                 <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
                   {showDemoResults ? (
                     <span className="flex items-center gap-2">
-                      <Waves className="h-3 w-3" />
-                      STREAMING PIPELINE COMPLETE
+                      <Waves className="h-3 w-3 shrink-0" />
+                      <span className="truncate">STREAMING PIPELINE COMPLETE</span>
                     </span>
                   ) : showReplay && replayResult ? (
                     <span className="flex items-center gap-2">
-                      <GitBranch className="h-3 w-3" />
-                      VERIFIED REPLAY
+                      <GitBranch className="h-3 w-3 shrink-0" />
+                      <span className="truncate">VERIFIED REPLAY</span>
                     </span>
                   ) : (
-                    'Event → Feature → Score → Decide → Audit'
+                    <span className="truncate">Event → Feature → Score → Decide → Audit</span>
                   )}
                 </div>
               </div>
@@ -337,21 +337,24 @@ export function Hero() {
                       Replay Verification
                     </div>
                     <div className="space-y-2 font-mono text-xs text-neutral-300">
-                      <div>
-                        <span className="text-secondary">[HASH]</span> {replayResult.audit.deterministic_hash.slice(0, 24)}...
+                      <div className="flex items-start gap-2 truncate">
+                        <span className="text-secondary shrink-0">[HASH]</span>
+                        <span className="truncate">{replayResult.audit.deterministic_hash.slice(0, 24)}...</span>
                       </div>
-                      <div>
-                        <span className="text-secondary">[RATIONALE]</span> {replayResult.prioritized_case.rationale.length} factors
+                      <div className="flex items-start gap-2 truncate">
+                        <span className="text-secondary shrink-0">[RATIONALE]</span>
+                        <span className="truncate">{replayResult.prioritized_case.rationale.length} factors</span>
                       </div>
-                      <div>
-                        <span className="text-secondary">[DECISION]</span> {replayResult.decision.recommendation}
+                      <div className="flex items-start gap-2 truncate">
+                        <span className="text-secondary shrink-0">[DECISION]</span>
+                        <span className="truncate">{replayResult.decision.recommendation}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 border border-secondary/20 bg-secondary/5 p-3">
-                    <CheckCircle2 className="h-4 w-4 text-secondary" />
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-secondary">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-secondary" />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-secondary truncate">
                       REPLAY VERIFIED - Same input produces identical output
                     </span>
                   </div>
@@ -398,20 +401,24 @@ export function Hero() {
                       Decision Bundle
                     </div>
                     <div className="space-y-2 font-mono text-xs text-neutral-300">
-                      <div>
-                        <span className="text-primary">[INGESTION]</span> {active.event.source}
+                      <div className="flex items-start gap-2 truncate">
+                        <span className="text-primary shrink-0">[INGESTION]</span>
+                        <span className="truncate">{active.event.source}</span>
                       </div>
-                      <div>
-                        <span className="text-secondary">[FEATURE]</span> {Object.keys(active.features.features).length} features extracted
+                      <div className="flex items-start gap-2 truncate">
+                        <span className="text-secondary shrink-0">[FEATURE]</span>
+                        <span className="truncate">{Object.keys(active.features.features).length} features extracted</span>
                       </div>
-                      <div>
-                        <span className="text-danger">[MODEL]</span> anomaly={active.assessment.anomaly_score.toFixed(3)}, failure={active.assessment.failure_probability.toFixed(3)}
+                      <div className="flex items-start gap-2 truncate">
+                        <span className="text-danger shrink-0">[MODEL]</span>
+                        <span className="truncate">anomaly={active.assessment.anomaly_score.toFixed(3)}, failure={active.assessment.failure_probability.toFixed(3)}</span>
                       </div>
-                      <div>
-                        <span className="text-tertiary">[DECISION]</span> {active.decision.recommendation}
+                      <div className="flex items-start gap-2 truncate">
+                        <span className="text-tertiary shrink-0">[DECISION]</span>
+                        <span className="truncate">{active.decision.recommendation}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-primary">[AUDIT]</span>
+                        <span className="text-primary shrink-0">[AUDIT]</span>
                         <span className="truncate text-[10px] text-neutral-500">
                           {active.audit.deterministic_hash.slice(0, 24)}...
                         </span>
@@ -424,22 +431,22 @@ export function Hero() {
                       <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.24em] text-tertiary">
                         Consequence
                       </div>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <div className="font-mono text-[10px] uppercase text-neutral-500">Downtime Avoided</div>
-                          <div className="font-headline text-lg font-bold uppercase text-tertiary">
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="min-w-0">
+                          <div className="font-mono text-[10px] uppercase text-neutral-500 truncate">Downtime</div>
+                          <div className="font-headline text-base font-bold uppercase text-tertiary truncate">
                             {active.consequence.downtime_avoided_minutes} min
                           </div>
                         </div>
-                        <div>
-                          <div className="font-mono text-[10px] uppercase text-neutral-500">Risk Level</div>
-                          <div className="font-headline text-lg font-bold uppercase text-danger">
+                        <div className="min-w-0">
+                          <div className="font-mono text-[10px] uppercase text-neutral-500 truncate">Risk</div>
+                          <div className="font-headline text-base font-bold uppercase text-danger truncate">
                             {active.consequence.risk_level}
                           </div>
                         </div>
-                        <div>
-                          <div className="font-mono text-[10px] uppercase text-neutral-500">Escalation</div>
-                          <div className="font-headline text-lg font-bold uppercase text-white">
+                        <div className="min-w-0">
+                          <div className="font-mono text-[10px] uppercase text-neutral-500 truncate">Escalate</div>
+                          <div className="font-headline text-base font-bold uppercase text-white truncate">
                             {active.consequence.escalation_required ? 'YES' : 'NO'}
                           </div>
                         </div>
@@ -448,8 +455,8 @@ export function Hero() {
                   )}
 
                   <div className="flex items-center gap-2 border border-primary/20 bg-primary/5 p-3">
-                    <AlertTriangle className="h-4 w-4 text-primary" />
-                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-primary" />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary truncate">
                       Uncertainty: [{active.assessment.uncertainty_low.toFixed(3)} — {active.assessment.uncertainty_high.toFixed(3)}]
                     </span>
                   </div>
@@ -480,9 +487,9 @@ function InfoRow({
   valueClass?: string;
 }) {
   return (
-    <div>
-      <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">{label}</div>
-      <div className={`mt-2 font-headline text-xl font-bold uppercase tracking-tight text-white ${valueClass ?? ''}`}>
+    <div className="min-w-0">
+      <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500 truncate">{label}</div>
+      <div className={`mt-2 font-headline text-xl font-bold uppercase tracking-tight text-white truncate ${valueClass ?? ''}`}>
         {value}
       </div>
     </div>

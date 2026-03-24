@@ -114,28 +114,28 @@ export function SystemModeSwitch() {
 
             <div className="grid gap-4 md:grid-cols-3">
               <div className="border border-white/10 p-4">
-                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500 truncate">
                   Review Threshold
                 </div>
-                <div className="font-mono text-sm" style={{ color: active.color }}>
+                <div className="font-mono text-sm truncate" style={{ color: active.color }}>
                   {behavior.reviewThreshold}
                 </div>
               </div>
 
               <div className="border border-white/10 p-4">
-                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500 truncate">
                   Auto Action
                 </div>
-                <div className="font-mono text-sm" style={{ color: active.color }}>
+                <div className="font-mono text-sm truncate" style={{ color: active.color }}>
                   {behavior.autoAction}
                 </div>
               </div>
 
               <div className="border border-white/10 p-4">
-                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+                <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500 truncate">
                   Risk Tolerance
                 </div>
-                <div className="font-mono text-sm" style={{ color: active.color }}>
+                <div className="font-mono text-sm truncate" style={{ color: active.color }}>
                   {behavior.riskTolerance}
                 </div>
               </div>
@@ -147,8 +147,8 @@ export function SystemModeSwitch() {
                 animate={{ opacity: 1, height: 'auto' }}
                 className="mt-4 flex items-center gap-2 border border-ac8aff/20 bg-ac8aff/10 p-3"
               >
-                <Shield className="h-4 w-4 text-ac8aff" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ac8aff">
+                <Shield className="h-4 w-4 shrink-0 text-ac8aff" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ac8aff truncate">
                   SAFE mode: All uncertain decisions routed to human review
                 </span>
               </motion.div>
@@ -160,8 +160,8 @@ export function SystemModeSwitch() {
                 animate={{ opacity: 1, height: 'auto' }}
                 className="mt-4 flex items-center gap-2 border border-ffd16f/20 bg-ffd16f/10 p-3"
               >
-                <AlertTriangle className="h-4 w-4 text-ffd16f" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ffd16f">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-ffd16f" />
+                <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ffd16f truncate">
                   AGGRESSIVE mode: Fewer review gates, faster decisions
                 </span>
               </motion.div>

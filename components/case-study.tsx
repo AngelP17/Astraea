@@ -166,11 +166,11 @@ function ResultCard({
 }) {
   return (
     <div className="border border-white/10 bg-black/40 p-4 text-center">
-      <Icon className="mx-auto h-6 w-6 mb-2" style={{ color }} />
-      <div className="font-headline text-3xl font-black uppercase" style={{ color }}>
-        {value}<span className="text-lg">{unit}</span>
+      <Icon className="mx-auto h-6 w-6 mb-2 shrink-0" style={{ color }} />
+      <div className="font-headline text-2xl font-black uppercase truncate" style={{ color }}>
+        {value}<span className="text-sm">{unit}</span>
       </div>
-      <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500">
+      <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500 truncate">
         {label}
       </div>
     </div>

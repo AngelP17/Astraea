@@ -79,10 +79,10 @@ export function DecisionBreakdown({ result }: DecisionBreakdownProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-2 font-mono text-xs text-neutral-300"
+              className="flex items-start gap-2 font-mono text-xs text-neutral-300"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              {factor}
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+              <span className="break-words">{factor}</span>
             </motion.div>
           ))}
         </div>
@@ -99,10 +99,10 @@ export function DecisionBreakdown({ result }: DecisionBreakdownProps) {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-2 font-mono text-xs text-neutral-300"
+              className="flex items-start gap-2 font-mono text-xs text-neutral-300"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-secondary" />
-              {reason}
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary" />
+              <span className="break-words">{reason}</span>
             </motion.div>
           ))}
         </div>
