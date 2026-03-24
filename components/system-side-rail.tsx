@@ -15,10 +15,12 @@ export function SystemSideRail() {
       initial={{ x: -24, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.7, delay: 0.15 }}
-      className="fixed left-4 top-1/2 z-40 hidden min-w-[48px] max-w-[48px] -translate-y-1/2 flex-col items-center gap-6 border border-white/10 bg-black/50 py-8 shadow-panel backdrop-blur-md xl:flex"
+      className="fixed left-2 top-1/2 z-40 hidden w-12 -translate-y-1/2 flex-col items-center gap-6 border border-white/10 bg-black/50 py-8 shadow-panel backdrop-blur-md xl:flex overflow-visible"
     >
-      <div className="mb-8 w-48 origin-center rotate-[-90deg] whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.2em] text-neutral-500">
-        ASTRAEA
+      <div className="relative mb-6 h-8 w-8 overflow-visible">
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-[-90deg] whitespace-nowrap font-mono text-[8px] uppercase tracking-[0.15em] text-neutral-500">
+          ASTRAEA
+        </span>
       </div>
 
       {items.map(({ icon: Icon, label, href }) => (
