@@ -56,11 +56,8 @@ At 02:13 AM on March 23, Astraea detected abnormal vibration patterns on Press_0
 
 ## Screenshots
 
-![Hero Section](screenshots/01-hero-section.png)
 
 ![Walkthrough Section](screenshots/02-walkthrough-section.png)
-
-![Engine Page](screenshots/03-engine-page.png)
 
 ---
 
