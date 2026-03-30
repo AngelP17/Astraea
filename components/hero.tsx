@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, Play, Loader2, CheckCircle2, Zap, GitBranch, Waves, Copy } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { fetchCases, runLivePipeline, replayCase, runDemoMode, PipelineResult, DemoResult, StageProgressEvent } from '@/lib/data';
+import { fetchCases, runLivePipeline, replayCase, runDemoMode, streamDemoStages, PipelineResult, DemoResult, StageProgressEvent } from '@/lib/data';
 import { DemoWalkthrough } from '@/components/demo-walkthrough';
 
 const STAGES = ['INGESTION', 'FEATURE', 'MODEL', 'DECISION', 'AUDIT'] as const;
@@ -544,6 +544,7 @@ export function Hero() {
   const [showDemoResults, setShowDemoResults] = useState(false);
   const [demoResult, setDemoResult] = useState<DemoResult | null>(null);
   const [streamingEvent, setStreamingEvent] = useState<StageProgressEvent | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const loadCases = useCallback(async () => {
     const data = await fetchCases();
@@ -557,6 +558,7 @@ export function Hero() {
   }, [loadCases]);
 
   const handleRunLive = async () => {
+    setError(null);
     setIsRunning(true);
     setLiveProgress(8);
     setShowReplay(false);
@@ -585,7 +587,11 @@ export function Hero() {
         });
         setActiveIndex(nextIndex);
         setHasRunLive(true);
+      } else {
+        setError('Pipeline execution failed - check backend is running');
       }
+    } catch (error) {
+      console.error('handleRunLive error:', error);
     } finally {
       setIsRunning(false);
     }
@@ -615,20 +621,28 @@ export function Hero() {
   };
 
   const handleRunDemo = async () => {
+    setError(null);
     setIsDemoRunning(true);
     setDemoProgress(0);
     setShowReplay(false);
     setShowDemoResults(false);
     setStreamingEvent(null);
+
+    const cleanup = streamDemoStages(
+      (event) => {
+        setStreamingEvent(event);
+        setDemoProgress(Math.min((event.stage / 5) * 100, 95));
+      },
+      (error) => {
+        console.error('Demo stream error:', error);
+      },
+      () => {
+        setDemoProgress(100);
+      }
+    );
+
     try {
-      const progressInterval = setInterval(() => {
-        setDemoProgress((current) => Math.min(current + 5, 95));
-      }, 200);
-
       const result = await runDemoMode();
-
-      clearInterval(progressInterval);
-      setDemoProgress(100);
 
       if (result) {
         setDemoResult(result);
@@ -636,8 +650,11 @@ export function Hero() {
         setActiveIndex(0);
         setShowDemoResults(true);
         setHasRunLive(true);
+      } else {
+        setError('Demo execution failed - check backend is running');
       }
     } finally {
+      cleanup();
       setIsDemoRunning(false);
     }
   };
@@ -686,6 +703,12 @@ export function Hero() {
               replayResult={replayResult}
               onBackToLive={() => setShowReplay(false)}
             />
+
+            {error && (
+              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-red-400 text-sm">
+                {error}
+              </div>
+            )}
 
             <TrustStats />
 

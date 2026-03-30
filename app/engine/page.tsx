@@ -15,7 +15,7 @@ import {
   RotateCcw,
   Shield,
 } from 'lucide-react';
-import { fetchCases, replayCase, PipelineResult } from '@/lib/data';
+import { fetchCases, replayCase, runDemoMode, PipelineResult } from '@/lib/data';
 import { PipelineVisualizer } from '@/components/pipeline-visualizer';
 import { DecisionBreakdown } from '@/components/decision-breakdown';
 import { AuditVisualization } from '@/components/audit-visualization';
@@ -29,12 +29,28 @@ export default function EnginePage() {
 
   useEffect(() => {
     const loadCases = async () => {
-      const data = await fetchCases();
-      setCases(data);
-      if (data.length > 0) {
-        setSelectedCase(data[data.length - 1]);
+      try {
+        const data = await fetchCases();
+        if (data && data.length > 0) {
+          setCases(data);
+          setSelectedCase(data[data.length - 1]);
+        } else {
+          const demoResult = await runDemoMode();
+          if (demoResult && demoResult.results.length > 0) {
+            setCases(demoResult.results);
+            setSelectedCase(demoResult.results[demoResult.results.length - 1]);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load cases:', error);
+        const demoResult = await runDemoMode();
+        if (demoResult && demoResult.results.length > 0) {
+          setCases(demoResult.results);
+          setSelectedCase(demoResult.results[demoResult.results.length - 1]);
+        }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     loadCases();

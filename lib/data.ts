@@ -169,13 +169,9 @@ export const modules = [
 ];
 
 export async function fetchCases(): Promise<PipelineResult[]> {
-  try {
-    return await requestJson<PipelineResult[]>('/api/cases', {
-      cache: 'no-store',
-    });
-  } catch {
-    return [];
-  }
+  return await requestJson<PipelineResult[]>('/api/cases', {
+    cache: 'no-store',
+  });
 }
 
 export async function runLivePipeline(): Promise<PipelineResult | null> {
@@ -677,7 +673,7 @@ export function streamDemoStages(
 ): () => void {
   let aborted = false;
   
-  const eventSource = new EventSource("/api/demo");
+  const eventSource = new EventSource("/api/demo/stream");
   
   eventSource.addEventListener("stage", (e) => {
     if (aborted) return;
