@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 const API_BASE = process.env.API_BASE_URL || "http://localhost:8000";
+const BACKEND_UNAVAILABLE_MESSAGE =
+  "Astraea backend is unavailable. Start the FastAPI server on http://localhost:8000 or set API_BASE_URL.";
 
 function getAuthHeaders() {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -34,8 +36,8 @@ export async function GET() {
   } catch (error) {
     console.error("Failed to fetch cases:", error);
     return NextResponse.json(
-      { error: "Failed to fetch cases", details: String(error) },
-      { status: 500 }
+      { error: BACKEND_UNAVAILABLE_MESSAGE, details: String(error) },
+      { status: 503 }
     );
   }
 }

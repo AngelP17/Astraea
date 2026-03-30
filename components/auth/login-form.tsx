@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const AUTH_API_BASE = process.env.NEXT_PUBLIC_AUTH_API_URL || API_BASE || "http://localhost:8000";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -24,7 +25,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       formData.append("username", email);
       formData.append("password", password);
 
-      const response = await fetch(`${API_BASE}/auth/token`, {
+      const response = await fetch(`${AUTH_API_BASE}/auth/token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -103,7 +104,7 @@ export function RegisterForm({ onSuccess }: LoginFormProps) {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE}/auth/register`, {
+      const response = await fetch(`${AUTH_API_BASE}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

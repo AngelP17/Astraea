@@ -1,4 +1,4 @@
-const DEFAULT_API_BASE = 'http://localhost:8000';
+const DEFAULT_API_BASE = '';
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_BASE;
 
@@ -17,7 +17,13 @@ export class ApiError extends Error {
 }
 
 export function buildApiUrl(path: string) {
-  return path.startsWith('http://') || path.startsWith('https://') ? path : `${API_BASE}${path}`;
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  if (!API_BASE) {
+    return path;
+  }
+  return `${API_BASE}${path}`;
 }
 
 async function fetchWithTimeout(url: string, options: FetchOptions = {}): Promise<Response> {
@@ -62,4 +68,3 @@ export async function checkApiHealth(): Promise<boolean> {
     return false;
   }
 }
-

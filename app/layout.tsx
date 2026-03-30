@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   description:
     'Astraea is a deterministic decision engine for event-driven systems with explainability, replay, and auditability built into the core.',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon/icon.svg',
+    shortcut: '/favicon/icon.svg',
   },
 };
 

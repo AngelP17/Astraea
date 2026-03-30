@@ -337,7 +337,6 @@ async def health_check():
 @app.post("/api/run")
 async def run_pipeline(
     db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_current_user)],
 ):
     try:
         events = load_events("data/sample_events.json")
@@ -370,7 +369,6 @@ async def run_pipeline(
 @app.post("/api/demo")
 async def run_demo(
     db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_current_user)],
 ):
     try:
         events = load_events("data/synthetic_events_100.json")
@@ -404,7 +402,7 @@ async def run_demo(
 
 
 @app.get("/api/demo/stream")
-async def demo_stream(current_user: Annotated[User, Depends(get_current_user)]):
+async def demo_stream():
     async def event_generator():
         try:
             async for message in run_streaming_demo():
@@ -428,7 +426,6 @@ async def demo_stream(current_user: Annotated[User, Depends(get_current_user)]):
 @app.get("/api/cases")
 async def get_cases(
     db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_current_user)],
 ):
     try:
         if DB_AVAILABLE:
@@ -465,7 +462,6 @@ async def get_cases(
 async def replay_case(
     request: ReplayRequest,
     db: Annotated[AsyncSession, Depends(get_db)],
-    current_user: Annotated[User, Depends(get_current_user)],
 ):
     try:
         case_id = request.case_id
