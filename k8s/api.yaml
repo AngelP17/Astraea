@@ -22,9 +22,16 @@ spec:
         app.kubernetes.io/name: astraea-api
         app.kubernetes.io/component: api
     spec:
+      serviceAccountName: astraea-service-account
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 30
       containers:
         - name: api
-          image: astraea/backend:latest
+          image: ghcr.io/angelp17/astraea/api:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
@@ -59,11 +66,33 @@ spec:
                 secretKeyRef:
                   name: astraea-secrets
                   key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: astraea-secrets
+                  key: DB_PORT
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: astraea-secrets
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: astraea-secrets
+                  key: DB_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: astraea-secrets
                   key: DB_PASSWORD
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
           resources:
             requests:
               cpu: 250m

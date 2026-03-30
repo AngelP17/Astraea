@@ -2,24 +2,32 @@
   "name": "astraea-landing",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "framer-motion": "^11.11.17",
     "lucide-react": "^0.468.0",
     "next": "^16.2.1",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.1",
     "playwright": "^1.58.2",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",

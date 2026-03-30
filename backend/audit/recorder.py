@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict
-from datetime import datetime, timezone
-from typing import List
+from datetime import UTC, datetime
 
 from backend.shared.schemas import (
     AuditRecord,
@@ -19,7 +17,7 @@ from backend.shared.schemas import (
 
 class AuditRecorder:
     def __init__(self) -> None:
-        self.records: List[AuditRecord] = []
+        self.records: list[AuditRecord] = []
 
     def record(
         self,
@@ -55,12 +53,12 @@ class AuditRecorder:
             decision_snapshot=decision_snapshot,
             execution_snapshot=execution_snapshot,
             deterministic_hash=deterministic_hash,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
         self.records.append(record)
         return record
 
-    def get_all(self) -> List[AuditRecord]:
+    def get_all(self) -> list[AuditRecord]:
         return self.records
 
     def get_by_case(self, case_id: str) -> AuditRecord | None:

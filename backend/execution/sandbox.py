@@ -2,11 +2,11 @@ import asyncio
 import hashlib
 import re
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Callable
-from contextlib import asynccontextmanager
+from typing import Any
 
 
 class SandboxMode(Enum):
@@ -25,26 +25,26 @@ class ExecutionResult(Enum):
 @dataclass
 class SandboxAction:
     action_type: str
-    params: Dict[str, Any]
-    result: Optional[Any] = None
+    params: dict[str, Any]
+    result: Any | None = None
     execution_time_ms: float = 0.0
     result_type: ExecutionResult = ExecutionResult.SUCCESS
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 @dataclass
 class SandboxTrace:
     trace_id: str
-    actions: List[SandboxAction] = field(default_factory=list)
-    start_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    end_time: Optional[datetime] = None
+    actions: list[SandboxAction] = field(default_factory=list)
+    start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
+    end_time: datetime | None = None
     total_time_ms: float = 0.0
 
     def add_action(self, action: SandboxAction):
         self.actions.append(action)
 
     def finalize(self):
-        self.end_time = datetime.now(timezone.utc)
+        self.end_time = datetime.now(UTC)
         self.total_time_ms = sum(a.execution_time_ms for a in self.actions)
 
 
@@ -80,11 +80,11 @@ class Sandbox:
     def __init__(self, mode: SandboxMode = SandboxMode.SAFE, timeout_ms: int = 5000):
         self.mode = mode
         self.timeout_ms = timeout_ms
-        self._traces: Dict[str, SandboxTrace] = {}
+        self._traces: dict[str, SandboxTrace] = {}
 
     def _validate_action(
-        self, action_type: str, params: Dict[str, Any]
-    ) -> tuple[bool, Optional[str]]:
+        self, action_type: str, params: dict[str, Any]
+    ) -> tuple[bool, str | None]:
         if action_type not in self.ALLOWED_ACTION_TYPES:
             return (
                 False,
@@ -99,7 +99,7 @@ class Sandbox:
         return True, None
 
     def _execute_action_internal(
-        self, action_type: str, params: Dict[str, Any], handler: Callable
+        self, action_type: str, params: dict[str, Any], handler: Callable
     ) -> SandboxAction:
         start = time.perf_counter()
         action = SandboxAction(action_type=action_type, params=params)
@@ -123,7 +123,7 @@ class Sandbox:
         return action
 
     async def execute_action(
-        self, trace_id: str, action_type: str, params: Dict[str, Any], handler: Callable
+        self, trace_id: str, action_type: str, params: dict[str, Any], handler: Callable
     ) -> SandboxAction:
         if trace_id not in self._traces:
             self._traces[trace_id] = SandboxTrace(trace_id=trace_id)
@@ -143,13 +143,13 @@ class Sandbox:
         self._traces[trace_id].add_action(action)
         return action
 
-    def get_trace(self, trace_id: str) -> Optional[SandboxTrace]:
+    def get_trace(self, trace_id: str) -> SandboxTrace | None:
         trace = self._traces.get(trace_id)
         if trace:
             trace.finalize()
         return trace
 
-    def get_all_traces(self) -> List[SandboxTrace]:
+    def get_all_traces(self) -> list[SandboxTrace]:
         for trace in self._traces.values():
             trace.finalize()
         return list(self._traces.values())
@@ -160,16 +160,16 @@ class Sandbox:
 
 class ActionHandlers:
     @staticmethod
-    def handle_inspect(params: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_inspect(params: dict[str, Any]) -> dict[str, Any]:
         machine_id = params.get("machine_id")
         return {
             "machine_id": machine_id,
             "status": "operational",
-            "last_inspection": datetime.now(timezone.utc).isoformat(),
+            "last_inspection": datetime.now(UTC).isoformat(),
         }
 
     @staticmethod
-    def handle_monitor(params: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_monitor(params: dict[str, Any]) -> dict[str, Any]:
         metric = params.get("metric")
         duration = params.get("duration_seconds", 60)
         return {
@@ -181,18 +181,18 @@ class ActionHandlers:
         }
 
     @staticmethod
-    def handle_log(params: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_log(params: dict[str, Any]) -> dict[str, Any]:
         message = params.get("message", "")
         level = params.get("level", "info")
         return {
             "logged": True,
             "message_id": hashlib.sha256(message.encode()).hexdigest()[:8],
             "level": level,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     @staticmethod
-    def handle_alert(params: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_alert(params: dict[str, Any]) -> dict[str, Any]:
         severity = params.get("severity", "medium")
         target = params.get("target")
         return {
@@ -202,7 +202,7 @@ class ActionHandlers:
         }
 
     @staticmethod
-    def handle_isolate(params: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_isolate(params: dict[str, Any]) -> dict[str, Any]:
         machine_id = params.get("machine_id")
         return {
             "machine_id": machine_id,
@@ -211,7 +211,7 @@ class ActionHandlers:
         }
 
     @staticmethod
-    def handle_reset(params: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_reset(params: dict[str, Any]) -> dict[str, Any]:
         machine_id = params.get("machine_id")
         return {
             "machine_id": machine_id,
@@ -220,7 +220,7 @@ class ActionHandlers:
         }
 
     @staticmethod
-    def handle_classify(params: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_classify(params: dict[str, Any]) -> dict[str, Any]:
         severity = params.get("severity", "low")
         confidence = params.get("confidence", 0.5)
         return {
@@ -229,13 +229,20 @@ class ActionHandlers:
             "label": f"{severity}_{int(confidence * 100)}",
         }
 
+    @staticmethod
+    def handle_unknown_action(action_type: str) -> Callable[[dict[str, Any]], dict[str, Any]]:
+        def _handler(_: dict[str, Any]) -> dict[str, Any]:
+            return {"error": f"Unknown action: {action_type}"}
+
+        return _handler
+
 
 @dataclass
 class WorkflowStep:
     step_id: str
     action_type: str
-    params: Dict[str, Any]
-    depends_on: List[str] = field(default_factory=list)
+    params: dict[str, Any]
+    depends_on: list[str] = field(default_factory=list)
     required: bool = True
     retry_count: int = 0
     max_retries: int = 3
@@ -247,24 +254,24 @@ class WorkflowResult:
     success: bool
     steps_completed: int
     steps_failed: int
-    results: Dict[str, Any]
+    results: dict[str, Any]
     trace: SandboxTrace
 
 
 class BoundedWorkflowEngine:
-    def __init__(self, sandbox: Optional[Sandbox] = None):
+    def __init__(self, sandbox: Sandbox | None = None):
         self.sandbox = sandbox or Sandbox()
         self.handlers = ActionHandlers()
-        self._workflow_registry: Dict[str, List[WorkflowStep]] = {}
+        self._workflow_registry: dict[str, list[WorkflowStep]] = {}
 
-    def register_workflow(self, workflow_id: str, steps: List[WorkflowStep]):
+    def register_workflow(self, workflow_id: str, steps: list[WorkflowStep]):
         self._workflow_registry[workflow_id] = steps
 
     async def execute_workflow(
         self,
         workflow_id: str,
-        context: Dict[str, Any],
-        trace_id: Optional[str] = None,
+        context: dict[str, Any],
+        trace_id: str | None = None,
     ) -> WorkflowResult:
         if workflow_id not in self._workflow_registry:
             return WorkflowResult(
@@ -278,7 +285,7 @@ class BoundedWorkflowEngine:
 
         trace_id = trace_id or f"wf_{workflow_id}_{int(time.time() * 1000)}"
         steps = self._workflow_registry[workflow_id]
-        results: Dict[str, Any] = {}
+        results: dict[str, Any] = {}
         steps_completed = 0
         steps_failed = 0
 
@@ -292,7 +299,13 @@ class BoundedWorkflowEngine:
 
             handler = getattr(self.handlers, f"handle_{step.action_type}", None)
             if not handler:
-                handler = lambda p: {"error": f"Unknown action: {step.action_type}"}
+                action_type = step.action_type
+
+                def handler(
+                    _: dict[str, Any],
+                    action_type: str = action_type,
+                ) -> dict[str, Any]:
+                    return {"error": f"Unknown action: {action_type}"}
 
             action = await self.sandbox.execute_action(
                 trace_id, step.action_type, {**step.params, **context}, handler
@@ -317,5 +330,5 @@ class BoundedWorkflowEngine:
             trace=trace or SandboxTrace(trace_id=trace_id),
         )
 
-    def get_registered_workflows(self) -> List[str]:
+    def get_registered_workflows(self) -> list[str]:
         return list(self._workflow_registry.keys())

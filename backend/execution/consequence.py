@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import Dict, List
-
 from backend.shared.schemas import (
-    DecisionConsequence,
-    PrioritizedCase,
     Decision,
-    ModelAssessment,
+    DecisionConsequence,
     Event,
+    ModelAssessment,
+    PrioritizedCase,
 )
 
 
@@ -35,8 +33,6 @@ class ConsequenceCalculator:
         event: Event,
     ) -> DecisionConsequence:
         severity = case.severity
-        costs = self.SEVERITY_COSTS.get(severity, self.SEVERITY_COSTS["low"])
-
         downtime_avoided = self._calculate_downtime_avoided(severity, assessment, event)
 
         risk_level = self._calculate_risk_level(severity, assessment, event)
@@ -165,7 +161,7 @@ class ConsequenceCalculator:
         escalation: bool,
         safety: str,
         production: str,
-    ) -> List[str]:
+    ) -> list[str]:
         reasons = []
 
         reasons.append(f"Based on {severity} severity classification")

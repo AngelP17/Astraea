@@ -1,22 +1,18 @@
 from __future__ import annotations
 
-import json
-import hashlib
 import uuid
-from datetime import datetime, timezone
-from typing import Dict, Any, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from celery import shared_task
 
-from backend.ingestion.normalizer import normalize_event
-from backend.pipeline.feature_engine import FeatureEngine
-from backend.ml.anomaly_detector import AnomalyDetector
-from backend.decision.prioritizer import DecisionPrioritizationEngine
-from backend.decision.engine import DecisionEngine
 from backend.audit.recorder import AuditRecorder
+from backend.decision.engine import DecisionEngine
+from backend.decision.prioritizer import DecisionPrioritizationEngine
 from backend.execution.dispatcher import ExecutionDispatcher
-from backend.shared.schemas import Event, FeatureVector, ModelAssessment
-
+from backend.ingestion.normalizer import normalize_event
+from backend.ml.anomaly_detector import AnomalyDetector
+from backend.pipeline.feature_engine import FeatureEngine
 
 feature_engine = FeatureEngine()
 anomaly_detector = AnomalyDetector()
@@ -27,7 +23,7 @@ dispatcher = ExecutionDispatcher()
 
 
 @shared_task(bind=True, name="backend.worker.tasks.process_event")
-def process_event(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
+def process_event(self, event_data: dict[str, Any]) -> dict[str, Any]:
     try:
         event = normalize_event(event_data)
 
@@ -67,7 +63,7 @@ def process_event(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 @shared_task(bind=True, name="backend.worker.tasks.run_pipeline")
-def run_pipeline(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
+def run_pipeline(self, event_data: dict[str, Any]) -> dict[str, Any]:
     try:
         from backend.core.pipeline import AstraeaPipeline
 
@@ -89,7 +85,7 @@ def run_pipeline(self, event_data: Dict[str, Any]) -> Dict[str, Any]:
 
 
 @shared_task(bind=True, name="backend.worker.tasks.replay_case")
-def replay_case(self, case_id: str) -> Dict[str, Any]:
+def replay_case(self, case_id: str) -> dict[str, Any]:
     try:
         from backend.core.replay import ReplayStore
 
@@ -112,7 +108,7 @@ def replay_case(self, case_id: str) -> Dict[str, Any]:
 
 
 @shared_task(bind=True, name="backend.worker.tasks.batch_process")
-def batch_process(self, events: List[Dict[str, Any]]) -> Dict[str, Any]:
+def batch_process(self, events: list[dict[str, Any]]) -> dict[str, Any]:
     results = []
     for event_data in events:
         result = run_pipeline.delay(event_data)
@@ -132,15 +128,14 @@ def batch_process(self, events: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 @shared_task(name="backend.worker.tasks.cleanup_old_artifacts")
-def cleanup_old_artifacts(days: int = 90) -> Dict[str, Any]:
-    import os
+def cleanup_old_artifacts(days: int = 90) -> dict[str, Any]:
     from pathlib import Path
 
     artifacts_dir = Path("/app/artifacts")
     if not artifacts_dir.exists():
         return {"status": "skipped", "reason": "artifacts directory not found"}
 
-    cutoff = datetime.now(timezone.utc).timestamp() - (days * 86400)
+    cutoff = datetime.now(UTC).timestamp() - (days * 86400)
     deleted = 0
 
     for file_path in artifacts_dir.rglob("*.json"):

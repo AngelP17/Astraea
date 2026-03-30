@@ -6,18 +6,17 @@ Comprehensive performance and correctness benchmarks using real industrial event
 
 from __future__ import annotations
 
-import json
-import time
 import statistics
-from pathlib import Path
-from typing import List, Dict, Any
+import time
+from typing import Any
+
 from backend.core.pipeline import AstraeaPipeline
-from backend.ingestion.normalizer import load_events, normalize_event
-from backend.pipeline.feature_engine import FeatureEngine
+from backend.ingestion.normalizer import normalize_event
 from backend.ml.anomaly_detector import AnomalyDetector
+from backend.pipeline.feature_engine import FeatureEngine
 
 
-def generate_realistic_events(count: int = 100) -> List[Dict]:
+def generate_realistic_events(count: int = 100) -> list[dict]:
     """
     Generate realistic industrial events with varying conditions:
     - Normal operating conditions
@@ -92,7 +91,7 @@ def generate_realistic_events(count: int = 100) -> List[Dict]:
     return events
 
 
-def benchmark_pipeline_latency(event_count: int = 100) -> Dict[str, Any]:
+def benchmark_pipeline_latency(event_count: int = 100) -> dict[str, Any]:
     """
     Benchmark pipeline latency across multiple events.
     Returns detailed latency statistics per stage.
@@ -177,7 +176,7 @@ def benchmark_pipeline_latency(event_count: int = 100) -> Dict[str, Any]:
     }
 
 
-def benchmark_hash_stability(iterations: int = 10, event_count: int = 50) -> Dict[str, Any]:
+def benchmark_hash_stability(iterations: int = 10, event_count: int = 50) -> dict[str, Any]:
     """
     Benchmark hash stability across multiple iterations.
     Verifies determinism by comparing hashes from independent pipeline runs.
@@ -187,7 +186,7 @@ def benchmark_hash_stability(iterations: int = 10, event_count: int = 50) -> Dic
 
     all_hashes = []
 
-    for iteration in range(iterations):
+    for _iteration in range(iterations):
         pipeline = AstraeaPipeline()
         iteration_hashes = []
         for event in events:
@@ -216,7 +215,7 @@ def benchmark_hash_stability(iterations: int = 10, event_count: int = 50) -> Dic
     }
 
 
-def benchmark_score_distribution(event_count: int = 100) -> Dict[str, Any]:
+def benchmark_score_distribution(event_count: int = 100) -> dict[str, Any]:
     """
     Analyze distribution of scores across diverse events.
     """
@@ -267,7 +266,7 @@ def benchmark_score_distribution(event_count: int = 100) -> Dict[str, Any]:
     }
 
 
-def benchmark_threshold_sensitivity() -> Dict[str, Any]:
+def benchmark_threshold_sensitivity() -> dict[str, Any]:
     """
     Test threshold sensitivity by varying values around thresholds.
     """
@@ -318,7 +317,7 @@ def benchmark_threshold_sensitivity() -> Dict[str, Any]:
     }
 
 
-def benchmark_explainability_coverage(event_count: int = 100) -> Dict[str, Any]:
+def benchmark_explainability_coverage(event_count: int = 100) -> dict[str, Any]:
     """
     Verify explainability factors are generated consistently.
     """
@@ -360,25 +359,33 @@ def run_all_benchmarks():
     print("[1/6] Benchmarking Pipeline Latency (100 events)...")
     print("-" * 60)
     lat = benchmark_pipeline_latency(100)
-    print(f"  Total pipeline latency:")
+    print("  Total pipeline latency:")
     print(f"    Mean:   {lat['total']['mean_ms']:.3f} ms")
     print(f"    Median: {lat['total']['median_ms']:.3f} ms")
     print(f"    P95:    {lat['total']['p95_ms']:.3f} ms")
     print(f"    P99:    {lat['total']['p99_ms']:.3f} ms")
     print(f"    Min:    {lat['total']['min_ms']:.3f} ms")
     print(f"    Max:    {lat['total']['max_ms']:.3f} ms")
-    print(f"  Per-stage breakdown:")
+    print("  Per-stage breakdown:")
     print(
-        f"    Feature extraction: {lat['feature_extraction']['mean_ms']:.4f} ms ± {lat['feature_extraction']['stdev_ms']:.4f}"
+        "    Feature extraction: "
+        f"{lat['feature_extraction']['mean_ms']:.4f} ms ± "
+        f"{lat['feature_extraction']['stdev_ms']:.4f}"
     )
     print(
-        f"    Anomaly detection: {lat['anomaly_detection']['mean_ms']:.4f} ms ± {lat['anomaly_detection']['stdev_ms']:.4f}"
+        "    Anomaly detection: "
+        f"{lat['anomaly_detection']['mean_ms']:.4f} ms ± "
+        f"{lat['anomaly_detection']['stdev_ms']:.4f}"
     )
     print(
-        f"    Prioritization:     {lat['prioritization']['mean_ms']:.4f} ms ± {lat['prioritization']['stdev_ms']:.4f}"
+        "    Prioritization:     "
+        f"{lat['prioritization']['mean_ms']:.4f} ms ± "
+        f"{lat['prioritization']['stdev_ms']:.4f}"
     )
     print(
-        f"    Decision:           {lat['decision']['mean_ms']:.4f} ms ± {lat['decision']['stdev_ms']:.4f}"
+        "    Decision:           "
+        f"{lat['decision']['mean_ms']:.4f} ms ± "
+        f"{lat['decision']['stdev_ms']:.4f}"
     )
     print(
         f"    Audit:              {lat['audit']['mean_ms']:.4f} ms ± {lat['audit']['stdev_ms']:.4f}"
@@ -400,16 +407,28 @@ def run_all_benchmarks():
     print("-" * 60)
     dist = benchmark_score_distribution(100)
     print(
-        f"  Anomaly Score:     mean={dist['anomaly_score']['mean']:.4f}, range=[{dist['anomaly_score']['min']:.4f}, {dist['anomaly_score']['max']:.4f}]"
+        "  Anomaly Score:     "
+        f"mean={dist['anomaly_score']['mean']:.4f}, "
+        f"range=[{dist['anomaly_score']['min']:.4f}, {dist['anomaly_score']['max']:.4f}]"
     )
     print(
-        f"  Failure Probability: mean={dist['failure_probability']['mean']:.4f}, range=[{dist['failure_probability']['min']:.4f}, {dist['failure_probability']['max']:.4f}]"
+        "  Failure Probability: "
+        f"mean={dist['failure_probability']['mean']:.4f}, "
+        "range=["
+        f"{dist['failure_probability']['min']:.4f}, "
+        f"{dist['failure_probability']['max']:.4f}]"
     )
     print(
-        f"  Priority Score:     mean={dist['priority_score']['mean']:.4f}, range=[{dist['priority_score']['min']:.4f}, {dist['priority_score']['max']:.4f}]"
+        "  Priority Score:     "
+        f"mean={dist['priority_score']['mean']:.4f}, "
+        f"range=[{dist['priority_score']['min']:.4f}, {dist['priority_score']['max']:.4f}]"
     )
     print(
-        f"  Uncertainty Width:  mean={dist['uncertainty_interval_width']['mean']:.4f}, range=[{dist['uncertainty_interval_width']['min']:.4f}, {dist['uncertainty_interval_width']['max']:.4f}]"
+        "  Uncertainty Width:  "
+        f"mean={dist['uncertainty_interval_width']['mean']:.4f}, "
+        "range=["
+        f"{dist['uncertainty_interval_width']['min']:.4f}, "
+        f"{dist['uncertainty_interval_width']['max']:.4f}]"
     )
     print()
 
@@ -426,13 +445,19 @@ def run_all_benchmarks():
     print("-" * 60)
     expl = benchmark_explainability_coverage(100)
     print(
-        f"  Events with explanation factors: {expl['events_with_explanation_factors']}/{expl['event_count']} ({expl['explainability_rate'] * 100:.1f}%)"
+        "  Events with explanation factors: "
+        f"{expl['events_with_explanation_factors']}/{expl['event_count']} "
+        f"({expl['explainability_rate'] * 100:.1f}%)"
     )
     print(
-        f"  Events with top features:       {expl['events_with_top_features']}/{expl['event_count']} ({expl['top_features_rate'] * 100:.1f}%)"
+        "  Events with top features:       "
+        f"{expl['events_with_top_features']}/{expl['event_count']} "
+        f"({expl['top_features_rate'] * 100:.1f}%)"
     )
     print(
-        f"  Events with rationale:          {expl['events_with_rationale']}/{expl['event_count']} ({expl['rationale_rate'] * 100:.1f}%)"
+        "  Events with rationale:          "
+        f"{expl['events_with_rationale']}/{expl['event_count']} "
+        f"({expl['rationale_rate'] * 100:.1f}%)"
     )
     print()
 

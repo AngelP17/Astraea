@@ -1,0 +1,162 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+
+env:
+  REGISTRY: ghcr.io
+  NAMESPACE: astraea
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-${{ inputs.environment || 'production' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment || 'production' }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'production' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Normalize image namespace
+        id: meta
+        run: echo "repo_lc=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate deployment secrets
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          for key in SECRET_KEY DB_HOST DB_PORT DB_NAME DB_USER DB_PASSWORD; do
+            if [ -z "${!key}" ]; then
+              echo "::error::Missing required secret: ${key}"
+              exit 1
+            fi
+          done
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.backend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_lc }}/api:latest
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_lc }}/api:${{ github.sha }}
+
+      - name: Build and push Worker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.worker
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_lc }}/worker:latest
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_lc }}/worker:${{ github.sha }}
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Set Kubernetes context
+        uses: azure/k8s-set-context@v4
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Ensure namespace exists
+        run: kubectl apply -f k8s/namespace.yaml
+
+      - name: Create or update application secrets
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          kubectl create secret generic astraea-secrets \
+            --namespace "${NAMESPACE}" \
+            --from-literal=SECRET_KEY="${SECRET_KEY}" \
+            --from-literal=DB_HOST="${DB_HOST}" \
+            --from-literal=DB_PORT="${DB_PORT}" \
+            --from-literal=DB_NAME="${DB_NAME}" \
+            --from-literal=DB_USER="${DB_USER}" \
+            --from-literal=DB_PASSWORD="${DB_PASSWORD}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Create optional TLS secret
+        id: ingress
+        env:
+          K8S_INGRESS_HOST: ${{ vars.K8S_INGRESS_HOST }}
+          K8S_TLS_CERT: ${{ secrets.K8S_TLS_CERT }}
+          K8S_TLS_KEY: ${{ secrets.K8S_TLS_KEY }}
+        run: |
+          if [ -n "${K8S_INGRESS_HOST}" ] && [ -n "${K8S_TLS_CERT}" ] && [ -n "${K8S_TLS_KEY}" ]; then
+            kubectl create secret tls astraea-tls-secret \
+              --namespace "${NAMESPACE}" \
+              --cert=<(printf '%s' "${K8S_TLS_CERT}") \
+              --key=<(printf '%s' "${K8S_TLS_KEY}") \
+              --dry-run=client -o yaml | kubectl apply -f -
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy to Kubernetes
+        uses: azure/k8s-deploy@v4
+        with:
+          manifests: |
+            k8s/rbac.yaml
+            k8s/configmap.yaml
+            k8s/pvc.yaml
+            k8s/redis.yaml
+            k8s/api.yaml
+            k8s/worker.yaml
+            k8s/hpa.yaml
+            k8s/networkpolicy.yaml
+            k8s/pdb.yaml
+          namespace: ${{ env.NAMESPACE }}
+          images: |
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_lc }}/api:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ steps.meta.outputs.repo_lc }}/worker:${{ github.sha }}
+
+      - name: Apply ingress when configured
+        if: steps.ingress.outputs.enabled == 'true'
+        env:
+          K8S_INGRESS_HOST: ${{ vars.K8S_INGRESS_HOST }}
+        run: |
+          sed "s/__ASTRAEA_API_HOST__/${K8S_INGRESS_HOST}/g" k8s/ingress.yaml | kubectl apply -f -
+
+      - name: Verify rollout
+        run: |
+          kubectl rollout status deployment/astraea-redis --namespace "${NAMESPACE}" --timeout=180s
+          kubectl rollout status deployment/astraea-api --namespace "${NAMESPACE}" --timeout=180s
+          kubectl rollout status deployment/astraea-worker --namespace "${NAMESPACE}" --timeout=180s
+          kubectl get deployments,svc,pods,networkpolicy,pdb --namespace "${NAMESPACE}"

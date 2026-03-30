@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
-import { execSync } from "child_process";
-import fs from "fs";
-import path from "path";
+
+const API_BASE = process.env.API_BASE_URL || "http://localhost:8000";
+
+function getAuthHeaders() {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 export async function POST(request: Request) {
   try {
@@ -11,21 +18,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "caseId required" }, { status: 400 });
     }
 
-    const cwd = process.cwd();
-    
-    const replayDir = path.join(cwd, "artifacts/replays");
-    const caseFile = path.join(replayDir, `${caseId}.json`);
+    const response = await fetch(`${API_BASE}/api/replay`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ case_id: caseId }),
+    });
 
-    if (!fs.existsSync(caseFile)) {
+    if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json(
+          { error: `Replay not found for case: ${caseId}` },
+          { status: 404 }
+        );
+      }
+      const error = await response.json().catch(() => ({ error: "Replay failed" }));
       return NextResponse.json(
-        { error: `Replay not found for case: ${caseId}` },
-        { status: 404 }
+        { error: error.error || "Replay failed" },
+        { status: response.status }
       );
     }
 
-    const content = fs.readFileSync(caseFile, "utf-8");
-    const data = JSON.parse(content);
-
+    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error("Replay failed:", error);

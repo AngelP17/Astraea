@@ -1,5 +1,8 @@
 # Astraea
 
+[![CI](https://github.com/AngelP17/Astraea/actions/workflows/ci.yml/badge.svg)](https://github.com/AngelP17/Astraea/actions/workflows/ci.yml)
+[![Deploy](https://github.com/AngelP17/Astraea/actions/workflows/deploy.yml/badge.svg)](https://github.com/AngelP17/Astraea/actions/workflows/deploy.yml)
+
 ## A deterministic decision engine that transforms event streams into explainable, replayable, and auditable actions.
 
 Astraea combines anomaly detection, graph reasoning, and execution planning to produce decisions that can be verified and reproduced exactly.
@@ -149,16 +152,97 @@ This is safety-first design. Zero-trust when uncertainty bands are wide.
 git clone https://github.com/AngelP17/Astraea
 cd Astraea
 
-# Execute pipeline
-python run_pipeline.py
+# Install the local commit guardrails
+git config core.hooksPath .githooks
 
-# Start demo UI
+# Frontend
 npm install
 npm run dev
-open http://localhost:3000
-
-# Click "RUN LIVE PIPELINE" to execute
 ```
+
+```bash
+# Backend
+uv sync
+uv run uvicorn backend.api.main:app --reload
+```
+
+Open `http://localhost:3000`, then use `RUN LIVE PIPELINE` or `RUN DEMO`.
+
+### Environment
+
+Copy `.env.example` to `.env` and set the values you need for local development:
+
+- `DATABASE_URL` for PostgreSQL persistence
+- `SECRET_KEY` for JWT signing
+- `NEXT_PUBLIC_API_URL` for the frontend-to-backend API origin
+- `ARTIFACTS_*` settings for retention behavior
+
+### Repository Guardrails
+
+Astraea now includes **tracked secret protection** in two places:
+
+1. **Local pre-commit hook** via `.githooks/pre-commit`
+   - Blocks commits that include likely secrets in staged files
+   - Activate it once per clone with:
+
+   ```bash
+   git config core.hooksPath .githooks
+   ```
+
+2. **CI secret scan** in `.github/workflows/ci.yml`
+   - Scans the tracked repository on every PR and push
+   - Fails the workflow if likely secrets are committed
+
+The local scanner lives in `scripts/scan_staged_secrets.py` and supports:
+
+```bash
+# Scan only staged files
+python3 scripts/scan_staged_secrets.py
+
+# Scan the full tracked repository
+python3 scripts/scan_staged_secrets.py --all-files
+```
+
+### Quality Gates
+
+The enforced checks now match the stack that actually ships:
+
+- `uv run ruff check backend tests`
+- `uv run pytest -q tests`
+- `npm run typecheck`
+- `npm run build`
+- `npm run test:e2e`
+- `python3 scripts/scan_staged_secrets.py --all-files`
+
+That keeps CI honest: the backend lint suite is green, the browser lane fails for real when E2E breaks, and the repo still blocks likely secrets before and after push.
+
+### Kubernetes Deployment
+
+The production deploy workflow expects these GitHub Actions secrets:
+
+- `KUBE_CONFIG`
+- `SECRET_KEY`
+- `DB_HOST`
+- `DB_PORT`
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+
+Optional ingress support also uses:
+
+- `K8S_TLS_CERT`
+- `K8S_TLS_KEY`
+
+If you want ingress applied during deployment, set the GitHub Actions variable `K8S_INGRESS_HOST`.
+
+The deploy job now:
+
+1. Builds and pushes versioned API and worker images to GHCR
+2. Sets Kubernetes context from `KUBE_CONFIG`
+3. Creates or updates the runtime secret in-cluster
+4. Applies namespace, config, PVC, Redis, API, worker, HPA, PDB, and NetworkPolicy manifests
+5. Applies ingress only when host and TLS inputs are configured
+6. Waits for rollout completion before the workflow succeeds
 
 ---
 
@@ -215,4 +299,3 @@ Astraea addresses three fundamental tensions in operational decision systems:
 ```
 
 ---
-

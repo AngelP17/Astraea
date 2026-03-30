@@ -1,14 +1,13 @@
-from dataclasses import dataclass, field
-from typing import Dict, List, Any, Optional, Callable
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from backend.execution.sandbox import (
+    BoundedWorkflowEngine,
     Sandbox,
     SandboxMode,
-    WorkflowStep,
-    BoundedWorkflowEngine,
     WorkflowResult,
+    WorkflowStep,
 )
 
 
@@ -25,7 +24,7 @@ class WorkflowDefinition:
     workflow_id: WorkflowType
     name: str
     description: str
-    steps: List[WorkflowStep]
+    steps: list[WorkflowStep]
     timeout_ms: int = 30000
     allow_parallel: bool = False
 
@@ -224,7 +223,7 @@ class IndustrialWorkflows:
 
 
 class WorkflowExecutor:
-    def __init__(self, sandbox: Optional[Sandbox] = None):
+    def __init__(self, sandbox: Sandbox | None = None):
         self.sandbox = sandbox or Sandbox(mode=SandboxMode.SAFE, timeout_ms=30000)
         self.engine = BoundedWorkflowEngine(self.sandbox)
         self._register_all_workflows()
@@ -240,14 +239,14 @@ class WorkflowExecutor:
     async def execute(
         self,
         workflow_type: WorkflowType,
-        context: Dict[str, Any],
-        trace_id: Optional[str] = None,
+        context: dict[str, Any],
+        trace_id: str | None = None,
     ) -> WorkflowResult:
         return await self.engine.execute_workflow(
             workflow_type.value, context, trace_id
         )
 
-    def get_available_workflows(self) -> List[Dict[str, str]]:
+    def get_available_workflows(self) -> list[dict[str, str]]:
         return [{"id": wt.value, "name": wt.name} for wt in WorkflowType]
 
     def get_trace(self, trace_id: str):

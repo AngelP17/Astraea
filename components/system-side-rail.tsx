@@ -30,7 +30,7 @@ export function SystemSideRail() {
           target="_blank"
           rel="noreferrer"
           aria-label={label}
-          className="group relative p-2 text-neutral-500 transition-all duration-150 hover:bg-white/5 hover:text-primary"
+          className="group relative p-2 text-neutral-500 transition-all duration-150 hover:bg-white/5 hover:text-indigo"
         >
           <Icon className="h-5 w-5" />
           <span className="pointer-events-none absolute left-full top-1/2 ml-2 -translate-y-1/2 whitespace-nowrap truncate rounded border border-white/10 bg-black px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100">

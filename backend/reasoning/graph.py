@@ -1,24 +1,23 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Dict, List, Optional, Set, Tuple
-from dataclasses import dataclass, field
 from collections import defaultdict, deque
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 
 
 @dataclass
 class GraphNode:
     node_id: str
     node_type: str
-    machine_id: Optional[str] = None
-    line_id: Optional[str] = None
-    event_type: Optional[str] = None
+    machine_id: str | None = None
+    line_id: str | None = None
+    event_type: str | None = None
     anomaly_score: float = 0.0
     failure_probability: float = 0.0
     priority_score: float = 0.0
     severity: str = "low"
-    timestamp: Optional[datetime] = None
-    properties: Dict = field(default_factory=dict)
+    timestamp: datetime | None = None
+    properties: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -27,29 +26,29 @@ class GraphEdge:
     to_node: str
     edge_type: str
     weight: float
-    timestamp: Optional[datetime] = None
+    timestamp: datetime | None = None
 
 
 @dataclass
 class GraphInferenceResult:
-    root_cause_id: Optional[str]
-    cascade_path: List[str]
-    affected_machines: List[str]
-    affected_lines: List[str]
+    root_cause_id: str | None
+    cascade_path: list[str]
+    affected_machines: list[str]
+    affected_lines: list[str]
     graph_anomaly_score: float
     inference_confidence: float
     propagation_risk: float
-    recommendations: List[str]
-    reasoning_chain: List[str]
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    recommendations: list[str]
+    reasoning_chain: list[str]
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 class EventGraph:
     def __init__(self) -> None:
-        self.nodes: Dict[str, GraphNode] = {}
-        self.edges: List[GraphEdge] = []
-        self.adjacency: Dict[str, List[Tuple[str, GraphEdge]]] = defaultdict(list)
-        self.reverse_adjacency: Dict[str, List[Tuple[str, GraphEdge]]] = defaultdict(list)
+        self.nodes: dict[str, GraphNode] = {}
+        self.edges: list[GraphEdge] = []
+        self.adjacency: dict[str, list[tuple[str, GraphEdge]]] = defaultdict(list)
+        self.reverse_adjacency: dict[str, list[tuple[str, GraphEdge]]] = defaultdict(list)
 
     def add_node(self, node: GraphNode) -> None:
         self.nodes[node.node_id] = node
@@ -59,17 +58,17 @@ class EventGraph:
         self.adjacency[edge.from_node].append((edge.to_node, edge))
         self.reverse_adjacency[edge.to_node].append((edge.from_node, edge))
 
-    def get_node(self, node_id: str) -> Optional[GraphNode]:
+    def get_node(self, node_id: str) -> GraphNode | None:
         return self.nodes.get(node_id)
 
-    def get_neighbors(self, node_id: str) -> List[Tuple[str, GraphEdge]]:
+    def get_neighbors(self, node_id: str) -> list[tuple[str, GraphEdge]]:
         return self.adjacency.get(node_id, [])
 
-    def get_predecessors(self, node_id: str) -> List[Tuple[str, GraphEdge]]:
+    def get_predecessors(self, node_id: str) -> list[tuple[str, GraphEdge]]:
         return self.reverse_adjacency.get(node_id, [])
 
-    def topological_sort(self) -> List[str]:
-        in_degree: Dict[str, int] = defaultdict(int)
+    def topological_sort(self) -> list[str]:
+        in_degree: dict[str, int] = defaultdict(int)
         for node_id in self.nodes:
             in_degree[node_id] = 0
         for edge in self.edges:
@@ -92,9 +91,9 @@ class EventGraph:
 class GraphReasoningEngine:
     def __init__(self) -> None:
         self.graph = EventGraph()
-        self.event_to_node: Dict[str, str] = {}
-        self.machine_nodes: Dict[str, List[str]] = defaultdict(list)
-        self.line_nodes: Dict[str, List[str]] = defaultdict(list)
+        self.event_to_node: dict[str, str] = {}
+        self.machine_nodes: dict[str, list[str]] = defaultdict(list)
+        self.line_nodes: dict[str, list[str]] = defaultdict(list)
 
     def add_event_as_node(
         self,
@@ -104,7 +103,7 @@ class GraphReasoningEngine:
         event_type: str,
         anomaly_score: float = 0.0,
         failure_probability: float = 0.0,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ) -> None:
         node_id = f"event_{event_id}"
         severity = "low"
@@ -143,7 +142,7 @@ class GraphReasoningEngine:
         from_event_id: str,
         to_event_id: str,
         weight: float = 0.95,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ) -> None:
         from_node = self.event_to_node.get(from_event_id)
         to_node = self.event_to_node.get(to_event_id)
@@ -162,7 +161,7 @@ class GraphReasoningEngine:
         from_event_id: str,
         to_event_id: str,
         weight: float = 0.90,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ) -> None:
         from_node = self.event_to_node.get(from_event_id)
         to_node = self.event_to_node.get(to_event_id)
@@ -181,7 +180,7 @@ class GraphReasoningEngine:
         from_event_id: str,
         to_event_id: str,
         weight: float = 0.85,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ) -> None:
         from_node = self.event_to_node.get(from_event_id)
         to_node = self.event_to_node.get(to_event_id)
@@ -195,11 +194,11 @@ class GraphReasoningEngine:
             )
             self.graph.add_edge(edge)
 
-    def infer_root_cause(self) -> Optional[str]:
+    def infer_root_cause(self) -> str | None:
         if not self.graph.nodes:
             return None
 
-        in_degree: Dict[str, int] = defaultdict(int)
+        in_degree: dict[str, int] = defaultdict(int)
         for node_id in self.graph.nodes:
             in_degree[node_id] = 0
         for edge in self.graph.edges:
@@ -221,7 +220,7 @@ class GraphReasoningEngine:
         )
         return root_cause
 
-    def find_cascade_path(self, start_event_id: Optional[str] = None) -> List[str]:
+    def find_cascade_path(self, start_event_id: str | None = None) -> list[str]:
         if start_event_id:
             start_node = self.event_to_node.get(start_event_id)
         else:
@@ -231,7 +230,7 @@ class GraphReasoningEngine:
         if not start_node:
             return []
 
-        visited: Set[str] = set()
+        visited: set[str] = set()
         path = []
         queue = deque([start_node])
 
@@ -241,7 +240,7 @@ class GraphReasoningEngine:
                 continue
             visited.add(node_id)
             path.append(node_id)
-            for neighbor, edge in self.graph.get_neighbors(node_id):
+            for neighbor, _edge in self.graph.get_neighbors(node_id):
                 if neighbor not in visited:
                     queue.append(neighbor)
 
@@ -336,16 +335,16 @@ class GraphReasoningEngine:
 class HybridGraphReasoningEngine:
     def __init__(self) -> None:
         self.graph_engine = GraphReasoningEngine()
-        self.multi_event_results: List[Dict] = []
+        self.multi_event_results: list[dict] = []
 
     def build_graph_from_events(
         self,
-        events: List[Dict],
-        assessments: Dict[str, Dict],
+        events: list[dict],
+        assessments: dict[str, dict],
     ) -> None:
         event_list = sorted(events, key=lambda e: e.get("timestamp", ""))
-        machine_events: Dict[str, List] = defaultdict(list)
-        line_events: Dict[str, List] = defaultdict(list)
+        machine_events: dict[str, list] = defaultdict(list)
+        line_events: dict[str, list] = defaultdict(list)
 
         for e in event_list:
             machine_events[e["machine_id"]].append(e)
@@ -362,7 +361,7 @@ class HybridGraphReasoningEngine:
                 failure_probability=assessment.get("failure_probability", 0.0),
             )
 
-        for machine_id, machine_evts in machine_events.items():
+        for _machine_id, machine_evts in machine_events.items():
             sorted_machine = sorted(machine_evts, key=lambda e: e.get("timestamp", ""))
             for i in range(len(sorted_machine) - 1):
                 self.graph_engine.add_machine_relation(
@@ -371,7 +370,7 @@ class HybridGraphReasoningEngine:
                     weight=0.95,
                 )
 
-        for line_id, line_evts in line_events.items():
+        for _line_id, line_evts in line_events.items():
             sorted_line = sorted(line_evts, key=lambda e: e.get("timestamp", ""))
             for i in range(len(sorted_line) - 1):
                 if sorted_line[i]["machine_id"] != sorted_line[i + 1]["machine_id"]:

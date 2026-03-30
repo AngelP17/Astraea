@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict, List, Tuple
-
 from backend.shared.schemas import Decision, PrioritizedCase
 
 
@@ -32,7 +30,7 @@ class DecisionEngine:
 
     def _map_action(
         self, case: PrioritizedCase
-    ) -> Tuple[str, str, List[str], List[Dict[str, str]]]:
+    ) -> tuple[str, str, list[str], list[dict[str, str]]]:
         if case.severity == "critical":
             return (
                 "Immediate inspection required",

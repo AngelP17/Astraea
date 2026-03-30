@@ -4,6 +4,9 @@
 
 :root {
   color-scheme: dark;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 * {
@@ -15,20 +18,25 @@ html {
 }
 
 body {
-  background: #0a0a0a;
-  color: #fff;
+  background: #0A0A0B;
+  color: #FAFAFA;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: #00f4fe;
-  color: #004346;
+  background: #6366F1;
+  color: #FAFAFA;
+}
+
+:focus-visible {
+  outline: 2px solid #6366F1;
+  outline-offset: 2px;
 }
 
 .panel {
-  background: rgba(38, 38, 38, 0.38);
+  background: rgba(17, 17, 19, 0.8);
   backdrop-filter: blur(18px);
-  border: 1px solid rgba(73, 72, 71, 0.18);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
 .grid-bg {
@@ -38,13 +46,8 @@ body {
   background-size: 40px 40px;
 }
 
-.scanline {
-  background-image: linear-gradient(to bottom, transparent 50%, rgba(161,250,255,0.04) 50%);
-  background-size: 100% 4px;
-}
-
 .text-gradient {
-  background: linear-gradient(90deg, #a1faff 0%, #dac9ff 45%, #ffd16f 100%);
+  background: linear-gradient(90deg, #6366F1 0%, #818CF8 45%, #00F0FF 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -57,4 +60,23 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

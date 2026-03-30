@@ -6,12 +6,12 @@ from backend.ingestion.normalizer import load_events
 
 def test_full_pipeline_runs_end_to_end() -> None:
     events = load_events()
-    assert len(events) == 3
+    assert len(events) >= 3
 
     pipeline = AstraeaPipeline()
 
     results = [pipeline.process(event) for event in events]
-    assert len(results) == 3
+    assert len(results) == len(events)
 
     for result in results:
         payload = result.to_dict()

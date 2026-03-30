@@ -1,0 +1,27 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: astraea-api-pdb
+  namespace: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+    app.kubernetes.io/component: pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: astraea-api
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: astraea-worker-pdb
+  namespace: astraea
+  labels:
+    app.kubernetes.io/name: astraea
+    app.kubernetes.io/component: pdb
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: astraea-worker

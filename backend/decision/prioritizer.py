@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from math import exp, sqrt, tanh
-from typing import Dict, List, Optional, Tuple
 from collections import deque
+from datetime import UTC, datetime
+from math import exp, tanh
 
 from backend.shared.schemas import Event, ModelAssessment, PrioritizedCase
 
@@ -11,7 +10,7 @@ from backend.shared.schemas import Event, ModelAssessment, PrioritizedCase
 class TemporalPatternDetector:
     def __init__(self, window_size: int = 10):
         self.window_size = window_size
-        self.event_history: Dict[str, deque] = {}
+        self.event_history: dict[str, deque] = {}
 
     def record_event(self, event: Event) -> None:
         machine_key = f"{event.line_id}:{event.machine_id}"
@@ -48,7 +47,7 @@ class TemporalPatternDetector:
         slope = numerator / denominator
         return tanh(slope * 0.5)
 
-    def detect_repeated_pattern(self, machine_key: str, event_type: str) -> Tuple[bool, int]:
+    def detect_repeated_pattern(self, machine_key: str, event_type: str) -> tuple[bool, int]:
         if machine_key not in self.event_history:
             return False, 0
 
@@ -78,7 +77,7 @@ class TemporalPatternDetector:
 
 class CorrelationAnalyzer:
     def __init__(self):
-        self.correlation_matrix: Dict[str, Dict[str, float]] = {}
+        self.correlation_matrix: dict[str, dict[str, float]] = {}
         self._init_default_correlations()
 
     def _init_default_correlations(self) -> None:
@@ -108,7 +107,7 @@ class CorrelationAnalyzer:
             },
         }
 
-    def get_correlation_score(self, event_type: str, other_events: List[str]) -> float:
+    def get_correlation_score(self, event_type: str, other_events: list[str]) -> float:
         if event_type not in self.correlation_matrix:
             return 0.0
 
@@ -164,7 +163,7 @@ class EnsembleScorer:
         return min(max(score, 0.0), 1.0)
 
     def _event_severity(self, event: Event) -> float:
-        severity_map: Dict[str, float] = {
+        severity_map: dict[str, float] = {
             "vibration_spike": 0.90,
             "temperature_rise": 0.75,
             "stoppage": 0.98,
@@ -182,7 +181,7 @@ class EnsembleScorer:
         return min(base_severity * critical_context_multiplier, 1.0)
 
     def _recency_score(self, event: Event) -> float:
-        now = datetime.now(timezone.utc).timestamp()
+        now = datetime.now(UTC).timestamp()
         elapsed_seconds = max(now - event.timestamp.timestamp(), 0.0)
         return exp(-self.decay_lambda * elapsed_seconds)
 
@@ -220,8 +219,8 @@ class DecisionPrioritizationEngine:
         self.correlation_analyzer = CorrelationAnalyzer()
         self.ensemble_scorer = EnsembleScorer()
 
-        self._recent_events: Dict[str, List[Event]] = {}
-        self._line_event_cache: Dict[str, List[str]] = {}
+        self._recent_events: dict[str, list[Event]] = {}
+        self._line_event_cache: dict[str, list[str]] = {}
 
     def prioritize(self, event: Event, assessment: ModelAssessment) -> PrioritizedCase:
         self.temporal_detector.record_event(event)
@@ -285,7 +284,7 @@ class DecisionPrioritizationEngine:
         if len(self._line_event_cache[event.line_id]) > 50:
             self._line_event_cache[event.line_id] = self._line_event_cache[event.line_id][-50:]
 
-    def _get_recent_events_on_line(self, line_id: str) -> List[str]:
+    def _get_recent_events_on_line(self, line_id: str) -> list[str]:
         return self._line_event_cache.get(line_id, [])[-10:]
 
     def _compute_velocity_score(self, event: Event, machine_key: str) -> float:
@@ -350,8 +349,8 @@ class DecisionPrioritizationEngine:
         is_repeated: bool,
         repeat_count: int,
         correlation_score: float,
-    ) -> List[str]:
-        reasons: List[str] = []
+    ) -> list[str]:
+        reasons: list[str] = []
 
         if assessment.anomaly_score >= 0.70:
             reasons.append("high anomaly score detected")

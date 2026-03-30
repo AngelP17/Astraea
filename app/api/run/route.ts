@@ -1,29 +1,31 @@
 import { NextResponse } from "next/server";
-import { execSync } from "child_process";
-import fs from "fs";
-import path from "path";
+
+const API_BASE = process.env.API_BASE_URL || "http://localhost:8000";
+
+function getAuthHeaders() {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 export async function POST() {
   try {
-    const cwd = process.cwd();
-    
-    execSync("python3 run_pipeline.py", { cwd, stdio: "pipe" });
+    const response = await fetch(`${API_BASE}/api/run`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
 
-    const resultsDir = path.join(cwd, "artifacts/results");
-    const files = fs.readdirSync(resultsDir).filter((f) => f.endsWith(".json"));
-
-    if (files.length === 0) {
-      return NextResponse.json({ error: "No results generated" }, { status: 500 });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: "Pipeline execution failed" }));
+      return NextResponse.json(
+        { error: error.error || "Pipeline execution failed" },
+        { status: response.status }
+      );
     }
 
-    const latestFile = files.sort().pop();
-    if (!latestFile) {
-      return NextResponse.json({ error: "No results generated" }, { status: 500 });
-    }
-
-    const content = fs.readFileSync(path.join(resultsDir, latestFile), "utf-8");
-    const data = JSON.parse(content);
-
+    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error("Pipeline run failed:", error);

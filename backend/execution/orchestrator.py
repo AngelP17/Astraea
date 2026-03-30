@@ -1,16 +1,17 @@
 import asyncio
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 from backend.shared.schemas import (
+    Decision,
     Event,
     FeatureVector,
     ModelAssessment,
     PrioritizedCase,
-    Decision,
 )
 
 
@@ -34,9 +35,9 @@ class ExecutionStep:
     step_type: str
     description: str
     status: ExecutionStatus
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    result: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+    result: dict[str, Any] | None = None
+    error: str | None = None
 
 
 @dataclass
@@ -45,19 +46,19 @@ class SubAgentOutcome:
     completed: bool
     iteration_limit_reached: bool
     had_tool_errors: bool
-    created_paths: List[str] = field(default_factory=list)
-    errors: List[str] = field(default_factory=list)
-    successful_tools: List[str] = field(default_factory=list)
+    created_paths: list[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
+    successful_tools: list[str] = field(default_factory=list)
 
 
 @dataclass
 class ExecutionOutcome:
     success: bool
     had_warnings: bool
-    created_artifacts: List[str]
+    created_artifacts: list[str]
     summary: str
-    error_message: Optional[str] = None
-    agent_outcomes: List[SubAgentOutcome] = field(default_factory=list)
+    error_message: str | None = None
+    agent_outcomes: list[SubAgentOutcome] = field(default_factory=list)
 
 
 class ExecutionEngine:
@@ -69,7 +70,7 @@ class ExecutionEngine:
 
     def __init__(self, mode: ExecutionMode = ExecutionMode.BALANCED):
         self.mode = mode
-        self.execution_history: List[ExecutionStep] = []
+        self.execution_history: list[ExecutionStep] = []
 
     def _get_iteration_limit(self) -> int:
         return self.ITERATION_LIMITS.get(self.mode, 5)
@@ -261,7 +262,7 @@ class ExecutionEngine:
                 "case_id": case.case_id,
                 "priority_score": case.priority_score,
                 "recommendation": decision.recommendation,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
             step.status = ExecutionStatus.COMPLETED
@@ -273,31 +274,37 @@ class ExecutionEngine:
 
         return step
 
-    def _build_summary(self, steps: List[ExecutionStep], case: PrioritizedCase) -> str:
+    def _build_summary(self, steps: list[ExecutionStep], case: PrioritizedCase) -> str:
         completed = sum(1 for s in steps if s.status == ExecutionStatus.COMPLETED)
         failed = sum(1 for s in steps if s.status == ExecutionStatus.FAILED)
         total = len(steps)
 
         if failed == 0:
-            return f"Execution completed successfully. {completed}/{total} steps completed for case {case.case_id}."
+            return (
+                "Execution completed successfully. "
+                f"{completed}/{total} steps completed for case {case.case_id}."
+            )
 
-        return f"Execution completed with {failed} failure(s). {completed}/{total} steps completed for case {case.case_id}."
+        return (
+            f"Execution completed with {failed} failure(s). "
+            f"{completed}/{total} steps completed for case {case.case_id}."
+        )
 
 
 class MultiAgentOrchestrator:
     def __init__(self):
-        self.engines: Dict[str, ExecutionEngine] = {
+        self.engines: dict[str, ExecutionEngine] = {
             "primary": ExecutionEngine(ExecutionMode.BALANCED),
             "fast": ExecutionEngine(ExecutionMode.SPEED),
             "thorough": ExecutionEngine(ExecutionMode.QUALITY),
         }
-        self.execution_log: List[Dict[str, Any]] = []
+        self.execution_log: list[dict[str, Any]] = []
 
     async def orchestrate(
         self,
-        events: List[Event],
+        events: list[Event],
         pipeline_fn: Callable,
-    ) -> List[ExecutionOutcome]:
+    ) -> list[ExecutionOutcome]:
         outcomes = []
 
         for event in events:
@@ -307,7 +314,7 @@ class MultiAgentOrchestrator:
                 {
                     "event_id": event.event_id,
                     "outcome": outcome,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 }
             )
 
@@ -318,8 +325,6 @@ class MultiAgentOrchestrator:
         event: Event,
         pipeline_fn: Callable,
     ) -> ExecutionOutcome:
-        engine = self.engines["primary"]
-
         try:
             result = await pipeline_fn(event)
             return result
@@ -332,5 +337,5 @@ class MultiAgentOrchestrator:
                 error_message=str(e),
             )
 
-    def get_execution_trace(self) -> List[Dict[str, Any]]:
+    def get_execution_trace(self) -> list[dict[str, Any]]:
         return self.execution_log

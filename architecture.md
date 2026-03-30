@@ -4,92 +4,300 @@
 
 Astraea is a deterministic explainable decision engine for event-driven industrial systems. It transforms raw telemetry into auditable, replayable decisions with full uncertainty quantification.
 
+The system consists of a **Next.js frontend**, a thin **Next.js API proxy layer**, a **FastAPI backend** for pipeline execution, and a 7-stage decision pipeline that processes events through ingestion, feature engineering, anomaly detection, prioritization, decision resolution, execution planning, and audit recording. Demo mode exposes both a batch JSON response and an SSE stream so the UI can show a guided walkthrough while the backend runs the real pipeline. The landing page is deliberately split into a **primary flagship narrative** and a collapsible **technical depth** area so product value and diligence can coexist without overwhelming the first impression.
+
 ---
 
-## High-Level Architecture
+## Architecture
+
+### System Architecture Overview
 
 ```mermaid
-flowchart TD
-    subgraph INGESTION["Stage 1: Event Ingestion"]
-        A[Raw Sensor Data] --> B[Normalizer]
-        B --> C[Validated Event]
+graph TB
+    subgraph Frontend["Frontend (Next.js)"]
+        Hero["Hero Component"]
+        Walkthrough["Demo Walkthrough"]
+        Engine["Engine Page"]
     end
-
-    INGESTION --> FEATURE
-
-    subgraph FEATURE["Stage 2: Feature Engineering"]
-        C --> D[Feature Engine]
-        D --> E[Threshold Analysis]
-        D --> F[Ratio Computation]
-        D --> G[Context Markers]
-        E --> H[FeatureVector]
-        F --> H
-        G --> H
+    
+    subgraph API["API Layer"]
+        NAPI["Next.js API Routes"]
+        FastAPI["FastAPI Backend"]
     end
-
-    FEATURE --> DETECT
-
-    subgraph DETECT["Stage 3: Anomaly Detection"]
-        H --> I[Anomaly Detector]
-        I --> J[Anomaly Score]
-        I --> K[Failure Probability]
-        I --> L[Confidence]
-        I --> M[Uncertainty Interval]
+    
+    subgraph Pipeline["Decision Pipeline"]
+        Event["Event Ingestion"]
+        Normalize["Normalizer"]
+        Feature["Feature Engine"]
+        Score["Anomaly Detector"]
+        Prioritize["Prioritizer"]
+        Decide["Decision Engine"]
+        Audit["Audit Recorder"]
     end
+    
+    Frontend --> NAPI
+    NAPI --> FastAPI
+    FastAPI --> Pipeline
+    Pipeline --> Audit
+```
 
-    DETECT --> PRIORITIZE
+### Data Flow (Streaming)
 
-    subgraph PRIORITIZE["Stage 4: Decision Prioritization"]
-        J --> N[Priority Engine]
-        K --> N
-        L --> N
-        M --> N
-        N --> O[Priority Score]
-        N --> P[Routing Bucket]
-        N --> Q[Severity Label]
+```mermaid
+sequenceDiagram
+    participant E as Event Source
+    participant FE as Frontend
+    participant API as API Route
+    participant BE as Backend
+    participant P as Pipeline
+    
+    E->>FE: Click "Run Demo"
+    FE->>API: POST /api/demo
+    API->>BE: SSE Connection
+    BE->>P: Execute Pipeline
+    P-->>BE: Stage 1 Complete
+    BE-->>API: {stage: "capture", done: true}
+    API-->>FE: SSE Event
+    FE->>Walkthrough: Update Stage
+    P-->>BE: Stage 2 Complete
+    BE-->>API: {stage: "normalize", done: true}
+    API-->>FE: SSE Event
+    FE->>Walkthrough: Update Stage
+    Note over P,FE: ... continues for all 7 stages
+    P-->>BE: Final Result
+    BE-->>API: {complete: true, result: {...}}
+    API-->>FE: SSE Complete
+```
+
+### API Proxy Flow
+
+```mermaid
+sequenceDiagram
+    participant FE as Frontend
+    participant NAPI as Next.js API
+    participant BE as FastAPI Backend
+
+    FE->>NAPI: GET /api/demo
+    NAPI->>BE: GET /api/demo/stream
+    BE-->>NAPI: event: stage (SSE)
+    NAPI-->>FE: event: stage (SSE)
+    FE->>FE: Advance walkthrough stage
+
+    FE->>NAPI: POST /api/demo
+    NAPI->>BE: POST /api/demo
+    BE-->>NAPI: {count: 100, results: [...]}
+    NAPI-->>FE: JSON batch results
+```
+
+### Component Hierarchy
+
+```mermaid
+graph TD
+    App["app/layout.tsx"]
+    Page["app/page.tsx"]
+    Hero["components/hero.tsx"]
+    Nav["components/nav.tsx"]
+    Walkthrough["components/demo-walkthrough.tsx"]
+    Audit["components/audit-section.tsx"]
+    Artifacts["components/artifacts-section.tsx"]
+    DeepDive["Technical Depth Drawer"]
+    Footer["components/footer.tsx"]
+    
+    Engine["app/engine/page.tsx"]
+    EngineHero["Engine Hero"]
+    CaseQueue["Case Queue"]
+    
+    UI["components/ui/"]
+    Button["button.tsx"]
+    Card["card.tsx"]
+    Badge["badge.tsx"]
+    
+    App --> Page
+    App --> Nav
+    App --> Footer
+    Page --> Hero
+    Page --> Walkthrough
+    Page --> Audit
+    Page --> Artifacts
+    Page --> DeepDive
+    Engine --> EngineHero
+    Engine --> CaseQueue
+    
+    UI --> Button
+    UI --> Card
+    UI --> Badge
+```
+
+### Design System Tokens
+
+```mermaid
+graph LR
+    subgraph Colors["Colors"]
+        BG["background: #0A0A0B"]
+        Primary["indigo: #6366F1"]
+        Secondary["cyan: #00F0FF"]
+        Accent["amber: #FFD016"]
     end
-
-    PRIORITIZE --> DECIDE
-
-    subgraph DECIDE["Stage 5: Decision Resolution"]
-        O --> R[Decision Engine]
-        R --> S[Recommendation]
-        R --> T[Action Plan]
-        R --> U[Owner Assignment]
+    
+    subgraph Typography["Typography"]
+        Display["Display: Inter 800"]
+        Body["Body: Inter 400"]
+        Mono["Mono: JetBrains Mono"]
     end
-
-    DECIDE --> EXECUTE
-
-    subgraph EXECUTE["Stage 6: Execution Planning"]
-        T --> V[Execution Dispatcher]
-        V --> W[Execution Plan]
-        V --> X[Commands]
-        V --> Y[Notifications]
-    end
-
-    EXECUTE --> AUDIT
-
-    subgraph AUDIT["Stage 7: Audit & Replay"]
-        C --> Z[Event Snapshot]
-        H --> AA[Feature Snapshot]
-        J --> AB[Model Snapshot]
-        O --> AC[Prioritization Snapshot]
-        S --> AD[Decision Snapshot]
-        W --> AE[Execution Snapshot]
-        Z --> AF[Audit Recorder]
-        AA --> AF
-        AB --> AF
-        AC --> AF
-        AD --> AF
-        AE --> AF
-        AF --> AG[SHA256 Hash]
-        AG --> AH[Replay Store]
+    
+    subgraph Motion["Motion"]
+        Fast["fast: 100ms"]
+        Normal["normal: 200ms"]
+        Slow["slow: 400ms"]
     end
 ```
 
 ---
 
+## Frontend
+
+### Overview
+
+The **Next.js frontend** provides a reactive user interface for interacting with the Astraea decision engine. It features real-time streaming updates via Server-Sent Events (SSE), a demo walkthrough component, and an engine page for deep-dive case analysis.
+
+### Design System
+
+**Color Palette:**
+| Token | Value | Usage |
+|-------|-------|-------|
+| `background` | `#0A0A0B` | Page background |
+| `foreground` | `#FAFAFA` | Primary text |
+| `indigo` | `#6366F1` | Primary actions, links |
+| `cyan` | `#00F0FF` | Secondary highlights |
+| `amber` | `#FFD016` | Accent, warnings |
+| `muted` | `#27272A` | Card backgrounds |
+
+**Typography:**
+- **Display:** Inter 800 (headings)
+- **Body:** Inter 400 (paragraphs)
+- **Mono:** JetBrains Mono (code, metrics)
+
+**Motion:**
+- `fast`: 100ms (micro-interactions)
+- `normal`: 200ms (standard transitions)
+- `slow`: 400ms (page transitions, reveals)
+
+### UI Components
+
+The component library is located in `components/ui/`:
+
+| Component | File | Description |
+|-----------|------|-------------|
+| Button | `button.tsx` | Primary, secondary, ghost variants |
+| Card | `card.tsx` | Content containers with hover states |
+| Badge | `badge.tsx` | Status indicators (critical, high, medium, low) |
+| Skeleton | `skeleton.tsx` | Loading placeholders with shimmer |
+| Input | `input.tsx` | Text inputs with focus and error states |
+
+### Key Components
+
+- **`Hero Component`** (`components/hero.tsx`): Main landing hero with CTA
+- **`Demo Walkthrough`** (`components/demo-walkthrough.tsx`): 7-stage streaming demo with real-time pipeline visualization
+- **`Audit Section`** (`components/audit-section.tsx`): Proof-oriented trust layer that explains replay and hash verification
+- **`Artifacts Section`** (`components/artifacts-section.tsx`): Product-layer framing for frontend, backend, and replay artifacts
+- **`Engine Page`** (`app/engine/page.tsx`): Deep-dive case study interface with case queue
+- **`Technical Depth Drawer`** (`app/page.tsx`): Secondary architecture views kept behind a collapsible detail surface
+
+---
+
+## Backend
+
+### FastAPI Integration
+
+The **FastAPI backend** serves as the primary API layer, handling:
+- SSE (Server-Sent Events) streaming for real-time pipeline updates
+- REST endpoints for case retrieval and replay
+- Python pipeline execution management
+- Batch demo execution for 100 synthetic events
+
+The `/api/cases` endpoint merges both live run artifacts and demo artifacts so the engine page can inspect the latest replayable decision bundles without caring which mode produced them.
+
+### Repository Guardrails
+
+The repository now protects itself at both the **local commit** and **CI** layers:
+
+- **Local pre-commit blocking** via `.githooks/pre-commit`
+- **Repository-wide secret scan** via `.github/workflows/ci.yml`
+- **Example-only secrets** kept in `.env.example` instead of committed runtime files
+
+```mermaid
+flowchart LR
+    Dev["Developer Commit"] --> Hook[".githooks/pre-commit"]
+    Hook --> Scan["scripts/scan_staged_secrets.py"]
+    Scan -->|clean| Commit["Commit Allowed"]
+    Scan -->|suspected secret| Block["Commit Blocked"]
+
+    Push["Push / Pull Request"] --> CI["GitHub Actions CI"]
+    CI --> RepoScan["python3 scripts/scan_staged_secrets.py --all-files"]
+    RepoScan -->|clean| Jobs["Build / Test / Deploy Jobs"]
+    RepoScan -->|suspected secret| Fail["Workflow Fails"]
+```
+
+### Production Deploy Path
+
+The production deployment path now creates **runtime Kubernetes secrets from CI** instead of applying the placeholder secret manifest from the repository.
+
+```mermaid
+flowchart LR
+    Push["Push to main"] --> Build["Build and push API/worker images"]
+    Build --> Context["Set Kubernetes context from KUBE_CONFIG"]
+    Context --> Secret["Create or update astraea-secrets in cluster"]
+    Secret --> Deploy["Apply namespace, config, PVC, Redis, API, worker, HPA, PDB, NetworkPolicy"]
+    Deploy --> Ingress{"Ingress host + TLS configured?"}
+    Ingress -->|Yes| ApplyIngress["Render and apply ingress"]
+    Ingress -->|No| SkipIngress["Skip ingress"]
+    ApplyIngress --> Verify["Wait for rollout status"]
+    SkipIngress --> Verify["Wait for rollout status"]
+    Verify --> Healthy["Deployment marked successful"]
+```
+
+### Streaming Architecture
+
+```mermaid
+graph LR
+    FE[Frontend] -->|POST /api/demo| NAPI[Next.js API]
+    NAPI -->|SSE| BE[FastAPI]
+    BE -->|Execute| PL[Pipeline]
+    PL -->|Stage Events| BE
+    BE -->|SSE Stream| NAPI
+    NAPI -->|SSE Events| FE
+```
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/demo` | Run the batch demo and return processed results |
+| `GET` | `/api/demo/stream` | Stream stage-by-stage SSE events |
+| `GET` | `/api/cases` | Retrieve processed cases |
+| `POST` | `/api/replay` | Replay a specific case |
+
+---
+
 ## Data Flow
+
+### Streaming Pipeline Flow
+
+The demo walkthrough implements a 7-stage streaming architecture:
+
+1. **Capture** - Event ingestion from sensor data
+2. **Normalize** - Validate and normalize raw values
+3. **Feature** - Compute feature vectors
+4. **Score** - Anomaly detection with uncertainty
+5. **Prioritize** - Calculate priority scores
+6. **Decide** - Resolve routing bucket
+7. **Audit** - Final result with audit hash
+
+The batch demo processes 100 synthetic events by default and stores the resulting cases as JSON artifacts for replay.
+
+Each stage emits an SSE event to the frontend for real-time UI updates.
+
+### Batch Processing Flow
 
 ```mermaid
 flowchart LR
@@ -517,18 +725,20 @@ flowchart TB
     subgraph FRONTEND["Next.js Frontend"]
         UI[React Components]
         API[API Routes]
+        SSE[SSE Streaming]
     end
 
-    subgraph BACKEND["Python Backend"]
+    subgraph BACKEND["FastAPI Backend"]
         PL[Python Pipeline]
         FS[File System]
     end
 
-    UI -->|fetch /api/run| API
-    API -->|exec python run_pipeline.py| PL
+    UI -->|fetch /api/demo| API
+    API -->|SSE| FE
+    API -->|exec pipeline| PL
     PL -->|save JSON| FS
     FS -->|read JSON| API
-    API -->|return PipelineResult| UI
+    API -->|return result| UI
 
     style FRONTEND fill:#1a1a2e,color:#fff
     style BACKEND fill:#16213e,color:#fff
@@ -581,6 +791,15 @@ Astraea/
 │   │   └── replay/route.ts    # POST /api/replay
 │   ├── engine/page.tsx        # Deep dive case study
 │   └── page.tsx              # Landing page
+├── components/
+│   ├── hero.tsx               # Main hero component
+│   ├── nav.tsx                # Navigation
+│   ├── footer.tsx             # Footer
+│   ├── demo-walkthrough.tsx   # 7-stage streaming demo
+│   └── ui/                    # UI component library
+│       ├── button.tsx         # Button variants
+│       ├── card.tsx           # Card component
+│       └── badge.tsx          # Status badges
 ├── data/
 │   └── sample_events.json      # Sample industrial events
 ├── tests/
@@ -610,3 +829,8 @@ Every prediction includes calibrated confidence intervals, enabling informed hum
 
 ### 5. Operational Routing
 Decisions map directly to real-world workflows (maintenance queues, incident response, etc.).
+
+### 6. Real-Time Streaming
+SSE enables real-time pipeline stage updates for enhanced user experience during demo execution.
+
+(End of file - total 712 lines)

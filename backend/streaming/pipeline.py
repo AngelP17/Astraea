@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-import json
-from datetime import datetime, timezone
-from typing import AsyncGenerator, Callable, Dict, List, Optional, Any
-from dataclasses import dataclass, field
 from collections import deque
+from collections.abc import AsyncGenerator, Callable
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 
 from backend.shared.schemas import Event, PipelineResult
 
@@ -13,9 +12,9 @@ from backend.shared.schemas import Event, PipelineResult
 @dataclass
 class StreamEvent:
     event: Event
-    received_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    received_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     processed: bool = False
-    result: Optional[PipelineResult] = None
+    result: PipelineResult | None = None
     latency_ms: float = 0.0
 
 
@@ -42,7 +41,7 @@ class EventStreamBuffer:
             self.buffer.append(stream_event)
             return True
 
-    async def get_batch(self, count: int) -> List[StreamEvent]:
+    async def get_batch(self, count: int) -> list[StreamEvent]:
         async with self.lock:
             batch = []
             for _ in range(min(count, len(self.buffer))):
@@ -72,10 +71,9 @@ class StreamProcessor:
         self.buffer = EventStreamBuffer()
         self.metrics = StreamMetrics()
         self._running = False
-        self._process_task: Optional[asyncio.Task] = None
+        self._process_task: asyncio.Task | None = None
 
     async def submit(self, event: Event) -> bool:
-        start_time = datetime.now(timezone.utc)
         stream_event = StreamEvent(event=event)
 
         success = await self.buffer.add(stream_event)
@@ -83,7 +81,7 @@ class StreamProcessor:
         self.metrics.queue_depth = await self.buffer.size()
 
         if success:
-            stream_event.received_at = datetime.now(timezone.utc)
+            stream_event.received_at = datetime.now(UTC)
 
         return success
 
@@ -97,13 +95,13 @@ class StreamProcessor:
                     continue
 
                 for stream_event in batch:
-                    start = datetime.now(timezone.utc)
+                    start = datetime.now(UTC)
                     try:
                         result = self.pipeline_func(stream_event.event)
                         stream_event.result = result
                         stream_event.processed = True
                         processing_time = (
-                            datetime.now(timezone.utc) - start
+                            datetime.now(UTC) - start
                         ).total_seconds() * 1000
                         stream_event.latency_ms = processing_time
                         self.metrics.total_processed += 1
@@ -149,9 +147,9 @@ class StreamingDecisionEngine:
     ) -> None:
         self.batch_size = batch_size
         self.flush_interval = flush_interval
-        self.processors: Dict[str, StreamProcessor] = {}
+        self.processors: dict[str, StreamProcessor] = {}
         self._running = False
-        self._stream_task: Optional[asyncio.Task] = None
+        self._stream_task: asyncio.Task | None = None
 
     def create_line_processor(
         self,
@@ -188,14 +186,14 @@ class StreamingDecisionEngine:
         for processor in self.processors.values():
             await processor.stop()
 
-    def get_all_metrics(self) -> Dict[str, StreamMetrics]:
+    def get_all_metrics(self) -> dict[str, StreamMetrics]:
         return {line_id: p.get_metrics() for line_id, p in self.processors.items()}
 
 
 class EventStreamSimulator:
     def __init__(
         self,
-        events: List[Event],
+        events: list[Event],
         interval_ms: int = 500,
     ) -> None:
         self.events = events
@@ -213,11 +211,11 @@ class EventStreamSimulator:
 
 
 async def run_streaming_demo(
-    events: List[Event],
+    events: list[Event],
     pipeline_func: Callable[[Event], PipelineResult],
     batch_size: int = 5,
-) -> List[StreamEvent]:
-    results: List[StreamEvent] = []
+) -> list[StreamEvent]:
+    results: list[StreamEvent] = []
     engine = StreamingDecisionEngine(batch_size=batch_size)
 
     line_ids = set(e.line_id for e in events)

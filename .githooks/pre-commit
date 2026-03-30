@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eu
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+python3 scripts/scan_staged_secrets.py

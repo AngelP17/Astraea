@@ -1,181 +1,263 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useState } from 'react';
+import {
+  ArrowDownCircle,
+  Filter,
+  Lock,
+  Scale,
+  Send,
+  Shield,
+  Zap,
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const pipelineStages = [
-  { id: 'ingest', label: 'Ingest', icon: '📥', color: '#a1faff', description: 'Raw telemetry capture' },
-  { id: 'normalize', label: 'Normalize', icon: '⚡', color: '#ac8aff', description: 'Schema validation' },
-  { id: 'feature', label: 'Feature', icon: '🔢', color: '#dac9ff', description: 'Threshold analysis' },
-  { id: 'score', label: 'Score', icon: '📊', color: '#ff716c', description: 'Anomaly detection' },
-  { id: 'prioritize', label: 'Prioritize', icon: '🎯', color: '#ffd16f', description: 'Risk ranking' },
-  { id: 'decide', label: 'Decide', icon: '✅', color: '#00f4fe', description: 'Action resolution' },
-  { id: 'audit', label: 'Audit', icon: '🔐', color: '#a1faff', description: 'Hash verification' },
+  {
+    id: 'capture',
+    label: 'Event capture',
+    icon: ArrowDownCircle,
+    color: '#6366F1',
+    description: 'Raw telemetry enters with source, machine, and timestamp context intact.',
+  },
+  {
+    id: 'normalize',
+    label: 'Normalization',
+    icon: Scale,
+    color: '#818CF8',
+    description: 'The event contract is validated and converted into a stable shape.',
+  },
+  {
+    id: 'feature',
+    label: 'Feature extraction',
+    icon: Zap,
+    color: '#A78BFA',
+    description: 'Threshold deltas and ratios expose machine state in plain language.',
+  },
+  {
+    id: 'score',
+    label: 'Anomaly scoring',
+    icon: Shield,
+    color: '#8B5CF6',
+    description: 'The model scores risk and uncertainty without hiding its confidence band.',
+  },
+  {
+    id: 'prioritize',
+    label: 'Prioritization',
+    icon: Filter,
+    color: '#6366F1',
+    description: 'The case is routed into an operational bucket with clear rationale.',
+  },
+  {
+    id: 'dispatch',
+    label: 'Decision dispatch',
+    icon: Send,
+    color: '#818CF8',
+    description: 'The recommendation becomes an action bundle with owner and next steps.',
+  },
+  {
+    id: 'audit',
+    label: 'Audit proof',
+    icon: Lock,
+    color: '#A1FFAF',
+    description: 'Snapshots and hash material make the final decision replayable.',
+  },
 ];
 
-const STAGE_WIDTH = 64;
-const CONNECTOR_WIDTH = 40;
-
 export function PipelineDiagram() {
-  const [activeStage, setActiveStage] = useState<number | null>(null);
+  const [activeStage, setActiveStage] = useState<number>(0);
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section className="relative border-b border-white/5 bg-surface py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="mb-16 text-center">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">Architecture</div>
-          <h2 className="mt-5 font-headline text-4xl font-black uppercase tracking-[-0.04em] md:text-5xl">
-            7-Stage Deterministic Pipeline
+        <div className="mx-auto max-w-3xl text-center">
+          <Badge variant="info" dot className="mx-auto">
+            Architecture
+          </Badge>
+          <h2 className="mt-5 font-display text-4xl font-black uppercase tracking-[-0.04em] text-white md:text-5xl">
+            A seven-stage control loop that stays readable
           </h2>
-          <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-neutral-400">
-            Every decision flows through a deterministic control loop. No randomness. No black boxes. Full auditability.
+          <p className="mt-5 text-base leading-7 text-neutral-400 md:text-lg">
+            Every decision moves from capture to audit proof through a deterministic path. The diagram is designed
+            to explain the system quickly, without the visual noise common in technical landing pages.
           </p>
         </div>
 
-        <div className="relative">
-          <div className="absolute left-0 right-0 top-1/2 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-          
-          <div className="relative mx-auto" style={{ width: `${STAGE_WIDTH * 7 + CONNECTOR_WIDTH * 6 + 48}`, maxWidth: '100%' }}>
-            <svg 
-              className="absolute top-8 left-0 w-full h-16 pointer-events-none" 
-              viewBox={`0 0 ${STAGE_WIDTH * 7 + CONNECTOR_WIDTH * 6 + 48} 64`}
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <defs>
-                <marker id="arrowhead-dark" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-                  <polygon points="0 0, 8 3, 0 6" fill="#494847" />
-                </marker>
-              </defs>
-              {pipelineStages.slice(0, -1).map((stage, index) => {
-                const startX = 32 + index * (STAGE_WIDTH + CONNECTOR_WIDTH) + STAGE_WIDTH;
-                const endX = 32 + (index + 1) * (STAGE_WIDTH + CONNECTOR_WIDTH);
-                const midX = startX + (endX - startX) / 2;
-                return (
-                  <g key={`connector-${stage.id}`}>
-                    <line 
-                      x1={startX} 
-                      y1="32" 
-                      x2={midX - 4} 
-                      y2="32" 
-                      stroke={stage.color} 
-                      strokeWidth="1" 
-                      opacity="0.5"
-                    />
-                    <path
-                      d={`M${midX - 4} 32 L${midX + 4} 27 L${midX + 4} 37 Z`}
-                      fill={stage.color}
-                      opacity="0.5"
-                    />
-                    <line 
-                      x1={midX + 4} 
-                      y1="32" 
-                      x2={endX} 
-                      y2="32" 
-                      stroke="#494847" 
-                      strokeWidth="1" 
-                      strokeDasharray="2 2"
-                    />
-                  </g>
-                );
-              })}
-            </svg>
+        <div className="mt-14 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+          <Card padding="lg" className="overflow-hidden border-white/6">
+            <CardHeader className="pb-5">
+              <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-indigo">
+                Pipeline overview
+              </div>
+              <CardTitle className="mt-2 text-2xl font-black uppercase tracking-[-0.03em] text-white">
+                The same path, every time
+              </CardTitle>
+              <CardDescription className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
+                Hover a stage to inspect it, or read left to right for the full narrative. The active stage uses an
+                indigo glow so the flow feels guided rather than busy.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <div className="absolute left-5 right-5 top-[2.1rem] hidden h-px bg-gradient-to-r from-transparent via-white/10 to-transparent xl:block" />
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-7">
+                  {pipelineStages.map((stage, index) => {
+                    const Icon = stage.icon;
+                    const isActive = activeStage === index;
 
-            <div className="relative flex justify-between items-center gap-2 overflow-x-auto pb-8">
-              {pipelineStages.map((stage, index) => (
-                <motion.div
-                  key={stage.id}
-                  className="relative flex flex-col items-center shrink-0"
-                  onMouseEnter={() => setActiveStage(index)}
-                  onMouseLeave={() => setActiveStage(null)}
-                  style={{ width: STAGE_WIDTH }}
-                >
-                  <motion.div
-                    className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-2 text-2xl shrink-0"
-                    style={{ 
-                      borderColor: stage.color,
-                      backgroundColor: activeStage === index ? `${stage.color}20` : 'rgba(10,10,10,0.8)',
-                    }}
-                    animate={{
-                      scale: activeStage === index ? 1.15 : 1,
-                      boxShadow: activeStage === index ? `0 0 30px ${stage.color}40` : 'none',
-                    }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {stage.icon}
-                  </motion.div>
-                  
-                  <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] whitespace-nowrap" style={{ color: stage.color }}>
-                    {stage.label}
-                  </div>
-                  
-                  <div className="mt-1 h-1 w-12 rounded-full bg-white/10">
-                    <motion.div 
-                      className="h-full rounded-full"
-                      style={{ backgroundColor: stage.color }}
-                      initial={{ width: '0%' }}
-                      whileInView={{ width: '100%' }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.8, delay: index * 0.1 }}
-                    />
-                  </div>
+                    return (
+                      <motion.button
+                        key={stage.id}
+                        type="button"
+                        onMouseEnter={() => setActiveStage(index)}
+                        onFocus={() => setActiveStage(index)}
+                        onBlur={() => setActiveStage(0)}
+                        onClick={() => setActiveStage(index)}
+                        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{ duration: 0.35, delay: index * 0.04 }}
+                        className="group relative flex min-h-[180px] flex-col items-start rounded-2xl border border-white/6 bg-black/30 p-4 text-left transition-all duration-200 hover:border-white/12"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className={`rounded-full border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.2em] ${
+                            isActive ? 'border-indigo/30 bg-indigo/10 text-indigo' : 'border-white/10 bg-white/[0.02] text-neutral-500'
+                          }`}>
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                          <div className={`h-2 w-2 rounded-full ${isActive ? 'bg-indigo shadow-[0_0_12px_rgba(99,102,241,0.7)]' : 'bg-white/20'}`} />
+                        </div>
 
-                  {activeStage === index && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="absolute top-full mt-4 whitespace-nowrap rounded border border-white/10 bg-black/90 px-3 py-2 font-mono text-[10px] text-neutral-300 z-20"
-                    >
-                      {stage.description}
-                    </motion.div>
-                  )}
-                </motion.div>
-              ))}
+                        <div
+                          className={`mt-4 flex h-12 w-12 items-center justify-center rounded-xl border transition-all duration-200 ${
+                            isActive ? 'border-indigo/30 bg-indigo/10' : 'border-white/6 bg-white/[0.02]'
+                          }`}
+                        >
+                          <Icon className={`h-5 w-5 ${isActive ? 'text-indigo' : 'text-neutral-300'}`} />
+                        </div>
+
+                        <div className={`mt-4 font-display text-sm font-bold uppercase tracking-[0.08em] ${
+                          isActive ? 'text-white' : 'text-neutral-200'
+                        }`}>
+                          {stage.label}
+                        </div>
+
+                        <p className="mt-2 text-sm leading-6 text-neutral-400">
+                          {stage.description}
+                        </p>
+
+                        <div className="mt-4 h-1 w-full overflow-hidden rounded-full bg-white/5">
+                          <motion.div
+                            className="h-full rounded-full"
+                            style={{ backgroundColor: stage.color }}
+                            initial={{ width: '0%' }}
+                            whileInView={{ width: isActive ? '100%' : '70%' }}
+                            viewport={{ once: true }}
+                            transition={{ duration: prefersReducedMotion ? 0.01 : 0.8, delay: index * 0.05 }}
+                          />
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-6">
+            <Card padding="lg" className="border-white/6 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.12),transparent_45%),rgba(17,17,19,0.9)]">
+              <CardHeader className="pb-4">
+                <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-indigo">
+                  Active stage
+                </div>
+                <CardTitle className="mt-2 text-2xl font-black uppercase tracking-[-0.03em] text-white">
+                  {String(activeStage + 1).padStart(2, '0')} / {pipelineStages[activeStage].label}
+                </CardTitle>
+                <CardDescription className="mt-2 text-sm leading-6 text-neutral-400">
+                  {pipelineStages[activeStage].description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <InfoTile label="Guarantee" value="Deterministic trace" />
+                  <InfoTile label="Outcome" value="Replayable audit bundle" />
+                </div>
+                <div className="rounded-2xl border border-white/6 bg-black/30 p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-neutral-500">
+                    Why this matters
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-neutral-300">
+                    The visualization favors clarity over spectacle. That keeps the pipeline legible for technical
+                    audiences while still feeling premium enough for executive demos.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid gap-4">
+              <FeatureCard
+                title="Deterministic hash"
+                description="Every stage contributes to the same proof chain, so any decision can be replayed later."
+                code="sha256(event + features + model + decision)"
+                color="#6366F1"
+              />
+              <FeatureCard
+                title="Uncertainty quantification"
+                description="Confidence and uncertainty stay visible, which makes operator review feel deliberate."
+                code="[0.614 — 0.866]"
+                color="#8B5CF6"
+              />
+              <FeatureCard
+                title="Zero-trust execution"
+                description="High-uncertainty cases stay in human review until the recommendation is ready."
+                code="if confidence < threshold: review_required"
+                color="#FFD016"
+              />
             </div>
           </div>
-        </div>
-
-        <div className="mt-20 grid gap-8 md:grid-cols-3">
-          <FeatureCard
-            title="Deterministic Hash"
-            description="Every pipeline stage produces a SHA256 hash. Reproduce any decision by replaying the same input."
-            code="hash = sha256(event + features + model + decision)"
-            color="#a1faff"
-          />
-          <FeatureCard
-            title="Uncertainty Quantification"
-            description="Every decision includes confidence intervals. Know exactly when the model is uncertain."
-            code="uncertainty = [0.614 — 0.866]"
-            color="#ff716c"
-          />
-          <FeatureCard
-            title="Zero-Trust Execution"
-            description="All decisions require human review under uncertainty. No fully autonomous actions."
-            code="if confidence < threshold: human_review_required"
-            color="#ffd16f"
-          />
         </div>
       </div>
     </section>
   );
 }
 
-function FeatureCard({ title, description, code, color }: { title: string; description: string; code: string; color: string }) {
+function FeatureCard({
+  title,
+  description,
+  code,
+  color,
+}: {
+  title: string;
+  description: string;
+  code: string;
+  color: string;
+}) {
   return (
-    <motion.div
-      className="panel overflow-hidden p-1"
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.2 }}
-    >
-      <div className="border border-white/5 bg-black/60 p-6">
-        <div className="mb-4 h-px w-full" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
-        <h3 className="font-headline text-xl font-bold uppercase" style={{ color }}>
+    <Card variant="interactive" padding="md" className="border-white/6">
+      <CardHeader className="pb-3">
+        <div className="h-px w-full" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+        <CardTitle className="mt-4 text-lg font-black uppercase tracking-[-0.02em]" style={{ color }}>
           {title}
-        </h3>
-        <p className="mt-3 text-sm leading-6 text-neutral-400">{description}</p>
-        <div className="mt-4 rounded bg-surface-low p-3 font-mono text-[10px] text-primary/80">
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <p className="text-sm leading-6 text-neutral-400">{description}</p>
+        <div className="rounded-xl border border-white/6 bg-black/40 p-3 font-mono text-[10px] text-neutral-200">
           {code}
         </div>
-      </div>
-    </motion.div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function InfoTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-white/6 bg-black/30 p-4">
+      <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">{label}</div>
+      <div className="mt-3 font-display text-sm font-bold uppercase tracking-[0.08em] text-white">{value}</div>
+    </div>
   );
 }

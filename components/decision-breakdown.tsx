@@ -81,7 +81,7 @@ export function DecisionBreakdown({ result }: DecisionBreakdownProps) {
               transition={{ delay: i * 0.05 }}
               className="flex items-start gap-2 font-mono text-xs text-neutral-300"
             >
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo" />
               <span className="break-words">{factor}</span>
             </motion.div>
           ))}
@@ -109,7 +109,7 @@ export function DecisionBreakdown({ result }: DecisionBreakdownProps) {
       </div>
 
       <div className="rounded border border-tertiary/30 bg-tertiary/5 p-4">
-        <div className="mb-2 font-headline text-lg font-bold uppercase text-tertiary">
+        <div className="mb-2 font-display text-lg font-bold uppercase text-tertiary">
           {decision.recommendation}
         </div>
         <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400">
@@ -132,7 +132,7 @@ function ScoreCard({
   color: 'primary' | 'secondary' | 'danger' | 'tertiary';
 }) {
   const colorClasses = {
-    primary: 'text-primary bg-primary/10 border-primary/30',
+    primary: 'text-indigo bg-indigo/10 border-indigo/30',
     secondary: 'text-secondary bg-secondary/10 border-secondary/30',
     danger: 'text-danger bg-danger/10 border-danger/30',
     tertiary: 'text-tertiary bg-tertiary/10 border-tertiary/30',
@@ -148,7 +148,7 @@ function ScoreCard({
         <Icon className="h-4 w-4" />
         <span className="font-mono text-[10px] uppercase tracking-[0.2em]">{(value * 100).toFixed(1)}%</span>
       </div>
-      <div className="mt-2 font-headline text-xl font-bold uppercase">{value.toFixed(3)}</div>
+      <div className="mt-2 font-display text-xl font-bold uppercase">{value.toFixed(3)}</div>
       <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.15em] text-neutral-500">{label}</div>
     </motion.div>
   );

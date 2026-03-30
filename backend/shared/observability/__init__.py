@@ -1,9 +1,10 @@
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Callable
-from enum import Enum
 import time
 import uuid
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from enum import Enum
+from typing import Any
 
 
 class SpanStatus(Enum):
@@ -17,20 +18,20 @@ class Span:
     span_id: str
     operation_name: str
     start_time: float
-    end_time: Optional[float] = None
-    duration_ms: Optional[float] = None
+    end_time: float | None = None
+    duration_ms: float | None = None
     status: SpanStatus = SpanStatus.OK
-    attributes: Dict[str, Any] = field(default_factory=dict)
-    events: List[Dict[str, Any]] = field(default_factory=list)
-    error_message: Optional[str] = None
+    attributes: dict[str, Any] = field(default_factory=dict)
+    events: list[dict[str, Any]] = field(default_factory=list)
+    error_message: str | None = None
 
-    def finish(self, status: SpanStatus = SpanStatus.OK, error: Optional[str] = None):
+    def finish(self, status: SpanStatus = SpanStatus.OK, error: str | None = None):
         self.end_time = time.perf_counter()
         self.duration_ms = (self.end_time - self.start_time) * 1000
         self.status = status
         self.error_message = error
 
-    def add_event(self, name: str, attributes: Optional[Dict[str, Any]] = None):
+    def add_event(self, name: str, attributes: dict[str, Any] | None = None):
         self.events.append(
             {
                 "name": name,
@@ -46,13 +47,13 @@ class Span:
 @dataclass
 class Trace:
     trace_id: str
-    spans: List[Span] = field(default_factory=list)
-    start_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    end_time: Optional[datetime] = None
-    total_duration_ms: Optional[float] = None
+    spans: list[Span] = field(default_factory=list)
+    start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
+    end_time: datetime | None = None
+    total_duration_ms: float | None = None
 
     def finish(self):
-        self.end_time = datetime.now(timezone.utc)
+        self.end_time = datetime.now(UTC)
         if self.spans:
             self.total_duration_ms = sum(s.duration_ms or 0 for s in self.spans)
 
@@ -60,11 +61,11 @@ class Trace:
 class Observability:
     def __init__(self, service_name: str = "astraea"):
         self.service_name = service_name
-        self._traces: Dict[str, Trace] = {}
-        self._active_spans: Dict[str, Span] = {}
-        self._metrics: Dict[str, List[float]] = {}
+        self._traces: dict[str, Trace] = {}
+        self._active_spans: dict[str, Span] = {}
+        self._metrics: dict[str, list[float]] = {}
 
-    def start_trace(self, trace_id: Optional[str] = None) -> str:
+    def start_trace(self, trace_id: str | None = None) -> str:
         trace_id = trace_id or str(uuid.uuid4())
         trace = Trace(trace_id=trace_id)
         self._traces[trace_id] = trace
@@ -74,9 +75,11 @@ class Observability:
         self,
         trace_id: str,
         operation_name: str,
-        attributes: Optional[Dict[str, Any]] = None,
+        attributes: dict[str, Any] | None = None,
     ) -> Span:
-        span_id = f"{trace_id}:{operation_name}:{len(self._traces.get(trace_id, Trace(trace_id=trace_id)).spans)}"
+        trace = self._traces.get(trace_id)
+        span_index = len(trace.spans) if trace is not None else 0
+        span_id = f"{trace_id}:{operation_name}:{span_index}"
         span = Span(
             span_id=span_id,
             operation_name=operation_name,
@@ -92,22 +95,22 @@ class Observability:
         self,
         span: Span,
         status: SpanStatus = SpanStatus.OK,
-        error: Optional[str] = None,
+        error: str | None = None,
     ):
         span.finish(status, error)
         if span.span_id in self._active_spans:
             del self._active_spans[span.span_id]
 
-    def finish_trace(self, trace_id: str) -> Optional[Trace]:
+    def finish_trace(self, trace_id: str) -> Trace | None:
         if trace_id in self._traces:
             self._traces[trace_id].finish()
             return self._traces[trace_id]
         return None
 
-    def get_trace(self, trace_id: str) -> Optional[Trace]:
+    def get_trace(self, trace_id: str) -> Trace | None:
         return self._traces.get(trace_id)
 
-    def get_all_traces(self) -> List[Trace]:
+    def get_all_traces(self) -> list[Trace]:
         return list(self._traces.values())
 
     def record_metric(self, metric_name: str, value: float):
@@ -117,7 +120,7 @@ class Observability:
         if len(self._metrics[metric_name]) > 10000:
             self._metrics[metric_name] = self._metrics[metric_name][-10000:]
 
-    def get_metric_stats(self, metric_name: str) -> Dict[str, Any]:
+    def get_metric_stats(self, metric_name: str) -> dict[str, Any]:
         if metric_name not in self._metrics:
             return {"count": 0, "avg": None, "min": None, "max": None}
         values = self._metrics[metric_name]
@@ -134,13 +137,13 @@ class Observability:
 
 
 class PipelineObserver:
-    def __init__(self, observability: Optional[Observability] = None):
+    def __init__(self, observability: Observability | None = None):
         self.observability = observability or Observability()
 
     def trace_pipeline(
         self,
         pipeline_name: str,
-        inputs: Dict[str, Any],
+        inputs: dict[str, Any],
     ) -> tuple[str, Callable]:
         trace_id = self.observability.start_trace()
         span = self.observability.start_span(
@@ -152,7 +155,7 @@ class PipelineObserver:
         )
 
     def trace_stage(
-        self, trace_id: str, stage_name: str, stage_inputs: Dict[str, Any]
+        self, trace_id: str, stage_name: str, stage_inputs: dict[str, Any]
     ) -> Callable:
         span = self.observability.start_span(
             trace_id, f"stage.{stage_name}", {"inputs": str(stage_inputs)[:200]}
@@ -162,7 +165,7 @@ class PipelineObserver:
         def finish_stage(
             outputs: Any = None,
             status: SpanStatus = SpanStatus.OK,
-            error: Optional[str] = None,
+            error: str | None = None,
         ):
             duration_ms = (time.perf_counter() - start) * 1000
             span.set_attribute("duration_ms", duration_ms)
@@ -180,21 +183,21 @@ class PipelineObserver:
 class DecisionTrace:
     case_id: str
     event_id: str
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    pipeline_trace: List[Dict[str, Any]] = field(default_factory=list)
-    score_breakdown: Dict[str, float] = field(default_factory=dict)
-    model_calls: List[Dict[str, Any]] = field(default_factory=list)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+    pipeline_trace: list[dict[str, Any]] = field(default_factory=list)
+    score_breakdown: dict[str, float] = field(default_factory=dict)
+    model_calls: list[dict[str, Any]] = field(default_factory=list)
     total_duration_ms: float = 0.0
 
     def add_stage_trace(
-        self, stage_name: str, duration_ms: float, details: Dict[str, Any]
+        self, stage_name: str, duration_ms: float, details: dict[str, Any]
     ):
         self.pipeline_trace.append(
             {
                 "stage": stage_name,
                 "duration_ms": duration_ms,
                 "details": details,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
         )
 
@@ -204,7 +207,7 @@ class DecisionTrace:
                 "model": model_name,
                 "latency_ms": latency_ms,
                 "success": success,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
         )
 
@@ -213,26 +216,26 @@ class DecisionTrace:
 
 
 class DecisionTracer:
-    def __init__(self, observability: Optional[Observability] = None):
+    def __init__(self, observability: Observability | None = None):
         self.observability = observability or Observability()
-        self._decision_traces: Dict[str, DecisionTrace] = {}
+        self._decision_traces: dict[str, DecisionTrace] = {}
 
     def start_decision_trace(self, case_id: str, event_id: str) -> DecisionTrace:
         trace = DecisionTrace(case_id=case_id, event_id=event_id)
         self._decision_traces[case_id] = trace
         return trace
 
-    def get_trace(self, case_id: str) -> Optional[DecisionTrace]:
+    def get_trace(self, case_id: str) -> DecisionTrace | None:
         return self._decision_traces.get(case_id)
 
-    def get_all_traces(self) -> List[DecisionTrace]:
+    def get_all_traces(self) -> list[DecisionTrace]:
         return list(self._decision_traces.values())
 
     def finalize_trace(self, case_id: str, total_duration_ms: float):
         if case_id in self._decision_traces:
             self._decision_traces[case_id].total_duration_ms = total_duration_ms
 
-    def get_score_summary(self) -> Dict[str, Any]:
+    def get_score_summary(self) -> dict[str, Any]:
         traces_with_scores = [
             t for t in self._decision_traces.values() if t.score_breakdown
         ]

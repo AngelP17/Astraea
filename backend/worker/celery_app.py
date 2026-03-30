@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import os
+
 from celery import Celery
+from celery.schedules import crontab
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
@@ -10,7 +12,7 @@ celery_app = Celery(
     "astraea",
     broker=f"redis://{REDIS_HOST}:{REDIS_PORT}/0",
     backend=f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
-    include=["backend.worker.tasks"],
+    include=["backend.worker.tasks", "backend.worker.retention_task"],
 )
 
 celery_app.conf.update(
@@ -38,3 +40,10 @@ celery_app.conf.update(
 )
 
 celery_app.autodiscover_tasks(["backend.worker"])
+
+CELERYBEAT_SCHEDULE = {
+    "cleanup-artifacts-hourly": {
+        "task": "retention.cleanup_artifacts",
+        "schedule": crontab(minute=0),
+    },
+}

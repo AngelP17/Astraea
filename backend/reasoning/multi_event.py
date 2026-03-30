@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from typing import Dict, List, Optional, Tuple
 from collections import defaultdict
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 
-from backend.shared.schemas import Event, FeatureVector, ModelAssessment, PrioritizedCase
+from backend.shared.schemas import Event, ModelAssessment
 
 
 @dataclass
@@ -20,8 +19,8 @@ class CorrelatedEvent:
 @dataclass
 class MultiEventReasoningResult:
     batch_id: str
-    correlated_events: List[CorrelatedEvent]
-    graph_edges: List[Tuple[str, str, float]]
+    correlated_events: list[CorrelatedEvent]
+    graph_edges: list[tuple[str, str, float]]
     aggregate_anomaly_score: float
     aggregate_failure_probability: float
     correlation_score: float
@@ -30,26 +29,26 @@ class MultiEventReasoningResult:
     final_priority_score: float
     final_severity: str
     recommendation: str
-    rationale: List[str]
+    rationale: list[str]
     confidence_band: str
     requires_review: bool
     routing_bucket: str
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 class MultiEventCorrelator:
     def __init__(self, window_seconds: int = 300) -> None:
         self.window_seconds = window_seconds
-        self.event_buffer: List[Event] = []
-        self.machine_events: Dict[str, List[Event]] = defaultdict(list)
-        self.line_events: Dict[str, List[Event]] = defaultdict(list)
+        self.event_buffer: list[Event] = []
+        self.machine_events: dict[str, list[Event]] = defaultdict(list)
+        self.line_events: dict[str, list[Event]] = defaultdict(list)
 
     def add_event(self, event: Event) -> None:
         self.event_buffer.append(event)
         self.machine_events[event.machine_id].append(event)
         self.line_events[event.line_id].append(event)
 
-        cutoff = datetime.now(timezone.utc).timestamp() - self.window_seconds
+        cutoff = datetime.now(UTC).timestamp() - self.window_seconds
         self.event_buffer = [e for e in self.event_buffer if e.timestamp.timestamp() >= cutoff]
         for machine_id in self.machine_events:
             self.machine_events[machine_id] = [
@@ -63,8 +62,8 @@ class MultiEventCorrelator:
     def get_pending_count(self) -> int:
         return len(self.event_buffer)
 
-    def get_correlation_pairs(self) -> List[Tuple[Event, Event, float]]:
-        pairs: List[Tuple[Event, Event, float]] = []
+    def get_correlation_pairs(self) -> list[tuple[Event, Event, float]]:
+        pairs: list[tuple[Event, Event, float]] = []
         if len(self.event_buffer) < 2:
             return pairs
 
@@ -79,8 +78,8 @@ class MultiEventCorrelator:
 
         return pairs
 
-    def compute_correlation_matrix(self) -> Dict[str, Dict[str, float]]:
-        matrix: Dict[str, Dict[str, float]] = defaultdict(dict)
+    def compute_correlation_matrix(self) -> dict[str, dict[str, float]]:
+        matrix: dict[str, dict[str, float]] = defaultdict(dict)
         pairs = self.get_correlation_pairs()
 
         for e1, e2, base_corr in pairs:
@@ -109,8 +108,8 @@ class MultiEventCorrelator:
 
 class GraphReasoningEngine:
     def __init__(self) -> None:
-        self.nodes: Dict[str, Dict] = {}
-        self.edges: List[Dict] = []
+        self.nodes: dict[str, dict] = {}
+        self.edges: list[dict] = []
 
     def add_event_node(
         self, event: Event, anomaly_score: float, failure_probability: float
@@ -129,7 +128,7 @@ class GraphReasoningEngine:
         self.edges.append({"from": from_id, "to": to_id, "weight": weight})
 
     def build_graph_from_correlations(
-        self, correlation_pairs: List[Tuple[Event, Event, float]]
+        self, correlation_pairs: list[tuple[Event, Event, float]]
     ) -> None:
         for e1, e2, weight in correlation_pairs:
             if e1.event_id not in self.nodes:
@@ -138,7 +137,7 @@ class GraphReasoningEngine:
                 self.add_event_node(e2, 0.0, 0.0)
             self.add_edge(e1.event_id, e2.event_id, weight)
 
-    def compute_graph_metrics(self) -> Tuple[float, float, List[str]]:
+    def compute_graph_metrics(self) -> tuple[float, float, list[str]]:
         if not self.nodes:
             return 0.0, 0.0, []
 
@@ -165,17 +164,17 @@ class GraphReasoningEngine:
 
         return graph_anomaly, max_failure, insights
 
-    def _find_connected_components(self) -> List[List[str]]:
+    def _find_connected_components(self) -> list[list[str]]:
         if not self.edges:
             return [[n] for n in self.nodes.keys()]
 
-        adjacency: Dict[str, List[str]] = defaultdict(list)
+        adjacency: dict[str, list[str]] = defaultdict(list)
         for edge in self.edges:
             adjacency[edge["from"]].append(edge["to"])
             adjacency[edge["to"]].append(edge["from"])
 
         visited = set()
-        components: List[List[str]] = []
+        components: list[list[str]] = []
 
         for start in self.nodes.keys():
             if start in visited:
@@ -193,7 +192,7 @@ class GraphReasoningEngine:
 
         return components
 
-    def get_cascade_path(self) -> List[str]:
+    def get_cascade_path(self) -> list[str]:
         if not self.edges:
             return []
 
@@ -219,8 +218,8 @@ class MultiEventReasoningEngine:
 
     def process_events(
         self,
-        events: List[Event],
-        assessments: Dict[str, ModelAssessment],
+        events: list[Event],
+        assessments: dict[str, ModelAssessment],
     ) -> MultiEventReasoningResult:
         for event in events:
             self.correlator.add_event(event)

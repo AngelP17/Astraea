@@ -9,8 +9,8 @@ export function ScrollNarrative() {
     <section id="pipeline" className="relative border-b border-white/5 bg-surface py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="mb-16 max-w-3xl">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-primary">DATA-SCROLL NARRATIVE</div>
-          <h2 className="mt-5 font-headline text-4xl font-black uppercase leading-none tracking-[-0.04em] md:text-6xl">
+          <div className="font-mono text-xs uppercase tracking-[0.28em] text-indigo">DATA-SCROLL NARRATIVE</div>
+          <h2 className="mt-5 font-display text-4xl font-black uppercase leading-none tracking-[-0.04em] md:text-6xl">
             Event becomes decision through a staged control loop.
           </h2>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-neutral-400">
@@ -25,10 +25,10 @@ export function ScrollNarrative() {
               <div className="mt-5 space-y-4">
                 {narrativeSteps.map((step) => (
                   <div key={step.step} className="flex items-start gap-4 border border-white/5 bg-black/30 p-4">
-                    <div className="font-headline text-2xl font-black text-primary/80">{step.step}</div>
+                    <div className="font-display text-2xl font-black text-indigo/80">{step.step}</div>
                     <div className="min-w-0">
                       <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-neutral-500">{step.eyebrow}</div>
-                      <div className="mt-2 font-headline text-lg font-bold uppercase leading-tight md:text-xl [overflow-wrap:anywhere]">{step.title}</div>
+                      <div className="mt-2 font-display text-lg font-bold uppercase leading-tight md:text-xl [overflow-wrap:anywhere]">{step.title}</div>
                     </div>
                   </div>
                 ))}
@@ -79,12 +79,12 @@ function NarrativeCard({
       <div className="border border-white/5 bg-black/60 p-8 md:p-10">
         <div className="mb-5 flex items-center justify-between gap-6">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-primary">{eyebrow}</div>
-            <h3 className="mt-3 font-headline text-3xl font-black uppercase tracking-[-0.04em] leading-[0.95] md:text-5xl">
+            <div className="font-mono text-[10px] uppercase tracking-[0.28em] text-indigo">{eyebrow}</div>
+            <h3 className="mt-3 font-display text-3xl font-black uppercase tracking-[-0.04em] leading-[0.95] md:text-5xl">
               {title}
             </h3>
           </div>
-          <div className="font-headline text-5xl font-black text-white/10">{step}</div>
+          <div className="font-display text-5xl font-black text-white/10">{step}</div>
         </div>
 
         <p className="max-w-2xl text-lg leading-8 text-neutral-400">{description}</p>
@@ -93,7 +93,7 @@ function NarrativeCard({
           {metrics.map((metric) => (
             <div key={metric} className="border border-white/5 bg-surface-low p-4">
               <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">Signal</div>
-              <div className="mt-3 font-headline text-base font-bold uppercase leading-tight md:text-lg [overflow-wrap:anywhere]">{metric}</div>
+              <div className="mt-3 font-display text-base font-bold uppercase leading-tight md:text-lg [overflow-wrap:anywhere]">{metric}</div>
             </div>
           ))}
         </div>
@@ -104,7 +104,7 @@ function NarrativeCard({
             <span>{String((index + 1) * 25).padStart(2, '0')}%</span>
           </div>
           <div className="h-2 w-full bg-white/5">
-            <motion.div style={{ width: progressWidth }} className="h-full bg-primary" />
+            <motion.div style={{ width: progressWidth }} className="h-full bg-indigo" />
           </div>
         </div>
       </div>

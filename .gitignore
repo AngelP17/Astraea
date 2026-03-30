@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 *.pyo
 .venv/
+.env
 .pytest_cache/
 .ruff_cache/
 .DS_Store
@@ -12,3 +13,8 @@ raw_all/
 .snapshots/
 node_modules/
 .next/
+playwright-report/
+test-results/
+tsconfig.tsbuildinfo
+artifacts/demo_results/
+uv.lock

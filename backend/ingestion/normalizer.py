@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable, List
 
 from backend.shared.schemas import Event
 
@@ -49,12 +49,12 @@ def normalize_event(raw: dict) -> Event:
     )
 
 
-def load_events(path: str = "data/sample_events.json") -> List[Event]:
+def load_events(path: str = "data/sample_events.json") -> list[Event]:
     payload = json.loads(Path(path).read_text())
     if not isinstance(payload, list):
         raise ValueError("Input file must contain a list of events")
     return [normalize_event(row) for row in payload]
 
 
-def load_events_from_rows(rows: Iterable[dict]) -> List[Event]:
+def load_events_from_rows(rows: Iterable[dict]) -> list[Event]:
     return [normalize_event(row) for row in rows]

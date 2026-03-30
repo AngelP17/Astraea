@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List, Tuple
-
 from backend.shared.schemas import FeatureVector, ModelAssessment
 
 
@@ -92,13 +90,13 @@ class AnomalyDetector:
 
     def _uncertainty_interval(
         self, anomaly_score: float, confidence: float
-    ) -> Tuple[float, float]:
+    ) -> tuple[float, float]:
         spread = max(0.05, 0.30 * (1.0 - confidence))
         low = max(0.0, anomaly_score - spread)
         high = min(1.0, anomaly_score + spread)
         return low, high
 
-    def _top_features(self, fv: FeatureVector) -> List[str]:
+    def _top_features(self, fv: FeatureVector) -> list[str]:
         ranked = sorted(
             fv.features.items(),
             key=lambda item: abs(float(item[1])),
@@ -111,8 +109,8 @@ class AnomalyDetector:
         fv: FeatureVector,
         anomaly_score: float,
         failure_probability: float,
-    ) -> List[str]:
-        factors: List[str] = []
+    ) -> list[str]:
+        factors: list[str] = []
 
         for key, value in fv.context.items():
             if key.endswith("_above_threshold") and value is True:

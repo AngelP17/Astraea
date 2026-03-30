@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from backend.shared.schemas import Event, FeatureVector
 
@@ -23,8 +23,8 @@ class FeatureEngine:
     }
 
     def extract(self, event: Event) -> FeatureVector:
-        features: Dict[str, float] = {}
-        context: Dict[str, Any] = {}
+        features: dict[str, float] = {}
+        context: dict[str, Any] = {}
 
         for key, value in event.raw_values.items():
             features[f"raw_{key}"] = value

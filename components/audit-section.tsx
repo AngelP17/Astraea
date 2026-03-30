@@ -1,58 +1,158 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { metrics } from '@/lib/data';
+import { motion, useReducedMotion } from 'framer-motion';
+import { FileCheck2, Fingerprint, LockKeyhole, ShieldCheck } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+const auditLayers = [
+  {
+    label: 'Event snapshot',
+    value: 'Source, timestamp, machine, and raw signal frame',
+    tone: 'text-cyan',
+  },
+  {
+    label: 'Feature snapshot',
+    value: 'Ratios, threshold deltas, and contextual markers',
+    tone: 'text-indigo',
+  },
+  {
+    label: 'Model snapshot',
+    value: 'Anomaly score, failure probability, confidence band',
+    tone: 'text-violet',
+  },
+  {
+    label: 'Decision snapshot',
+    value: 'Priority, routing, action plan, and execution state',
+    tone: 'text-amber',
+  },
+];
+
+const trustBlocks = [
+  {
+    icon: Fingerprint,
+    label: 'Hash-bound replay',
+    value: 'Every recommendation can be reconstructed from the same decision state.',
+  },
+  {
+    icon: FileCheck2,
+    label: 'Evidence attached',
+    value: 'Operators receive rationale, confidence, and execution context together.',
+  },
+  {
+    icon: ShieldCheck,
+    label: 'Defensible outcome',
+    value: 'The product stays trustworthy because it exposes how it arrived there.',
+  },
+  {
+    icon: LockKeyhole,
+    label: 'Proof over promise',
+    value: 'Determinism is not a claim on the landing page. It is the output itself.',
+  },
+];
 
 export function AuditSection() {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
-    <section id="audit" className="relative border-b border-white/5 py-24">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/10" />
+    <section id="audit" className="relative border-b border-white/5 bg-background py-24">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.12),transparent_38%)]" />
+
       <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="mb-14 max-w-3xl">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-tertiary">REPLAY + AUDIT</div>
-          <h2 className="mt-4 font-headline text-4xl font-black uppercase leading-none tracking-[-0.04em] md:text-6xl">
-            Determinism is the product, not just a feature.
+        <div className="mx-auto max-w-3xl text-center">
+          <Badge variant="info" dot className="mx-auto">
+            Audit proof
+          </Badge>
+          <h2 className="mt-5 font-display text-4xl font-black tracking-[-0.04em] text-white md:text-5xl">
+            Determinism is the trust surface.
           </h2>
-          <p className="mt-6 text-lg leading-8 text-neutral-400">
-            Astraea does not stop at scoring. It persists the path from input event to execution plan as a stable, inspectable record. That is the trust layer.
+          <p className="mt-5 text-base leading-7 text-neutral-400 md:text-lg">
+            Astraea persists the path from raw event to routed action as a proof bundle, so teams can inspect what
+            happened, why it happened, and whether the same input would resolve the same way again.
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="mt-14 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.65 }}
-            className="panel p-1"
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="border border-white/5 bg-black/70 p-8">
-              <div className="mb-5 font-mono text-[10px] uppercase tracking-[0.24em] text-neutral-500">Audit Bundle</div>
-              <div className="space-y-3 font-mono text-sm text-neutral-300">
-                <div className="border border-white/5 bg-surface-low p-4"><span className="text-primary">EVENT_SNAPSHOT</span> → normalized source record</div>
-                <div className="border border-white/5 bg-surface-low p-4"><span className="text-secondary">FEATURE_SNAPSHOT</span> → ratios, deltas, context</div>
-                <div className="border border-white/5 bg-surface-low p-4"><span className="text-danger">MODEL_SNAPSHOT</span> → score, confidence, uncertainty</div>
-                <div className="border border-white/5 bg-surface-low p-4"><span className="text-tertiary">DECISION_SNAPSHOT</span> → severity, routing, action plan</div>
-                <div className="border border-primary/20 bg-primary/5 p-4 text-primary">DETERMINISTIC_HASH → SHA256(event, features, model, decision, execution)</div>
-              </div>
-            </div>
+            <Card
+              padding="lg"
+              className="border-white/6 bg-[linear-gradient(180deg,rgba(17,17,19,0.96),rgba(9,9,11,0.92))]"
+            >
+              <CardHeader className="pb-5">
+                <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-indigo">
+                  Proof bundle
+                </div>
+                <CardTitle className="mt-2 text-2xl font-black tracking-[-0.03em] text-white">
+                  The same decision can be read, checked, and replayed later.
+                </CardTitle>
+                <CardDescription className="mt-2 text-sm leading-6 text-neutral-400">
+                  Instead of hiding the logic inside a final score, Astraea keeps every state transition attached to
+                  the recommendation.
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {auditLayers.map((layer, index) => (
+                  <motion.div
+                    key={layer.label}
+                    initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.35, delay: index * 0.05 }}
+                    className="rounded-2xl border border-white/6 bg-black/30 p-4"
+                  >
+                    <div className={`font-mono text-[10px] uppercase tracking-[0.22em] ${layer.tone}`}>
+                      {layer.label}
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-neutral-300">{layer.value}</p>
+                  </motion.div>
+                ))}
+
+                <div className="rounded-2xl border border-indigo/20 bg-indigo/10 p-4">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-indigo">
+                    Deterministic hash
+                  </div>
+                  <div className="mt-3 break-all font-mono text-xs text-white">
+                    sha256(event + features + assessment + prioritization + decision + execution)
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {metrics.map((metric, index) => (
-              <motion.div
-                key={metric.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.35 }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="border border-white/5 bg-surface-low p-6"
-              >
-                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500 truncate">{metric.label}</div>
-                <div className="mt-4 font-headline text-2xl font-black uppercase text-white truncate">{metric.value}</div>
-                <div className="mt-3 text-sm text-neutral-500 truncate">{metric.hint}</div>
-              </motion.div>
-            ))}
+            {trustBlocks.map((item, index) => {
+              const Icon = item.icon;
+
+              return (
+                <motion.div
+                  key={item.label}
+                  initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.35, delay: index * 0.05 }}
+                >
+                  <Card variant="interactive" padding="md" className="h-full border-white/6 bg-surface/90">
+                    <CardContent className="space-y-4">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/6 bg-white/[0.03]">
+                        <Icon className="h-5 w-5 text-indigo" />
+                      </div>
+                      <div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">
+                          {item.label}
+                        </div>
+                        <p className="mt-3 text-sm leading-6 text-neutral-300">{item.value}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -12,18 +12,10 @@ Tests verify the following system guarantees:
 
 from __future__ import annotations
 
-import json
-import time
-from pathlib import Path
 from backend.core.pipeline import AstraeaPipeline
 from backend.core.replay import ReplayStore
 from backend.ingestion.normalizer import load_events, normalize_event
-from backend.ml.anomaly_detector import AnomalyDetector
 from backend.pipeline.feature_engine import FeatureEngine
-from backend.decision.prioritizer import DecisionPrioritizationEngine
-from backend.decision.engine import DecisionEngine
-from backend.execution.dispatcher import ExecutionDispatcher
-from backend.audit.recorder import AuditRecorder
 
 
 def generate_realistic_events(count: int = 100) -> list:
@@ -81,7 +73,10 @@ def generate_realistic_events(count: int = 100) -> list:
                 "machine_id": machine,
                 "line_id": line,
                 "event_type": event_type,
-                "timestamp": f"2026-03-{23 - (i % 5):02d}T{(14 + i % 8):02d}:{(i * 7) % 60:02d}:00Z",
+                "timestamp": (
+                    f"2026-03-{23 - (i % 5):02d}T"
+                    f"{(14 + i % 8):02d}:{(i * 7) % 60:02d}:00Z"
+                ),
                 "raw_values": raw_values,
                 "source": source,
                 "metadata": {
@@ -119,7 +114,7 @@ def test_full_pipeline_with_real_data():
         assert payload["execution"]["dispatch_status"], "Missing dispatch_status"
         assert payload["audit"]["deterministic_hash"], "Missing deterministic_hash"
 
-    print(f"[PASS] Full pipeline with 100 real events - all validations passed")
+    print("[PASS] Full pipeline with 100 real events - all validations passed")
 
 
 def test_hash_stability_with_large_dataset():
@@ -145,10 +140,12 @@ def test_hash_stability_with_large_dataset():
         hashes_run_1.append(result_1["audit"]["deterministic_hash"])
         hashes_run_2.append(result_2["audit"]["deterministic_hash"])
 
-    mismatches = sum(1 for h1, h2 in zip(hashes_run_1, hashes_run_2) if h1 != h2)
+    mismatches = sum(
+        1 for h1, h2 in zip(hashes_run_1, hashes_run_2, strict=False) if h1 != h2
+    )
 
     assert mismatches == 0, f"Hash mismatch: {mismatches}/100 hashes did not match"
-    print(f"[PASS] Hash stability: 100% match across 2 runs with 100 events")
+    print("[PASS] Hash stability: 100% match across 2 runs with 100 events")
 
 
 def test_threshold_breach_detection_realistic():
@@ -283,7 +280,7 @@ def test_severity_distribution():
         sev = result["prioritized_case"]["severity"]
         severities[sev] += 1
 
-    print(f"[INFO] Severity distribution:")
+    print("[INFO] Severity distribution:")
     for sev, count in severities.items():
         print(f"      {sev}: {count}/100")
 
@@ -337,7 +334,7 @@ def test_routing_bucket_coverage():
         bucket = result["prioritized_case"]["routing_bucket"]
         buckets[bucket] += 1
 
-    print(f"[INFO] Routing bucket distribution:")
+    print("[INFO] Routing bucket distribution:")
     for bucket, count in buckets.items():
         print(f"      {bucket}: {count}/100")
 
@@ -356,7 +353,7 @@ def test_replay_with_real_events():
 
     for event in events[:3]:
         result = pipeline.process(event).to_dict()
-        saved_path = store.save(result["case_id"], result)
+        store.save(result["case_id"], result)
         loaded = store.load(result["case_id"])
 
         assert loaded["case_id"] == result["case_id"], "Loaded case_id should match"

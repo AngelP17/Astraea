@@ -9,7 +9,7 @@ interface AuditVisualizationProps {
 }
 
 const colorMap = {
-  primary: { bg: 'bg-primary/10', text: 'text-primary', border: 'border-primary/30' },
+  primary: { bg: 'bg-indigo/10', text: 'text-indigo', border: 'border-indigo/30' },
   secondary: { bg: 'bg-secondary/10', text: 'text-secondary', border: 'border-secondary/30' },
   danger: { bg: 'bg-danger/10', text: 'text-danger', border: 'border-danger/30' },
   tertiary: { bg: 'bg-tertiary/10', text: 'text-tertiary', border: 'border-tertiary/30' },
@@ -89,7 +89,7 @@ export function AuditVisualization({ result }: AuditVisualizationProps) {
                 {layer.hash}...
               </div>
             </div>
-            <CheckCircle2 className="h-4 w-4 text-primary" />
+            <CheckCircle2 className="h-4 w-4 text-indigo" />
           </motion.div>
         ))}
       </div>
@@ -98,18 +98,18 @@ export function AuditVisualization({ result }: AuditVisualizationProps) {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5 }}
-        className="rounded border border-primary/30 bg-primary/5 p-4"
+        className="rounded border border-indigo/30 bg-indigo/5 p-4"
       >
         <div className="mb-3 flex items-center gap-2">
-          <Hash className="h-5 w-5 shrink-0 text-primary" />
-          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">
+          <Hash className="h-5 w-5 shrink-0 text-indigo" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-indigo">
             Deterministic Hash
           </span>
         </div>
-        <div className="break-all font-mono text-xs text-primary truncate">
+        <div className="break-all font-mono text-xs text-indigo truncate">
           {audit.deterministic_hash}
         </div>
-        <div className="mt-3 border-t border-primary/20 pt-3 font-mono text-[10px] text-neutral-500">
+        <div className="mt-3 border-t border-indigo/20 pt-3 font-mono text-[10px] text-neutral-500">
           TIMESTAMP: {new Date(audit.timestamp).toISOString()}
         </div>
       </motion.div>
@@ -121,7 +121,7 @@ export function AuditVisualization({ result }: AuditVisualizationProps) {
         <div className="space-y-1 font-mono text-[9px] text-neutral-600">
           <div>SHA256(event_snapshot || feature_snapshot || model_snapshot ||</div>
           <div>prioritization_snapshot || decision_snapshot || execution_snapshot)</div>
-          <div className="mt-2 text-primary">= {audit.deterministic_hash.slice(0, 24)}...</div>
+          <div className="mt-2 text-indigo">= {audit.deterministic_hash.slice(0, 24)}...</div>
         </div>
       </div>
     </div>

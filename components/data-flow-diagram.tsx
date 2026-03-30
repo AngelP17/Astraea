@@ -1,193 +1,193 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import {
+  ArrowRight,
+  AudioWaveform,
+  Binary,
+  BrainCircuit,
+  ClipboardCheck,
+  FileStack,
+  ShieldCheck,
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+
+const architectureFlow = [
+  {
+    id: 'capture',
+    label: 'Signal Intake',
+    title: 'Telemetry enters a strict event contract',
+    icon: AudioWaveform,
+    summary:
+      'Every machine signal arrives with source, line context, and timestamp normalization before the model sees anything.',
+    details: ['Schema locked', 'Source verified', 'UTC timestamped'],
+  },
+  {
+    id: 'feature',
+    label: 'Feature State',
+    title: 'Behavior becomes measurable evidence',
+    icon: Binary,
+    summary:
+      'Threshold deltas, ratios, and context markers turn noisy telemetry into a bounded machine-state representation.',
+    details: ['Ratios extracted', 'Thresholds marked', 'Context preserved'],
+  },
+  {
+    id: 'decision',
+    label: 'Decision Resolution',
+    title: 'Risk becomes routing and action',
+    icon: BrainCircuit,
+    summary:
+      'Scoring, prioritization, and consequence modeling produce an explainable action bundle instead of a raw anomaly score.',
+    details: ['Confidence scored', 'Routing assigned', 'Business impact framed'],
+  },
+  {
+    id: 'proof',
+    label: 'Proof Layer',
+    title: 'Every outcome ships with replay evidence',
+    icon: ClipboardCheck,
+    summary:
+      'Audit snapshots, deterministic hashes, and replay bundles make the output defensible in front of operators and buyers.',
+    details: ['Hash sealed', 'Replay ready', 'Execution recorded'],
+  },
+];
+
+const proofArtifacts = [
+  {
+    label: 'Event Bundle',
+    value: 'Normalized source record',
+    icon: FileStack,
+  },
+  {
+    label: 'Decision Proof',
+    value: 'Recommendation + impact trace',
+    icon: ShieldCheck,
+  },
+  {
+    label: 'Replay Bundle',
+    value: 'Deterministic audit snapshots',
+    icon: ClipboardCheck,
+  },
+];
 
 export function DataFlowDiagram() {
   return (
     <section className="relative border-b border-white/5 bg-background py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        <div className="mb-16 text-center">
-          <div className="font-mono text-xs uppercase tracking-[0.28em] text-secondary">Data Transformation</div>
-          <h2 className="mt-5 font-headline text-4xl font-black uppercase tracking-[-0.04em] md:text-5xl">
-            Event becomes Decision
-          </h2>
+        <div className="mb-16 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="font-mono text-xs uppercase tracking-[0.28em] text-indigo">System Architecture</div>
+            <h2 className="mt-5 font-display text-[clamp(2.5rem,5vw,4.5rem)] font-extrabold tracking-[-0.04em] text-white">
+              From live telemetry to an audit-grade decision.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-text-muted md:text-lg">
+              This is the architectural spine of Astraea. The flow below highlights the real system contracts that let the walkthrough, replay view, and command deck stay aligned.
+            </p>
+          </div>
+          <Badge variant="info" dot className="self-start lg:self-auto">
+            Reference architecture view
+          </Badge>
         </div>
 
-        <div className="relative overflow-x-auto">
-        <svg className="mx-auto min-w-[860px]" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" fill="none">
-          <defs>
-            <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#a1faff" />
-              <stop offset="50%" stopColor="#ac8aff" />
-              <stop offset="100%" stopColor="#ffd16f" />
-            </linearGradient>
-            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-              <polygon points="0 0, 10 3.5, 0 7" fill="#a1faff" />
-            </marker>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_17rem]">
+          <div className="grid gap-4 lg:grid-cols-4">
+            {architectureFlow.map((stage, index) => {
+              const Icon = stage.icon;
 
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1 }}
+              return (
+                <div key={stage.id} className="relative">
+                  <Card
+                    variant="interactive"
+                    padding="lg"
+                    className="relative h-full overflow-hidden border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))]"
+                  >
+                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo/70 to-transparent" />
+                    <div className="flex items-center justify-between gap-4">
+                      <Badge variant="info" className="border border-indigo/20 bg-indigo/10 text-indigo">
+                        {stage.label}
+                      </Badge>
+                      <Icon className="h-5 w-5 text-indigo" />
+                    </div>
+                    <h3 className="mt-6 font-display text-xl font-bold tracking-tight text-white">
+                      {stage.title}
+                    </h3>
+                    <p className="mt-4 text-sm leading-7 text-text-muted">
+                      {stage.summary}
+                    </p>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {stage.details.map((detail) => (
+                        <span
+                          key={detail}
+                          className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/75"
+                        >
+                          {detail}
+                        </span>
+                      ))}
+                    </div>
+                  </Card>
+                  {index < architectureFlow.length - 1 ? (
+                    <div className="pointer-events-none absolute right-[-1.05rem] top-1/2 hidden -translate-y-1/2 xl:block">
+                      <div className="flex items-center gap-2">
+                        <div className="h-px w-6 bg-gradient-to-r from-indigo/50 to-white/10" />
+                        <ArrowRight className="h-4 w-4 text-indigo/70" />
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+
+          <Card
+            variant="elevated"
+            padding="lg"
+            className="border-white/10 bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.16),transparent_52%),rgba(255,255,255,0.02)]"
+          >
+            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted">
+              Output artifacts
+            </div>
+            <div className="mt-5 space-y-4">
+              {proofArtifacts.map((artifact) => {
+                const Icon = artifact.icon;
+                return (
+                  <div
+                    key={artifact.label}
+                    className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-indigo/20 bg-indigo/10">
+                        <Icon className="h-4 w-4 text-indigo" />
+                      </div>
+                      <div>
+                        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-muted">
+                          {artifact.label}
+                        </div>
+                        <div className="mt-1 text-sm font-medium text-white">
+                          {artifact.value}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.35 }}
+              className="mt-6 rounded-2xl border border-indigo/20 bg-indigo/10 p-4"
             >
-              <rect x="20" y="40" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#a1faff" strokeWidth="2" />
-              <text x="110" y="70" textAnchor="middle" fill="#a1faff" fontSize="12" className="font-mono">RAW EVENT</text>
-              <text x="110" y="90" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">sensor_id: accel_01</text>
-              <text x="110" y="105" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">vibration: 12.4</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-            >
-              <path d="M200 80 L280 80" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="240" y="70" textAnchor="middle" fill="#666" fontSize="9" className="font-mono">normalize</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.3 }}
-            >
-              <rect x="280" y="40" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#ac8aff" strokeWidth="2" />
-              <text x="370" y="70" textAnchor="middle" fill="#ac8aff" fontSize="12" className="font-mono">FEATURE VECTOR</text>
-              <text x="370" y="90" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">delta_vib: +4.4</text>
-              <text x="370" y="105" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">ratio_vib: 1.55</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.4 }}
-            >
-              <path d="M460 80 L540 80" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="500" y="70" textAnchor="middle" fill="#666" fontSize="9" className="font-mono">score</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              <rect x="540" y="40" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#ff716c" strokeWidth="2" />
-              <text x="630" y="70" textAnchor="middle" fill="#ff716c" fontSize="12" className="font-mono">ASSESSMENT</text>
-              <text x="630" y="90" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">anomaly: 0.74</text>
-              <text x="630" y="105" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">uncertainty: [0.61, 0.87]</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.6 }}
-            >
-              <path d="M630 120 L630 200" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="645" y="160" fill="#666" fontSize="9" className="font-mono">decide</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.7 }}
-            >
-              <rect x="540" y="200" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#ffd16f" strokeWidth="2" />
-              <text x="630" y="230" textAnchor="middle" fill="#ffd16f" fontSize="12" className="font-mono">DECISION</text>
-              <text x="630" y="250" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">action: Inspect</text>
-              <text x="630" y="265" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">urgency: HIGH</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.8 }}
-            >
-              <path d="M540 240 L460 240" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="500" y="230" textAnchor="middle" fill="#666" fontSize="9" className="font-mono">audit</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.9 }}
-            >
-              <rect x="280" y="200" width="180" height="80" rx="8" fill="#0e0e0e" stroke="#a1faff" strokeWidth="2" />
-              <text x="370" y="230" textAnchor="middle" fill="#a1faff" fontSize="12" className="font-mono">AUDIT BUNDLE</text>
-              <text x="370" y="250" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">hash: cfced6c0...</text>
-              <text x="370" y="265" textAnchor="middle" fill="#666" fontSize="10" className="font-mono">replay: VERIFIED</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1 }}
-            >
-              <path d="M280 280 L280 360" stroke="url(#flowGradient)" strokeWidth="2" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="295" y="320" fill="#666" fontSize="9" className="font-mono">store</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.1 }}
-            >
-              <rect x="180" y="360" width="200" height="100" rx="8" fill="#0e0e0e" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" />
-              <text x="280" y="390" textAnchor="middle" fill="#666" fontSize="12" className="font-mono">ARTIFACTS</text>
-              <text x="280" y="415" textAnchor="middle" fill="#555" fontSize="10" className="font-mono">results/case_evt_001.json</text>
-              <text x="280" y="435" textAnchor="middle" fill="#555" fontSize="10" className="font-mono">replays/case_evt_001.json</text>
-            </motion.g>
-
-            <motion.g
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.2 }}
-            >
-              <path d="M380 410 L460 410" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
-              <path d="M460 410 L460 320" stroke="#494847" strokeWidth="1" strokeDasharray="4 4" markerEnd="url(#arrowhead)" vectorEffect="non-scaling-stroke" />
-              <text x="420" y="400" textAnchor="middle" fill="#555" fontSize="9" className="font-mono">replay</text>
-            </motion.g>
-
-            <motion.circle
-              cx="720" cy="450" r="60"
-              fill="none" stroke="#00f4fe" strokeWidth="2"
-              initial={{ strokeDasharray: "377 0", strokeDashoffset: 0 }}
-              animate={{ strokeDasharray: "377 0", strokeDashoffset: [0, -377] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            />
-            <text x="720" y="445" textAnchor="middle" fill="#00f4fe" fontSize="10" className="font-mono">DETER-</text>
-            <text x="720" y="460" textAnchor="middle" fill="#00f4fe" fontSize="10" className="font-mono">MINISTIC</text>
-          </svg>
-        </div>
-
-        <div className="mt-12 flex flex-wrap justify-center gap-8">
-          <HashBadge label="Input Hash" value="abc123..." color="#a1faff" />
-          <HashBadge label="Feature Hash" value="def456..." color="#ac8aff" />
-          <HashBadge label="Decision Hash" value="789xyz..." color="#ffd16f" />
-          <HashBadge label="Final Hash" value="cfced6c0..." color="#00f4fe" />
+              <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-indigo">
+                Why it matters
+              </div>
+              <p className="mt-2 text-sm leading-7 text-white/80">
+                The interface only feels trustworthy because the event contract, decision logic, and replay proof are all built from the same pipeline record.
+              </p>
+            </motion.div>
+          </Card>
         </div>
       </div>
     </section>
-  );
-}
-
-function HashBadge({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <motion.div
-      className="flex items-center gap-3 rounded border border-white/10 bg-surface-low px-4 py-2"
-      whileHover={{ scale: 1.05 }}
-    >
-      <div className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-      <div>
-        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-500">{label}</div>
-        <div className="font-mono text-xs" style={{ color }}>{value}</div>
-      </div>
-    </motion.div>
   );
 }

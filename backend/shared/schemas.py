@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -12,11 +12,11 @@ class Event:
     line_id: str
     event_type: str
     timestamp: datetime
-    raw_values: Dict[str, float]
+    raw_values: dict[str, float]
     source: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["timestamp"] = self.timestamp.isoformat()
         return payload
@@ -27,10 +27,10 @@ class FeatureVector:
     event_id: str
     machine_id: str
     timestamp: datetime
-    features: Dict[str, float]
-    context: Dict[str, Any]
+    features: dict[str, float]
+    context: dict[str, Any]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["timestamp"] = self.timestamp.isoformat()
         return payload
@@ -45,10 +45,10 @@ class ModelAssessment:
     uncertainty_low: float
     uncertainty_high: float
     model_version: str
-    top_features: List[str]
-    explanation_factors: List[str]
+    top_features: list[str]
+    explanation_factors: list[str]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -59,12 +59,12 @@ class PrioritizedCase:
     priority_score: float
     confidence_band: str
     severity: str
-    rationale: List[str]
+    rationale: list[str]
     requires_action: bool
     review_required: bool
     routing_bucket: str
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -73,12 +73,12 @@ class Decision:
     case_id: str
     recommendation: str
     urgency: str
-    owner: Optional[str]
-    justification: List[str]
-    next_steps: List[str]
-    action_plan: List[Dict[str, Any]]
+    owner: str | None
+    justification: list[str]
+    next_steps: list[str]
+    action_plan: list[dict[str, Any]]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -86,11 +86,11 @@ class Decision:
 class ExecutionPlan:
     case_id: str
     dispatch_status: str
-    assigned_team: Optional[str]
-    commands: List[str]
-    notifications: List[str]
+    assigned_team: str | None
+    commands: list[str]
+    notifications: list[str]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -104,25 +104,25 @@ class DecisionConsequence:
     production_impact: str
     cost_estimate_usd: float
     mtbf_impact_hours: float
-    reasoning: List[str]
+    reasoning: list[str]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
 @dataclass
 class AuditRecord:
     case_id: str
-    event_snapshot: Dict[str, Any]
-    feature_snapshot: Dict[str, Any]
-    model_snapshot: Dict[str, Any]
-    prioritization_snapshot: Dict[str, Any]
-    decision_snapshot: Dict[str, Any]
-    execution_snapshot: Dict[str, Any]
+    event_snapshot: dict[str, Any]
+    feature_snapshot: dict[str, Any]
+    model_snapshot: dict[str, Any]
+    prioritization_snapshot: dict[str, Any]
+    decision_snapshot: dict[str, Any]
+    execution_snapshot: dict[str, Any]
     deterministic_hash: str
     timestamp: datetime
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["timestamp"] = self.timestamp.isoformat()
         return payload
@@ -132,16 +132,16 @@ class AuditRecord:
 class PipelineResult:
     event_id: str
     case_id: str
-    event: Dict[str, Any]
-    features: Dict[str, Any]
-    assessment: Dict[str, Any]
-    prioritized_case: Dict[str, Any]
-    decision: Dict[str, Any]
-    execution: Dict[str, Any]
-    consequence: Dict[str, Any]
-    audit: Dict[str, Any]
+    event: dict[str, Any]
+    features: dict[str, Any]
+    assessment: dict[str, Any]
+    prioritized_case: dict[str, Any]
+    decision: dict[str, Any]
+    execution: dict[str, Any]
+    consequence: dict[str, Any]
+    audit: dict[str, Any]
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 

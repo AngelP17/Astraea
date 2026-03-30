@@ -1,10 +1,10 @@
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Protocol
-from functools import wraps
-import time
 import asyncio
+import time
+from collections.abc import Callable
+from dataclasses import dataclass
+from enum import Enum
+from functools import wraps
+from typing import Any
 
 
 class ModelTier(Enum):
@@ -24,19 +24,19 @@ class ModelCapability(Enum):
 class ModelConfig:
     name: str
     tier: ModelTier
-    capabilities: List[ModelCapability]
+    capabilities: list[ModelCapability]
     max_latency_ms: float = 1000.0
     cost_weight: float = 1.0
-    fallback_to: Optional[str] = None
+    fallback_to: str | None = None
 
 
 @dataclass
 class InferenceRequest:
     request_id: str
     model_name: str
-    input_data: Dict[str, Any]
+    input_data: dict[str, Any]
     preferred_tier: ModelTier
-    required_capabilities: List[ModelCapability]
+    required_capabilities: list[ModelCapability]
     timeout_ms: float = 5000.0
 
 
@@ -48,7 +48,7 @@ class InferenceResult:
     output: Any
     latency_ms: float
     tier_used: ModelTier
-    error: Optional[str] = None
+    error: str | None = None
     fallback_used: bool = False
 
 
@@ -56,7 +56,7 @@ class InferenceResult:
 class RoutingDecision:
     model_name: str
     tier: ModelTier
-    reasoning: List[str]
+    reasoning: list[str]
     estimated_latency_ms: float
 
 
@@ -95,8 +95,8 @@ class ModelRouter:
     }
 
     def __init__(self):
-        self._models: Dict[str, ModelConfig] = self.DEFAULT_CONFIGS.copy()
-        self._metrics: Dict[str, List[float]] = {}
+        self._models: dict[str, ModelConfig] = self.DEFAULT_CONFIGS.copy()
+        self._metrics: dict[str, list[float]] = {}
 
     def register_model(self, config: ModelConfig):
         self._models[config.name] = config
@@ -156,7 +156,7 @@ class ModelRouter:
         if len(self._metrics[model_name]) > 1000:
             self._metrics[model_name] = self._metrics[model_name][-1000:]
 
-    def get_model_health(self, model_name: str) -> Dict[str, Any]:
+    def get_model_health(self, model_name: str) -> dict[str, Any]:
         if model_name not in self._metrics:
             return {"status": "unknown", "avg_latency_ms": None, "sample_count": 0}
 
@@ -174,7 +174,7 @@ class ResilienceRouter:
     def __init__(self, router: ModelRouter, max_retries: int = 3):
         self.router = router
         self.max_retries = max_retries
-        self._circuit_breakers: Dict[str, CircuitBreaker] = {}
+        self._circuit_breakers: dict[str, CircuitBreaker] = {}
 
     def get_circuit_breaker(self, model_name: str) -> "CircuitBreaker":
         if model_name not in self._circuit_breakers:
@@ -190,7 +190,7 @@ class CircuitBreaker:
         self.failure_threshold = failure_threshold
         self.timeout_seconds = timeout_seconds
         self._failure_count = 0
-        self._last_failure_time: Optional[float] = None
+        self._last_failure_time: float | None = None
         self._state = "closed"
 
     @property
@@ -224,13 +224,13 @@ class RetryPolicy:
     exponential_base: float = 2.0
 
 
-def with_retry(policy: RetryPolicy, retryable_errors: Optional[List[type]] = None):
+def with_retry(policy: RetryPolicy, retryable_errors: list[type] | None = None):
     _retryable_errors = retryable_errors or [Exception]
 
     def decorator(func: Callable):
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
-            last_error: Optional[Exception] = None
+            last_error: Exception | None = None
             for attempt in range(policy.max_attempts):
                 try:
                     return await func(*args, **kwargs)
@@ -249,7 +249,7 @@ def with_retry(policy: RetryPolicy, retryable_errors: Optional[List[type]] = Non
 
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
-            last_error: Optional[Exception] = None
+            last_error: Exception | None = None
             for attempt in range(policy.max_attempts):
                 try:
                     return func(*args, **kwargs)

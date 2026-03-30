@@ -72,16 +72,6 @@ spec:
         target:
           type: Utilization
           averageUtilization: 80
-    - type: External
-      external:
-        metric:
-          name: redis_queue_length
-          selector:
-            matchLabels:
-              queue: astraea_tasks
-        target:
-          type: AverageValue
-          averageValue: "100"
   behavior:
     scaleDown:
       stabilizationWindowSeconds: 600
