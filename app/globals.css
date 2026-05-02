@@ -18,23 +18,23 @@ html {
 }
 
 body {
-  background: #0A0A0B;
+  background: #09090B;
   color: #FAFAFA;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: #6366F1;
-  color: #FAFAFA;
+  background: #D97706;
+  color: #09090B;
 }
 
 :focus-visible {
-  outline: 2px solid #6366F1;
+  outline: 2px solid #D97706;
   outline-offset: 2px;
 }
 
 .panel {
-  background: rgba(17, 17, 19, 0.8);
+  background: rgba(15, 15, 17, 0.85);
   backdrop-filter: blur(18px);
   border: 1px solid rgba(255,255,255,0.06);
 }
@@ -46,13 +46,6 @@ body {
   background-size: 40px 40px;
 }
 
-.text-gradient {
-  background: linear-gradient(90deg, #6366F1 0%, #818CF8 45%, #00F0FF 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -60,15 +53,6 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-.animate-shimmer {
-  animation: shimmer 1.5s infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -25,39 +25,22 @@ Most decision systems force a trade-off: you can have a black-box ML model that'
 
 ---
 
-## Case Study: Preventing Line Failure
-
-At 02:13 AM on March 23, Astraea detected abnormal vibration patterns on Press_07:
-
-1. **Abnormal Vibration Detected** — Vibration ratio exceeded 1.55x baseline
-2. **Cross-Machine Correlation** — Pattern matched 2 additional events within 300-second window
-3. **High-Confidence Anomaly** — Score 0.74, failure probability 0.68
-4. **Immediate Inspection Routed** — Escalated to operations_supervisor
-
-**Results:**
-- 45 minutes of downtime avoided
-- $3,200 estimated savings
-- Failure prevented before escalation
-
----
-
-## System Metrics
-
-| Metric | Value |
-|--------|-------|
-| Determinism Rate | 100% |
-| Replay Accuracy | 100% |
-| Audit Coverage | 100% |
-| Decision Confidence (avg) | 0.59 |
-| Action Rate | 100% |
-| Human Review Rate | 100% |
-
----
-
 ## Screenshots
 
+### Landing Page — Live Decision Console
+![Hero Section](screenshots/01-hero.png)
 
-![Walkthrough Section](screenshots/02-walkthrough-section.png)
+### Pipeline Architecture — Gapless Bento Grid
+![Bento Section](screenshots/02-bento.png)
+
+### Command Deck — Case Queue & Filters
+![Engine Overview](screenshots/03-engine.png)
+
+### Case Detail — Deterministic Trace & Replay
+![Engine Detail](screenshots/04-engine-detail.png)
+
+### Replay Verification — Hash Match
+![Replay Verification](screenshots/05-engine-replay.png)
 
 ---
 
@@ -65,11 +48,60 @@ At 02:13 AM on March 23, Astraea detected abnormal vibration patterns on Press_0
 
 ### 7-Stage Deterministic Pipeline
 
-```
-Event → Normalize → Feature → Score → Prioritize → Decide → Audit
+```mermaid
+flowchart LR
+    A[Event Capture] --> B[Normalization]
+    B --> C[Feature Extraction]
+    C --> D[Anomaly Scoring]
+    D --> E[Prioritization]
+    E --> F[Decision Dispatch]
+    F --> G[Audit Proof]
 ```
 
 Every stage produces a SHA256 hash. Reproduce any decision by replaying the same input.
+
+### System Architecture
+
+```mermaid
+flowchart TB
+    subgraph Frontend["Next.js Frontend"]
+        H[Hero / Landing]
+        E[Command Deck /engine]
+    end
+
+    subgraph Backend["FastAPI Backend"]
+        API[API Layer]
+        PIPE[AstraeaPipeline]
+        CRUD[DB CRUD]
+        RL[Rate Limit]
+    end
+
+    subgraph Workers["Celery Workers"]
+        WT[Pipeline Tasks]
+        RT[Replay Tasks]
+        CT[Cleanup Tasks]
+    end
+
+    subgraph Data["Data & Cache"]
+        DB[(PostgreSQL)]
+        R[(Redis)]
+        FS[Artifact Files]
+    end
+
+    H -->|API Calls| API
+    E -->|API Calls| API
+    API --> PIPE
+    API --> CRUD
+    API --> RL
+    PIPE --> CRUD
+    CRUD --> DB
+    API --> R
+    PIPE --> FS
+    WT --> PIPE
+    RT --> PIPE
+    CT --> FS
+    R --> Workers
+```
 
 ### Core Features
 
@@ -247,13 +279,25 @@ The deploy job now:
 ## API Reference
 
 ### GET /api/cases
-Retrieve all pipeline results.
+Retrieve all pipeline results with optional filtering by severity, machine, line, routing bucket, and review status.
+
+### GET /api/cases/{case_id}
+Retrieve full case details including event, features, assessment, decision, consequence, and audit proof.
 
 ### POST /api/run
 Execute pipeline on sample events.
 
 ### POST /api/replay
 Replay a specific case by ID with hash verification.
+
+### POST /api/demo
+Run a 100-event simulation batch.
+
+### GET /api/demo/stream
+Server-Sent Events stream of pipeline stage progress.
+
+### POST /api/admin/cleanup
+Admin-only artifact cleanup.
 
 ---
 

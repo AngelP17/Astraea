@@ -1,4 +1,4 @@
-import { requestJson } from './api';
+import { requestJson, buildApiUrl } from './api';
 
 export interface PipelineResult {
   event_id: string;
@@ -190,7 +190,7 @@ export async function replayCase(caseId: string): Promise<PipelineResult | null>
     return await requestJson<PipelineResult>('/api/replay', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ caseId }),
+      body: JSON.stringify({ case_id: caseId }),
       cache: "no-store",
     });
   } catch {
@@ -673,7 +673,7 @@ export function streamDemoStages(
 ): () => void {
   let aborted = false;
   
-  const eventSource = new EventSource("/api/demo/stream");
+  const eventSource = new EventSource(buildApiUrl("/api/demo/stream"));
   
   eventSource.addEventListener("stage", (e) => {
     if (aborted) return;

@@ -1,4 +1,3 @@
-
 from pydantic_settings import BaseSettings
 
 
@@ -7,7 +6,7 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     API_V1_PREFIX: str = "/api"
 
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:3001"]
 
     RATE_LIMIT_PER_MINUTE: int = 60
     RATE_LIMIT_PER_MINUTE_AUTH: int = 10

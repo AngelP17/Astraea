@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { List, X } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -19,9 +19,7 @@ export function Nav() {
   const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -29,23 +27,16 @@ export function Nav() {
   useEffect(() => {
     const sections = links.map(l => l.href.slice(1));
     const observers: IntersectionObserver[] = [];
-
     sections.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
-
       const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveSection(id);
-          }
-        },
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
         { rootMargin: '-40% 0px -40% 0px' }
       );
       observer.observe(el);
       observers.push(observer);
     });
-
     return () => observers.forEach(o => o.disconnect());
   }, []);
 
@@ -64,10 +55,7 @@ export function Nav() {
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex items-center justify-between">
-            <a
-              href="#top"
-              className="font-display text-lg font-bold tracking-tight text-white"
-            >
+            <a href="#top" className="font-display text-lg font-bold tracking-tight text-white">
               ASTRAEA
             </a>
 
@@ -81,7 +69,7 @@ export function Nav() {
                   {link.label}
                   <span
                     className={cn(
-                      'absolute -bottom-1 left-0 h-px bg-indigo transition-all duration-200',
+                      'absolute -bottom-1 left-0 h-px bg-amber transition-all duration-200',
                       activeSection === link.href.slice(1) ? 'w-full' : 'w-0 group-hover:w-full'
                     )}
                   />
@@ -98,7 +86,7 @@ export function Nav() {
               </a>
               <Link
                 href="/engine"
-                className="rounded border border-indigo bg-indigo/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-indigo transition-colors hover:bg-indigo/20"
+                className="rounded border border-amber bg-amber/10 px-4 py-2 font-mono text-xs uppercase tracking-[0.1em] text-amber transition-colors hover:bg-amber/20"
               >
                 Open Engine
               </Link>
@@ -109,7 +97,7 @@ export function Nav() {
               className="p-2 text-neutral-400 transition-colors hover:text-white md:hidden"
               aria-label="Open menu"
             >
-              <Menu className="h-5 w-5" />
+              <List className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -150,7 +138,7 @@ export function Nav() {
                     className={cn(
                       'block font-mono text-sm uppercase tracking-[0.15em] transition-colors',
                       activeSection === link.href.slice(1)
-                        ? 'text-indigo'
+                        ? 'text-amber'
                         : 'text-neutral-400 hover:text-white'
                     )}
                   >
@@ -167,7 +155,7 @@ export function Nav() {
                   <Link
                     href="/engine"
                     onClick={() => setIsMobileOpen(false)}
-                    className="block rounded border border-indigo bg-indigo/10 px-4 py-3 font-mono text-xs uppercase tracking-[0.1em] text-indigo text-center hover:bg-indigo/20"
+                    className="block rounded border border-amber bg-amber/10 px-4 py-3 font-mono text-xs uppercase tracking-[0.1em] text-amber text-center hover:bg-amber/20"
                   >
                     Open Engine
                   </Link>

@@ -27,6 +27,31 @@ async def create_case(db: AsyncSession, case_data: dict) -> Case:
     return case
 
 
+async def upsert_case(db: AsyncSession, case_data: dict) -> Case:
+    existing = await get_case_by_id(db, case_data["case_id"])
+    if existing:
+        existing.event_id = case_data["event"]["event_id"]
+        existing.machine_id = case_data["event"]["machine_id"]
+        existing.line_id = case_data["event"]["line_id"]
+        existing.event_type = case_data["event"]["event_type"]
+        existing.severity = case_data["prioritized_case"]["severity"]
+        existing.priority_score = case_data["prioritized_case"]["priority_score"]
+        existing.confidence = case_data["assessment"]["confidence"]
+        existing.recommendation = case_data["decision"]["recommendation"]
+        existing.routing_bucket = case_data["prioritized_case"]["routing_bucket"]
+        existing.deterministic_hash = case_data["audit"]["deterministic_hash"]
+        existing.downtime_avoided_minutes = int(
+            case_data["consequence"]["downtime_avoided_minutes"]
+        )
+        existing.cost_estimate_usd = int(case_data["consequence"]["cost_estimate_usd"])
+        existing.risk_level = case_data["consequence"]["risk_level"]
+        existing.result_data = case_data
+        await db.commit()
+        return existing
+
+    return await create_case(db, case_data)
+
+
 async def get_cases(db: AsyncSession, limit: int = 100) -> list[Case]:
     result = await db.execute(select(Case).order_by(Case.created_at.desc()).limit(limit))
     return list(result.scalars().all())

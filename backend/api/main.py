@@ -1,9 +1,12 @@
 import asyncio
+import hashlib
 import json
 import os
 import time
+import uuid
 from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
+from enum import Enum
 from pathlib import Path
 from typing import Annotated, Any
 
@@ -24,11 +27,11 @@ from backend.core.rate_limit import check_rate_limit
 from backend.core.replay import ReplayStore
 from backend.core.retention import get_retention_policy
 from backend.core.validators import validate_case_id
-from backend.db.crud import create_case, get_case_by_id
+from backend.db.crud import get_case_by_id, upsert_case
 from backend.db.crud import get_cases as db_get_cases
 from backend.db.session import get_db
 from backend.ingestion.normalizer import load_events
-from backend.shared.schemas import Event, PipelineResult
+from backend.shared.schemas import Event
 
 logger = structlog.get_logger()
 
@@ -111,29 +114,6 @@ STAGE_NAMES = [
     ("decision_dispatch", "Decision Dispatch", "ACTION_BUNDLE"),
     ("audit_proof", "Audit Proof", "REPLAY_GUARANTEE"),
 ]
-
-
-def run_pipeline_for_event(event: Event) -> PipelineResult:
-    features = pipeline.feature_engine.extract(event)
-    assessment = pipeline.anomaly_detector.assess(features)
-    case = pipeline.prioritizer.prioritize(event, assessment)
-    decision = pipeline.decision_engine.resolve(case)
-    execution = pipeline.dispatcher.dispatch(case, decision)
-    consequence = pipeline.consequence_calculator.calculate(case, decision, assessment, event)
-    audit = pipeline.audit_recorder.record(event, features, assessment, case, decision, execution)
-
-    return PipelineResult(
-        event_id=event.event_id,
-        case_id=case.case_id,
-        event=event.to_dict(),
-        features=features.to_dict(),
-        assessment=assessment.to_dict(),
-        prioritized_case=case.to_dict(),
-        decision=decision.to_dict(),
-        execution=execution.to_dict(),
-        consequence=consequence.to_dict(),
-        audit=audit.to_dict(),
-    )
 
 
 def build_partial_payload(
@@ -344,12 +324,12 @@ async def run_pipeline(
             raise HTTPException(status_code=404, detail="No events found")
 
         event = events[0]
-        result = run_pipeline_for_event(event)
+        result = pipeline.process(event)
         result_dict = result.to_dict()
 
         if DB_AVAILABLE:
             try:
-                await create_case(db, result_dict)
+                await upsert_case(db, result_dict)
             except Exception as db_err:
                 logger.warning("database_save_failed", error=str(db_err))
 
@@ -380,13 +360,13 @@ async def run_demo(
         output_dir.mkdir(parents=True, exist_ok=True)
 
         for event in events[:100]:
-            result = run_pipeline_for_event(event)
+            result = pipeline.process(event)
             result_dict = result.to_dict()
             results.append(result_dict)
 
             if DB_AVAILABLE:
                 try:
-                    await create_case(db, result_dict)
+                    await upsert_case(db, result_dict)
                 except Exception as db_err:
                     logger.warning("database_save_failed", error=str(db_err))
 
@@ -591,3 +571,326 @@ async def get_artifacts_stats(current_user: Annotated[User, Depends(get_current_
         },
     }
     return stats
+
+
+# ============================================================
+# v1 API Routes
+# ============================================================
+
+
+class JobStatus(Enum):
+    PENDING = "pending"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+app_v1 = FastAPI(title="Astraea v1 API", version="1.0.0")
+
+
+class JobStore:
+    def __init__(self):
+        self._jobs: dict[str, dict] = {}
+
+    def create_job(self, job_type: str, params: dict) -> str:
+        job_id = str(uuid.uuid4())
+        self._jobs[job_id] = {
+            "id": job_id,
+            "type": job_type,
+            "params": params,
+            "status": JobStatus.PENDING,
+            "created_at": datetime.now(UTC).isoformat(),
+            "result": None,
+            "error": None,
+        }
+        return job_id
+
+    def get_job(self, job_id: str) -> dict | None:
+        return self._jobs.get(job_id)
+
+    def update_job(self, job_id: str, status: JobStatus, result: Any = None, error: str = None):
+        if job_id in self._jobs:
+            self._jobs[job_id]["status"] = status.value
+            if result is not None:
+                self._jobs[job_id]["result"] = result
+            if error:
+                self._jobs[job_id]["error"] = error
+
+
+job_store = JobStore()
+
+
+def compute_result_hash(result_dict: dict) -> str:
+    canonical = json.dumps(result_dict, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode()).hexdigest()
+
+
+@app_v1.post("/ingest/events")
+async def ingest_events(
+    events: list[Event],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    results = []
+    for event in events:
+        result = pipeline.process(event)
+        result_dict = result.to_dict()
+
+        if DB_AVAILABLE:
+            try:
+                await upsert_case(db, result_dict)
+            except Exception as db_err:
+                logger.warning("database_save_failed", error=str(db_err))
+
+        results.append(
+            {
+                "event_id": event.event_id,
+                "case_id": result.case_id,
+                "status": "processed",
+            }
+        )
+
+    return {"ingested": len(results), "results": results}
+
+
+@app_v1.post("/ingest/batch")
+async def ingest_batch(
+    events: list[Event],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    job_id = job_store.create_job("batch_ingest", {"event_count": len(events)})
+    job_store.update_job(job_id, JobStatus.RUNNING)
+
+    try:
+        results = []
+        for event in events:
+            result = pipeline.process(event)
+            result_dict = result.to_dict()
+
+            if DB_AVAILABLE:
+                try:
+                    await upsert_case(db, result_dict)
+                except Exception as db_err:
+                    logger.warning("database_save_failed", error=str(db_err))
+
+            results.append(
+                {
+                    "event_id": event.event_id,
+                    "case_id": result.case_id,
+                }
+            )
+
+        job_store.update_job(
+            job_id, JobStatus.COMPLETED, {"processed": len(results), "cases": results}
+        )
+        return {"job_id": job_id, "status": JobStatus.COMPLETED.value, "processed": len(results)}
+    except Exception as e:
+        job_store.update_job(job_id, JobStatus.FAILED, error=str(e))
+        raise HTTPException(status_code=500, detail=f"Batch ingestion failed: {str(e)}") from e
+
+
+@app_v1.get("/jobs/{job_id}")
+async def get_job_status(job_id: str):
+    job = job_store.get_job(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail=f"Job not found: {job_id}")
+    return job
+
+
+@app_v1.get("/cases")
+async def list_cases_v1(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    machine_id: str | None = None,
+    line_id: str | None = None,
+    event_type: str | None = None,
+    severity: str | None = None,
+    min_priority: float | None = None,
+    limit: int = 100,
+    offset: int = 0,
+):
+    if DB_AVAILABLE:
+        try:
+            from sqlalchemy import and_, select
+
+            from backend.db.models import Case
+
+            query = select(Case)
+
+            filters = []
+            if machine_id:
+                filters.append(Case.machine_id == machine_id)
+            if line_id:
+                filters.append(Case.line_id == line_id)
+            if event_type:
+                filters.append(Case.event_type == event_type)
+            if severity:
+                filters.append(Case.severity == severity)
+            if min_priority is not None:
+                filters.append(Case.priority_score >= min_priority)
+
+            if filters:
+                query = query.where(and_(*filters))
+
+            query = query.offset(offset).limit(limit)
+            result = await db.execute(query)
+            cases = result.scalars().all()
+
+            return {
+                "total": len(cases),
+                "limit": limit,
+                "offset": offset,
+                "cases": [
+                    {
+                        "case_id": c.id,
+                        "event_id": c.event_id,
+                        "machine_id": c.machine_id,
+                        "line_id": c.line_id,
+                        "event_type": c.event_type,
+                        "severity": c.severity,
+                        "priority_score": c.priority_score,
+                        "confidence": c.confidence,
+                        "recommendation": c.recommendation,
+                        "risk_level": c.risk_level,
+                        "created_at": c.created_at.isoformat() if c.created_at else None,
+                    }
+                    for c in cases
+                ],
+            }
+        except Exception as db_err:
+            logger.warning("database_query_failed", error=str(db_err))
+
+    return load_case_records(Path("artifacts/results"), Path("artifacts/demo_results"))[:limit]
+
+
+@app_v1.get("/cases/{case_id}")
+async def get_case_v1(
+    case_id: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    is_valid, error = validate_case_id(case_id)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail=error)
+
+    if DB_AVAILABLE:
+        try:
+            case = await get_case_by_id(db, case_id)
+            if case:
+                return {
+                    "case_id": case.id,
+                    "event_id": case.event_id,
+                    "machine_id": case.machine_id,
+                    "line_id": case.line_id,
+                    "event_type": case.event_type,
+                    "severity": case.severity,
+                    "priority_score": case.priority_score,
+                    "confidence": case.confidence,
+                    "recommendation": case.recommendation,
+                    "routing_bucket": case.routing_bucket,
+                    "risk_level": case.risk_level,
+                    "created_at": case.created_at.isoformat() if case.created_at else None,
+                    "result_data": case.result_data,
+                }
+        except Exception as db_err:
+            logger.warning("database_query_failed", error=str(db_err))
+
+    case_file = find_case_file(
+        case_id,
+        Path("artifacts/results"),
+        Path("artifacts/demo_results"),
+    )
+
+    if not case_file:
+        raise HTTPException(status_code=404, detail=f"Case not found: {case_id}")
+
+    return json.loads(case_file.read_text())
+
+
+@app_v1.post("/replay/{case_id}/verify")
+async def verify_replay(
+    case_id: str,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    is_valid, error = validate_case_id(case_id)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail=error)
+
+    original_data = None
+
+    if DB_AVAILABLE:
+        try:
+            case = await get_case_by_id(db, case_id)
+            if case and case.result_data:
+                original_data = case.result_data
+        except Exception:
+            pass
+
+    if not original_data:
+        case_file = find_case_file(
+            case_id,
+            Path("artifacts/results"),
+            Path("artifacts/demo_results"),
+        )
+        if case_file:
+            original_data = json.loads(case_file.read_text())
+
+    if not original_data:
+        raise HTTPException(status_code=404, detail=f"Original case not found: {case_id}")
+
+    original_event_dict = original_data.get("event", {})
+    original_event = Event(**original_event_dict)
+
+    replay_result = pipeline.process(original_event)
+    replay_data = replay_result.to_dict()
+
+    original_hash = compute_result_hash(original_data)
+    replay_hash = compute_result_hash(replay_data)
+
+    return {
+        "case_id": case_id,
+        "verified": original_hash == replay_hash,
+        "original_hash": original_hash,
+        "replay_hash": replay_hash,
+        "original_case_id": original_data.get("case_id"),
+        "replay_case_id": replay_data.get("case_id"),
+        "stage_outputs_match": original_data.get("case_id") == replay_data.get("case_id"),
+        "replay_result": replay_data,
+    }
+
+
+@app_v1.get("/observability/metrics")
+async def get_metrics():
+    return {
+        "pipeline": {
+            "stages": len(STAGE_NAMES),
+            "stage_names": [s[0] for s in STAGE_NAMES],
+        },
+        "jobs": {
+            "active": len(
+                [j for j in job_store._jobs.values() if j["status"] == JobStatus.RUNNING.value]
+            ),
+            "total": len(job_store._jobs),
+        },
+        "artifacts": {
+            "results": len(list(Path("artifacts/results").glob("*.json")))
+            if Path("artifacts/results").exists()
+            else 0,
+            "demo_results": len(list(Path("artifacts/demo_results").glob("*.json")))
+            if Path("artifacts/demo_results").exists()
+            else 0,
+            "replays": len(list(Path("artifacts/replays").glob("*.json")))
+            if Path("artifacts/replays").exists()
+            else 0,
+        },
+    }
+
+
+@app_v1.get("/observability/health")
+async def get_health_v1():
+    return {
+        "status": "healthy",
+        "version": "1.0.0",
+        "database_available": DB_AVAILABLE,
+        "timestamp": datetime.now(UTC).isoformat(),
+    }
+
+
+app.mount("/api/v1", app_v1)
