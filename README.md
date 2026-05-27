@@ -36,12 +36,6 @@ Most decision systems force a trade-off: you can have a black-box ML model that'
 ### Command Deck — Case Queue & Filters
 ![Engine Overview](screenshots/03-engine.png)
 
-### Case Detail — Deterministic Trace & Replay
-![Engine Detail](screenshots/04-engine-detail.png)
-
-### Replay Verification — Hash Match
-![Replay Verification](screenshots/05-engine-replay.png)
-
 ---
 
 ## Architecture
