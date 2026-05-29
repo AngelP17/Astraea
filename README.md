@@ -108,9 +108,9 @@ The latest generated artifact is [artifacts/evaluation/eval_latest.json](artifac
 | Replay pass rate | 100.00% |
 | Audit completeness | 100.00% |
 | Rationale coverage | 100.00% |
-| Throughput | 6,237.48 events/sec |
-| Mean latency | 0.1603 ms |
-| P99 latency | 0.2086 ms |
+| Throughput | 6,160.12 events/sec |
+| Mean latency | 0.1623 ms |
+| P99 latency | 0.2469 ms |
 
 Baseline comparison from the same artifact:
 
@@ -197,7 +197,16 @@ uv run python -m backend.evaluation.run_eval
 | `GET /api/claims` | Claim-to-proof matrix for frontend/docs |
 | `GET /api/evaluation/latest` | Latest measured evaluation artifact |
 | `GET /api/health/deep` | Runtime health, artifact, DB, and optional Floci status |
-| `GET /api/v1/observability/benchmarks` | Benchmark view derived from the latest evaluation artifact |
+| `POST /api/v1/ingest/events` | Ingest and process a list of events |
+| `POST /api/v1/ingest/batch` | Batch ingest with async job tracking |
+| `GET /api/v1/jobs/{job_id}` | Check async job status |
+| `GET /api/v1/cases` | Filtered case listing with pagination |
+| `POST /api/v1/replay/{case_id}/verify` | Verify replay for a case |
+| `GET /api/v1/observability/metrics` | Pipeline and artifact metrics |
+| `GET /api/v1/observability/benchmarks` | Benchmark view from the latest evaluation artifact |
+| `POST /auth/register` | Register new user |
+| `POST /auth/token` | Login and obtain JWT |
+| `GET /auth/me` | Current user profile |
 | `POST /api/admin/cleanup` | Admin-only artifact cleanup |
 
 ## Repository Guardrails

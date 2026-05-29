@@ -99,30 +99,32 @@ graph TD
     Nav["components/nav.tsx"]
     Walkthrough["components/demo-walkthrough.tsx"]
     Audit["components/audit-section.tsx"]
-    Artifacts["components/artifacts-section.tsx"]
-    DeepDive["Technical Depth Drawer"]
+    ModeSwitch["components/system-mode-switch.tsx"]
+    Consequence["components/consequence-layer.tsx"]
+    ArchView["components/system-architecture.tsx"]
+    Metrics["components/system-metrics.tsx"]
     Footer["components/footer.tsx"]
-    
+
     Engine["app/engine/page.tsx"]
-    EngineHero["Engine Hero"]
-    CaseQueue["Case Queue"]
-    
+    Eval["app/evaluation/page.tsx"]
+    Arch["app/architecture/page.tsx"]
+
     UI["components/ui/"]
     Button["button.tsx"]
     Card["card.tsx"]
     Badge["badge.tsx"]
-    
+
     App --> Page
     App --> Nav
     App --> Footer
     Page --> Hero
     Page --> Walkthrough
     Page --> Audit
-    Page --> Artifacts
-    Page --> DeepDive
-    Engine --> EngineHero
-    Engine --> CaseQueue
-    
+    Page --> ModeSwitch
+    Page --> Consequence
+    Page --> ArchView
+    Page --> Metrics
+
     UI --> Button
     UI --> Card
     UI --> Badge
@@ -272,10 +274,28 @@ graph LR
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/demo` | Run the batch demo and return processed results |
-| `GET` | `/api/demo/stream` | Stream stage-by-stage SSE events |
-| `GET` | `/api/cases` | Retrieve processed cases |
-| `POST` | `/api/replay` | Replay a specific case |
+| `GET` | `/health` | Basic health check with uptime and DB status |
+| `POST` | `/api/run` | Execute pipeline on sample events |
+| `POST` | `/api/demo` | Run 100-event demo batch with graph context |
+| `GET` | `/api/demo/stream` | SSE stream for seven-stage pipeline |
+| `GET` | `/api/cases` | List all pipeline results |
+| `GET` | `/api/cases/{case_id}` | Retrieve one full case |
+| `POST` | `/api/replay` | Replay verification by request body |
+| `POST` | `/api/replay/{case_id}` | Re-execute stored event and compare hashes |
+| `GET` | `/api/claims` | Claim-to-proof matrix |
+| `GET` | `/api/evaluation/latest` | Latest evaluation artifact |
+| `GET` | `/api/health/deep` | Runtime health, artifact, DB, Floci status |
+| `POST` | `/api/v1/ingest/events` | Ingest and process event list |
+| `POST` | `/api/v1/ingest/batch` | Batch ingest with job tracking |
+| `GET` | `/api/v1/jobs/{job_id}` | Check async job status |
+| `GET` | `/api/v1/cases` | Filtered case listing with pagination |
+| `POST` | `/api/v1/replay/{case_id}/verify` | Verify replay for a case |
+| `GET` | `/api/v1/observability/metrics` | Pipeline and artifact metrics |
+| `GET` | `/api/v1/observability/health` | Versioned health check |
+| `GET` | `/api/v1/observability/benchmarks` | Benchmark view from eval artifact |
+| `POST` | `/auth/register` | Register new user |
+| `POST` | `/auth/token` | Login, get JWT |
+| `GET` | `/auth/me` | Current user profile |
 
 ---
 
@@ -311,11 +331,12 @@ flowchart LR
         AD --> PE[Prioritizer]
         PE --> DE[Decision Engine]
         DE --> ED[Execution Dispatcher]
+        ED --> CC[Consequence Calculator]
     end
 
     subgraph OUTPUT["Output"]
-        ED --> P[PipelineResult]
-        ED --> A[AuditRecord]
+        CC --> P[PipelineResult]
+        CC --> A[AuditRecord]
     end
 
     style INPUT fill:#1a1a2e,color:#fff
@@ -486,10 +507,13 @@ flowchart TD
 **Priority Weights:**
 ```python
 weights = {
-    "anomaly": 0.38,    # Primary signal weight
-    "failure": 0.30,    # Secondary signal weight
-    "severity": 0.22,    # Event type baseline
-    "recency": 0.10,     # Time decay factor
+    "anomaly": 0.30,      # Primary signal weight
+    "failure": 0.25,      # Secondary signal weight
+    "severity": 0.15,     # Event type baseline
+    "recency": 0.08,      # Time decay factor
+    "temporal": 0.10,     # Temporal trend signal
+    "correlation": 0.07,  # Cross-event correlation
+    "velocity": 0.05,     # Event rate signal
 }
 ```
 
@@ -557,19 +581,18 @@ flowchart TD
         G[PrioritizedCase] --> H[Prioritization Snapshot]
         I[Decision] --> J[Decision Snapshot]
         K[ExecutionPlan] --> L[Execution Snapshot]
+        M2[DecisionConsequence] --> N2[Consequence Snapshot]
     end
 
     SNAPSHOTS --> M[Audit Recorder]
 
-    M --> N[JSON Serialization]
-    N --> O[Sort Keys]
-    N --> P[Stable Hashing]
+    M --> O[JSON Serialization - sorted keys]
+    O --> Q[SHA256 Bundle Hash]
+    O --> R[Per-Stage SHA256 Hashes]
 
-    O --> Q[SHA256 Hash]
-    P --> Q
-
-    Q --> R[Replay Store]
-    Q --> S[Timestamp]
+    Q --> S[Replay Store]
+    R --> S
+    S --> T[Timestamp]
 ```
 
 ---
@@ -748,16 +771,28 @@ flowchart TB
 
 ## Performance Characteristics
 
-| Operation | Mean Latency | P95 Latency | P99 Latency |
-|-----------|-------------|--------------|--------------|
-| Feature extraction | 0.0076 ms | 0.009 ms | 0.015 ms |
-| Anomaly detection | 0.0070 ms | 0.008 ms | 0.012 ms |
-| Decision prioritization | 0.0060 ms | 0.008 ms | 0.010 ms |
-| Decision resolution | 0.0011 ms | 0.001 ms | 0.002 ms |
-| Audit hashing | 0.0541 ms | 0.060 ms | 0.080 ms |
-| **Total pipeline** | **0.076 ms** | **0.101 ms** | **0.645 ms** |
+From the latest synthetic evaluation (500 cases, `generated_labeled_synthetic_v1`):
 
-**Throughput:** 13,893 events/second (sustained load)
+| Metric | Value |
+|--------|-------|
+| Throughput | 6,160 events/sec |
+| Mean latency | 0.1623 ms |
+| P99 latency | 0.2469 ms |
+| Hash consistency | 100.00% |
+| Replay pass rate | 100.00% |
+| Audit completeness | 100.00% |
+| Rationale coverage | 100.00% |
+
+Baseline comparison:
+
+| System | Precision | Recall | Accuracy | False Escalation |
+|--------|-----------|--------|----------|------------------|
+| Threshold only | 62.50% | 100.00% | 70.00% | 60.00% |
+| Scoring only | 83.33% | 100.00% | 90.00% | 20.00% |
+| Frozen model | 100.00% | 100.00% | 100.00% | 0.00% |
+| Astraea | 100.00% | 100.00% | 100.00% | 0.00% |
+
+These are synthetic benchmarks, not production plant throughput claims.
 
 ---
 
@@ -766,49 +801,82 @@ flowchart TB
 ```
 Astraea/
 ├── backend/
+│   ├── api/
+│   │   ├── main.py              # FastAPI endpoints (v0 + v1)
+│   │   └── middleware.py        # CORS, rate limiting
 │   ├── shared/
-│   │   └── schemas.py          # Event, FeatureVector, ModelAssessment, etc.
+│   │   └── schemas.py           # Event, FeatureVector, ModelAssessment, etc.
 │   ├── ingestion/
 │   │   └── normalizer.py        # Event validation and normalization
-│   ├── pipeline/
-│   │   └── feature_engine.py    # Threshold analysis, ratio computation
 │   ├── ml/
-│   │   └── anomaly_detector.py # Scoring with uncertainty quantification
+│   │   ├── anomaly_detector.py  # Scoring with uncertainty quantification
+│   │   └── model.py             # Frozen logistic model training/loading
 │   ├── decision/
-│   │   ├── prioritizer.py      # Priority scoring and routing
-│   │   └── engine.py          # Decision resolution
+│   │   ├── prioritizer.py       # Ensemble scoring and routing
+│   │   └── engine.py            # Decision resolution
 │   ├── execution/
-│   │   └── dispatcher.py        # Execution planning
+│   │   ├── dispatcher.py        # Execution planning
+│   │   └── consequence.py       # Business impact estimation
 │   ├── audit/
-│   │   └── recorder.py        # SHA256 hashing and replay
-│   └── core/
-│       ├── pipeline.py         # Main orchestrator
-│       └── replay.py           # Case replay functionality
-├── app/                        # Next.js frontend
-│   ├── api/
-│   │   ├── cases/route.ts     # GET /api/cases
-│   │   ├── run/route.ts       # POST /api/run
-│   │   └── replay/route.ts    # POST /api/replay
-│   ├── engine/page.tsx        # Deep dive case study
-│   └── page.tsx              # Landing page
+│   │   └── recorder.py          # SHA256 hashing and replay
+│   ├── reasoning/
+│   │   ├── graph.py             # Graph-lite reasoning engine
+│   │   └── multi_event.py       # Multi-event correlation
+│   ├── evaluation/
+│   │   └── run_eval.py          # Synthetic evaluation harness
+│   ├── core/
+│   │   ├── pipeline.py          # Main orchestrator
+│   │   ├── replay_engine.py     # True replay re-execution
+│   │   ├── replay.py            # Case persistence
+│   │   ├── config.py            # Pydantic settings
+│   │   ├── floci.py             # Optional local cloud emulation
+│   │   └── retention.py         # Artifact lifecycle management
+│   ├── auth/
+│   │   ├── routes.py            # JWT auth endpoints
+│   │   ├── models.py            # User model
+│   │   └── security.py          # Password hashing, JWT
+│   └── db/
+│       ├── models.py            # SQLAlchemy models
+│       ├── crud.py              # Database operations
+│       └── session.py           # DB session management
+├── app/                         # Next.js frontend
+│   ├── page.tsx                 # Landing proof console
+│   ├── engine/page.tsx          # Inspection cockpit
+│   ├── evaluation/page.tsx      # Claim matrix and benchmarks
+│   ├── architecture/page.tsx    # Topology and health
+│   └── api/                     # Next.js API proxy routes
 ├── components/
-│   ├── hero.tsx               # Main hero component
-│   ├── nav.tsx                # Navigation
-│   ├── footer.tsx             # Footer
-│   ├── demo-walkthrough.tsx   # 7-stage streaming demo
-│   └── ui/                    # UI component library
-│       ├── button.tsx         # Button variants
-│       ├── card.tsx           # Card component
-│       └── badge.tsx          # Status badges
+│   ├── hero.tsx                 # Main hero with SSE streaming
+│   ├── nav.tsx                  # Navigation
+│   ├── demo-walkthrough.tsx     # 7-stage streaming demo
+│   ├── audit-section.tsx        # Replay verification panel
+│   ├── system-mode-switch.tsx   # Operating stances
+│   ├── consequence-layer.tsx    # Business impact framing
+│   ├── system-architecture.tsx  # Interactive topology
+│   ├── system-metrics.tsx       # Metrics display
+│   └── footer.tsx               # Footer
+├── lib/
+│   └── data.ts                  # Frontend data contracts
 ├── data/
-│   └── sample_events.json      # Sample industrial events
+│   ├── sample_events.json       # Sample industrial events
+│   └── synthetic_events_100.json # 100-event demo batch
 ├── tests/
-│   ├── test_pipeline.py       # Basic pytest tests
-│   ├── test_comprehensive.py   # Comprehensive test suite
-│   └── test_benchmarks.py     # Performance benchmarks
-└── artifacts/
-    ├── results/               # Pipeline output JSON
-    └── replays/               # Replayable case bundles
+│   ├── test_pipeline.py         # Core pipeline tests
+│   ├── test_platform.py         # Platform integration tests
+│   └── test_public_demo_endpoints.py
+├── artifacts/
+│   ├── results/                 # Pipeline output JSON
+│   ├── replays/                 # Replayable case bundles
+│   ├── evaluation/              # Eval artifacts (eval_latest.json)
+│   └── model/                   # Frozen model artifact
+├── k8s/                         # Kubernetes manifests
+├── docs/
+│   ├── CLAIM_MATRIX.md          # Claim-to-proof spine
+│   ├── MODEL_CARD.md            # Frozen model card
+│   └── ASTRAEA_PAPER.md         # Research paper
+└── .github/workflows/
+    ├── ci.yml                   # CI pipeline
+    └── deploy.yml               # K8s deploy (manual trigger)
 ```
 
 ---

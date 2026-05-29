@@ -146,17 +146,18 @@ def test_audit_hash_is_stable_for_same_input():
 
 ### Sample Size
 
-Current evaluation uses 3 synthetic events. Statistical significance requires:
+Current evaluation uses 500 labeled synthetic test cases from a generated dataset of 1000 training + 500 test events. For real deployment significance:
 - Minimum 100+ real industrial events
 - Expert-annotated ground truth
 - Cross-validation with holdout sets
 
 ### Model Sophistication
 
-Astraea currently uses deterministic rules, not trained ML models:
+Astraea uses a frozen deterministic logistic regression model alongside heuristic fallbacks:
 
-**Current:** Rule-based thresholds + weighted combinations
-**Future:** Trained anomaly detection models (isolation forest, LSTM)
+**Current:** Frozen logistic model (`astraea_logreg_v1`) trained via gradient descent on synthetic labeled data, with deterministic rule-based fallback path
+**Features:** 15 named features (bias, ratio_max, ratio_mean, delta_max_scaled, duration_scaled, vibration_ratio, temperature_ratio, current_ratio, rpm_low, baseline_severity, plus 5 one-hot event type indicators)
+**Evaluation:** 100% precision/recall on held-out synthetic test set (500 cases)
 
 ### Domain Specificity
 
@@ -240,11 +241,12 @@ Deploy Astraea across multiple facilities:
 To reproduce Astraea results:
 
 - [ ] Clone repository: `git clone https://github.com/AngelP17/Astraea`
-- [ ] Install Python 3.11+
-- [ ] Run pipeline: `python run_pipeline.py`
-- [ ] Verify artifacts: `ls artifacts/results/`
-- [ ] Run tests: `pytest`
-- [ ] Compare hashes: `sha256sum artifacts/results/case_*.json`
+- [ ] Install Python 3.11+ and uv
+- [ ] Install dependencies: `uv sync`
+- [ ] Run evaluation: `uv run python -m backend.evaluation.run_eval`
+- [ ] Verify artifacts: `ls artifacts/evaluation/`
+- [ ] Run tests: `uv run pytest -q tests`
+- [ ] Check model card: `docs/MODEL_CARD.md`
 
 ---
 

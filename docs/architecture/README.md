@@ -49,55 +49,74 @@ All Snapshots → Deterministic Hash
 
 ```
 backend/
+├── api/
+│   ├── main.py              # FastAPI endpoints (v0 + v1)
+│   └── middleware.py        # CORS, rate limiting
 ├── shared/
-│   └── schemas.py          # Data contracts (Event, FeatureVector, etc.)
+│   └── schemas.py           # Data contracts (Event, FeatureVector, etc.)
 ├── ingestion/
-│   └── normalizer.py       # Event validation and normalization
-├── pipeline/
-│   └── feature_engine.py   # Feature extraction from raw telemetry
+│   └── normalizer.py        # Event validation and normalization
 ├── ml/
-│   └── anomaly_detector.py  # Scoring with uncertainty quantification
+│   ├── anomaly_detector.py  # Scoring with uncertainty quantification
+│   └── model.py             # Frozen logistic model training/loading
 ├── decision/
-│   ├── prioritizer.py      # Priority scoring and routing
-│   └── engine.py           # Decision resolution and action mapping
+│   ├── prioritizer.py       # Ensemble scoring and routing
+│   └── engine.py            # Decision resolution and action mapping
 ├── execution/
-│   └── dispatcher.py        # Execution planning and team assignment
+│   ├── dispatcher.py        # Execution planning and team assignment
+│   └── consequence.py       # Business impact estimation
 ├── audit/
-│   └── recorder.py         # Snapshot collection and hash generation
-└── core/
-    ├── pipeline.py          # Main orchestrator
-    └── replay.py            # Case replay functionality
+│   └── recorder.py          # Snapshot collection and hash generation
+├── reasoning/
+│   ├── graph.py             # Graph-lite reasoning engine
+│   └── multi_event.py       # Multi-event correlation
+├── evaluation/
+│   └── run_eval.py          # Synthetic evaluation harness
+├── core/
+│   ├── pipeline.py          # Main orchestrator
+│   ├── replay_engine.py     # True replay re-execution
+│   ├── replay.py            # Case persistence
+│   ├── config.py            # Pydantic settings
+│   ├── floci.py             # Optional local cloud emulation
+│   └── retention.py         # Artifact lifecycle management
+├── auth/
+│   ├── routes.py            # JWT auth endpoints
+│   ├── models.py            # User model
+│   └── security.py          # Password hashing, JWT
+└── db/
+    ├── models.py            # SQLAlchemy models
+    ├── crud.py              # Database operations
+    └── session.py           # DB session management
 ```
 
 ### Frontend Structure
 
 ```
 app/
-├── page.tsx                 # Landing page with live demo
+├── page.tsx                 # Landing proof console
 ├── layout.tsx               # Root layout with fonts
 ├── globals.css              # Global styles + custom properties
 ├── engine/
-│   └── page.tsx            # Deep dive case study page
-└── api/
-    ├── cases/
-    │   └── route.ts         # GET /api/cases
-    ├── run/
-    │   └── route.ts         # POST /api/run
-    └── replay/
-        └── route.ts         # POST /api/replay
+│   └── page.tsx            # Inspection cockpit
+├── evaluation/
+│   └── page.tsx            # Claim matrix and benchmarks
+├── architecture/
+│   └── page.tsx            # Topology and health
+└── api/                     # Next.js API proxy routes
 
 components/
 ├── nav.tsx                  # Navigation bar
-├── hero.tsx                 # Hero section with live pipeline
-├── scroll-narrative.tsx      # Pipeline explanation
-├── audit-section.tsx        # Audit/trace section
-├── artifacts-section.tsx     # System modules
-├── footer.tsx               # Footer
-├── cursor-glow.tsx          # Interactive cursor effect
-├── system-side-rail.tsx     # Side navigation
-├── pipeline-visualizer.tsx   # Visual pipeline trace
-├── decision-breakdown.tsx   # Decision explanation
-└── audit-visualization.tsx   # Audit trail visualization
+├── hero.tsx                 # Hero section with SSE streaming
+├── demo-walkthrough.tsx     # 7-stage streaming demo
+├── audit-section.tsx        # Replay verification panel
+├── system-mode-switch.tsx   # Operating stances
+├── consequence-layer.tsx    # Business impact framing
+├── system-architecture.tsx  # Interactive topology
+├── system-metrics.tsx       # Metrics display
+└── footer.tsx               # Footer
+
+lib/
+└── data.ts                  # Frontend data contracts and fetch helpers
 ```
 
 ---
@@ -313,5 +332,6 @@ For production deployment:
 
 1. **Input Validation** — All event fields validated before processing
 2. **Hash Integrity** — SHA256 prevents tampering
-3. **No SQL** — No database, file-based only
-4. **Sandboxed Execution** — API routes run in Node.js sandbox
+3. **Optional PostgreSQL** — Database persistence when DATABASE_URL is configured; JSON artifacts for local/demo
+4. **JWT Authentication** — Token-based auth for protected endpoints
+5. **Rate Limiting** — Configurable per-endpoint rate limits
