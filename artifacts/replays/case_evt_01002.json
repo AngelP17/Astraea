@@ -63,54 +63,60 @@
   },
   "assessment": {
     "event_id": "evt_01002",
-    "anomaly_score": 0.3992,
-    "failure_probability": 0.2501,
-    "confidence": 0.3095,
-    "uncertainty_low": 0.1921,
-    "uncertainty_high": 0.6064,
-    "model_version": "astraea_det_v2",
+    "anomaly_score": 0.5417,
+    "failure_probability": 0.6121,
+    "confidence": 0.4479,
+    "uncertainty_low": 0.3761,
+    "uncertainty_high": 0.7073,
+    "model_version": "astraea_logreg_v1",
     "top_features": [
-      "raw_rpm",
-      "delta_rpm",
-      "duration_seconds",
-      "delta_mean",
-      "raw_temperature_c"
+      "duration_scaled",
+      "event_stoppage",
+      "baseline_severity",
+      "rpm_low",
+      "vibration_ratio"
     ],
-    "explanation_factors": []
+    "explanation_factors": [
+      "elevated failure probability"
+    ]
   },
   "prioritized_case": {
     "case_id": "case_evt_01002",
     "event_id": "evt_01002",
-    "priority_score": 0.4423,
+    "priority_score": 0.5425,
     "confidence_band": "low",
-    "severity": "low",
+    "severity": "medium",
     "rationale": [
+      "elevated failure probability",
       "critical event type: stoppage",
-      "manual review required due to uncertainty band",
-      "below active intervention threshold"
+      "manual review required due to uncertainty band"
     ],
-    "requires_action": false,
+    "requires_action": true,
     "review_required": true,
     "routing_bucket": "human_review"
   },
   "decision": {
     "case_id": "case_evt_01002",
-    "recommendation": "Monitor only",
-    "urgency": "low",
+    "recommendation": "Plan intervention during next maintenance window",
+    "urgency": "medium",
     "owner": "reliability_engineer",
     "justification": [
+      "elevated failure probability",
       "critical event type: stoppage",
-      "manual review required due to uncertainty band",
-      "below active intervention threshold"
+      "manual review required due to uncertainty band"
     ],
     "next_steps": [
-      "Continue passive monitoring",
-      "Re-evaluate if signal worsens"
+      "Add to maintenance queue",
+      "Review trend progression"
     ],
     "action_plan": [
       {
-        "step": "monitor_only",
-        "status": "passive"
+        "step": "queue_maintenance",
+        "status": "pending"
+      },
+      {
+        "step": "review_trend",
+        "status": "pending"
       }
     ]
   },
@@ -124,6 +130,23 @@
     ],
     "notifications": [
       "Case case_evt_01002 queued for human review"
+    ]
+  },
+  "consequence": {
+    "case_id": "case_evt_01002",
+    "downtime_avoided_minutes": 10.8,
+    "risk_level": "MODERATE",
+    "escalation_required": true,
+    "safety_impact": "HIGH",
+    "production_impact": "CRITICAL",
+    "cost_estimate_usd": 3000.0,
+    "mtbf_impact_hours": 2,
+    "reasoning": [
+      "Based on medium severity classification",
+      "Estimated downtime avoided: 11 minutes",
+      "Escalation triggered per safety protocol",
+      "Safety impact: HIGH - personnel risk present",
+      "Production impact: CRITICAL - line stoppage imminent"
     ]
   },
   "audit": {
@@ -190,54 +213,60 @@
     },
     "model_snapshot": {
       "event_id": "evt_01002",
-      "anomaly_score": 0.3992,
-      "failure_probability": 0.2501,
-      "confidence": 0.3095,
-      "uncertainty_low": 0.1921,
-      "uncertainty_high": 0.6064,
-      "model_version": "astraea_det_v2",
+      "anomaly_score": 0.5417,
+      "failure_probability": 0.6121,
+      "confidence": 0.4479,
+      "uncertainty_low": 0.3761,
+      "uncertainty_high": 0.7073,
+      "model_version": "astraea_logreg_v1",
       "top_features": [
-        "raw_rpm",
-        "delta_rpm",
-        "duration_seconds",
-        "delta_mean",
-        "raw_temperature_c"
+        "duration_scaled",
+        "event_stoppage",
+        "baseline_severity",
+        "rpm_low",
+        "vibration_ratio"
       ],
-      "explanation_factors": []
+      "explanation_factors": [
+        "elevated failure probability"
+      ]
     },
     "prioritization_snapshot": {
       "case_id": "case_evt_01002",
       "event_id": "evt_01002",
-      "priority_score": 0.4423,
+      "priority_score": 0.5425,
       "confidence_band": "low",
-      "severity": "low",
+      "severity": "medium",
       "rationale": [
+        "elevated failure probability",
         "critical event type: stoppage",
-        "manual review required due to uncertainty band",
-        "below active intervention threshold"
+        "manual review required due to uncertainty band"
       ],
-      "requires_action": false,
+      "requires_action": true,
       "review_required": true,
       "routing_bucket": "human_review"
     },
     "decision_snapshot": {
       "case_id": "case_evt_01002",
-      "recommendation": "Monitor only",
-      "urgency": "low",
+      "recommendation": "Plan intervention during next maintenance window",
+      "urgency": "medium",
       "owner": "reliability_engineer",
       "justification": [
+        "elevated failure probability",
         "critical event type: stoppage",
-        "manual review required due to uncertainty band",
-        "below active intervention threshold"
+        "manual review required due to uncertainty band"
       ],
       "next_steps": [
-        "Continue passive monitoring",
-        "Re-evaluate if signal worsens"
+        "Add to maintenance queue",
+        "Review trend progression"
       ],
       "action_plan": [
         {
-          "step": "monitor_only",
-          "status": "passive"
+          "step": "queue_maintenance",
+          "status": "pending"
+        },
+        {
+          "step": "review_trend",
+          "status": "pending"
         }
       ]
     },
@@ -253,7 +282,45 @@
         "Case case_evt_01002 queued for human review"
       ]
     },
-    "deterministic_hash": "f78757a236cf9326b368c7ec63761e22a1c6b4a518d63a5ad6d49f3c6a45442f",
-    "timestamp": "2026-03-24T15:31:27.399409+00:00"
-  }
+    "consequence_snapshot": {
+      "case_id": "case_evt_01002",
+      "downtime_avoided_minutes": 10.8,
+      "risk_level": "MODERATE",
+      "escalation_required": true,
+      "safety_impact": "HIGH",
+      "production_impact": "CRITICAL",
+      "cost_estimate_usd": 3000.0,
+      "mtbf_impact_hours": 2,
+      "reasoning": [
+        "Based on medium severity classification",
+        "Estimated downtime avoided: 11 minutes",
+        "Escalation triggered per safety protocol",
+        "Safety impact: HIGH - personnel risk present",
+        "Production impact: CRITICAL - line stoppage imminent"
+      ]
+    },
+    "deterministic_hash": "e89f877ad436dd2435fdeb2a3a152c440dc4edfd1b1e69cb629d52052d65ef91",
+    "timestamp": "2026-05-29T16:43:12.876740+00:00",
+    "stage_hashes": {
+      "event": "6b76e257a94ec68f6d4bc96a8a8017c6abfcf64be81c4bc8efd2cdd4d07fdafd",
+      "features": "0896276e69bf07dd83ee6f94116749a82ba239c2fb8de2911c65ee52eeef4673",
+      "assessment": "163a25f715c10f8f6b3c4da764d635d27043b91733975effee44ec13e80332c7",
+      "prioritization": "bd529a80113b6f8161920ed5d083ca74e63284a25c65b55cbbe2751d34eae863",
+      "decision": "bcfd63ea1fb2b8e58f97a89b356cefd9b95cc14c564c283f3022e8066a8c5798",
+      "execution": "cc8c73ad0965392f3ed9fdc4c1203ba6670f66f02b0f54d557b4a9c4bc9e8c4e",
+      "consequence": "162534beacef2586be4ad8bd82f77d73b69cbbb5a3da5e627741d7e6e55bf0bc"
+    }
+  },
+  "provenance": "real",
+  "stage_timings": {
+    "event_capture": 0.01,
+    "normalization": 0.02,
+    "feature_extraction": 0.0065,
+    "anomaly_scoring": 0.012,
+    "prioritization": 0.0081,
+    "decision_dispatch": 0.0012,
+    "audit_proof": 0.0798,
+    "total": 0.138
+  },
+  "graph_context": null
 }

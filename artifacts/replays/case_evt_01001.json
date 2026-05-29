@@ -63,18 +63,18 @@
   },
   "assessment": {
     "event_id": "evt_01001",
-    "anomaly_score": 0.4647,
-    "failure_probability": 0.3973,
-    "confidence": 0.402,
-    "uncertainty_low": 0.2853,
-    "uncertainty_high": 0.6441,
-    "model_version": "astraea_det_v2",
+    "anomaly_score": 0.2283,
+    "failure_probability": 0.1133,
+    "confidence": 0.2484,
+    "uncertainty_low": 0.0029,
+    "uncertainty_high": 0.4538,
+    "model_version": "astraea_logreg_v1",
     "top_features": [
-      "raw_rpm",
-      "delta_rpm",
-      "raw_temperature_c",
-      "delta_mean",
-      "delta_vibration_peak"
+      "rpm_low",
+      "baseline_severity",
+      "temperature_ratio",
+      "delta_max_scaled",
+      "event_temperature_rise"
     ],
     "explanation_factors": [
       "temperature_c above threshold"
@@ -83,36 +83,34 @@
   "prioritized_case": {
     "case_id": "case_evt_01001",
     "event_id": "evt_01001",
-    "priority_score": 0.4608,
+    "priority_score": 0.2593,
     "confidence_band": "low",
-    "severity": "medium",
+    "severity": "low",
     "rationale": [
-      "manual review required due to uncertainty band"
+      "manual review required due to uncertainty band",
+      "below active intervention threshold"
     ],
-    "requires_action": true,
+    "requires_action": false,
     "review_required": true,
     "routing_bucket": "human_review"
   },
   "decision": {
     "case_id": "case_evt_01001",
-    "recommendation": "Plan intervention during next maintenance window",
-    "urgency": "medium",
+    "recommendation": "Monitor only",
+    "urgency": "low",
     "owner": "reliability_engineer",
     "justification": [
-      "manual review required due to uncertainty band"
+      "manual review required due to uncertainty band",
+      "below active intervention threshold"
     ],
     "next_steps": [
-      "Add to maintenance queue",
-      "Review trend progression"
+      "Continue passive monitoring",
+      "Re-evaluate if signal worsens"
     ],
     "action_plan": [
       {
-        "step": "queue_maintenance",
-        "status": "pending"
-      },
-      {
-        "step": "review_trend",
-        "status": "pending"
+        "step": "monitor_only",
+        "status": "passive"
       }
     ]
   },
@@ -126,6 +124,21 @@
     ],
     "notifications": [
       "Case case_evt_01001 queued for human review"
+    ]
+  },
+  "consequence": {
+    "case_id": "case_evt_01001",
+    "downtime_avoided_minutes": 1.8,
+    "risk_level": "LOW",
+    "escalation_required": true,
+    "safety_impact": "HIGH",
+    "production_impact": "MEDIUM",
+    "cost_estimate_usd": 200,
+    "mtbf_impact_hours": 0.5,
+    "reasoning": [
+      "Based on low severity classification",
+      "Escalation triggered per safety protocol",
+      "Safety impact: HIGH - personnel risk present"
     ]
   },
   "audit": {
@@ -192,18 +205,18 @@
     },
     "model_snapshot": {
       "event_id": "evt_01001",
-      "anomaly_score": 0.4647,
-      "failure_probability": 0.3973,
-      "confidence": 0.402,
-      "uncertainty_low": 0.2853,
-      "uncertainty_high": 0.6441,
-      "model_version": "astraea_det_v2",
+      "anomaly_score": 0.2283,
+      "failure_probability": 0.1133,
+      "confidence": 0.2484,
+      "uncertainty_low": 0.0029,
+      "uncertainty_high": 0.4538,
+      "model_version": "astraea_logreg_v1",
       "top_features": [
-        "raw_rpm",
-        "delta_rpm",
-        "raw_temperature_c",
-        "delta_mean",
-        "delta_vibration_peak"
+        "rpm_low",
+        "baseline_severity",
+        "temperature_ratio",
+        "delta_max_scaled",
+        "event_temperature_rise"
       ],
       "explanation_factors": [
         "temperature_c above threshold"
@@ -212,36 +225,34 @@
     "prioritization_snapshot": {
       "case_id": "case_evt_01001",
       "event_id": "evt_01001",
-      "priority_score": 0.4608,
+      "priority_score": 0.2593,
       "confidence_band": "low",
-      "severity": "medium",
+      "severity": "low",
       "rationale": [
-        "manual review required due to uncertainty band"
+        "manual review required due to uncertainty band",
+        "below active intervention threshold"
       ],
-      "requires_action": true,
+      "requires_action": false,
       "review_required": true,
       "routing_bucket": "human_review"
     },
     "decision_snapshot": {
       "case_id": "case_evt_01001",
-      "recommendation": "Plan intervention during next maintenance window",
-      "urgency": "medium",
+      "recommendation": "Monitor only",
+      "urgency": "low",
       "owner": "reliability_engineer",
       "justification": [
-        "manual review required due to uncertainty band"
+        "manual review required due to uncertainty band",
+        "below active intervention threshold"
       ],
       "next_steps": [
-        "Add to maintenance queue",
-        "Review trend progression"
+        "Continue passive monitoring",
+        "Re-evaluate if signal worsens"
       ],
       "action_plan": [
         {
-          "step": "queue_maintenance",
-          "status": "pending"
-        },
-        {
-          "step": "review_trend",
-          "status": "pending"
+          "step": "monitor_only",
+          "status": "passive"
         }
       ]
     },
@@ -257,7 +268,43 @@
         "Case case_evt_01001 queued for human review"
       ]
     },
-    "deterministic_hash": "aac1dd1a8e6e7eacbdf29f2f9b630e5f8b100dec06fd58b608090e17c4d90224",
-    "timestamp": "2026-03-24T15:31:27.397509+00:00"
-  }
+    "consequence_snapshot": {
+      "case_id": "case_evt_01001",
+      "downtime_avoided_minutes": 1.8,
+      "risk_level": "LOW",
+      "escalation_required": true,
+      "safety_impact": "HIGH",
+      "production_impact": "MEDIUM",
+      "cost_estimate_usd": 200,
+      "mtbf_impact_hours": 0.5,
+      "reasoning": [
+        "Based on low severity classification",
+        "Escalation triggered per safety protocol",
+        "Safety impact: HIGH - personnel risk present"
+      ]
+    },
+    "deterministic_hash": "3f7ebf9f2a8c98a9102b80e3a7f9edf807ff149ab87e949e516266b854915b94",
+    "timestamp": "2026-05-29T16:43:12.876368+00:00",
+    "stage_hashes": {
+      "event": "0127426c5d814ff4b9863fe2dd9c05d33428d9bf3d5255c7f601f8f07f535210",
+      "features": "8a59e9c8fd99bdc3ce065316da83ab94989b3188886d144a08042c97d193a9ee",
+      "assessment": "559cbe38397e4b37018bd0a31b74d89056180a801f574df17cd624d56eee2e5a",
+      "prioritization": "9268d7a7c201bff10fe9083d7c1faf76e9b68ce9dd0e8f2aec269c7b0274a8c8",
+      "decision": "967599b62dd9869f7da90344c4f6954cb30a5fe18ac729f6e4218982adf1e40c",
+      "execution": "dfd0e9175d9b43bfc999b70109d5999ea0b4b2645641d35fa2d49c3cca0e5fbe",
+      "consequence": "1967c5db14d7ed35a01d46342ccccaeb7bf1c9faa26930847b2da2f1f8b39860"
+    }
+  },
+  "provenance": "real",
+  "stage_timings": {
+    "event_capture": 0.01,
+    "normalization": 0.02,
+    "feature_extraction": 0.007,
+    "anomaly_scoring": 0.0122,
+    "prioritization": 0.008,
+    "decision_dispatch": 0.0013,
+    "audit_proof": 0.0749,
+    "total": 0.1337
+  },
+  "graph_context": null
 }

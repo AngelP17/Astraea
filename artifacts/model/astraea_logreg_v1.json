@@ -1,0 +1,50 @@
+{
+  "feature_names": [
+    "bias",
+    "ratio_max",
+    "ratio_mean",
+    "delta_max_scaled",
+    "duration_scaled",
+    "vibration_ratio",
+    "temperature_ratio",
+    "current_ratio",
+    "rpm_low",
+    "baseline_severity",
+    "event_stoppage",
+    "event_vibration_spike",
+    "event_temperature_rise",
+    "event_current_surge",
+    "event_pressure_anomaly"
+  ],
+  "threshold": 0.2,
+  "training": {
+    "algorithm": "logistic_regression_gradient_descent",
+    "dataset": "generated_labeled_synthetic_v1",
+    "epochs": 2400,
+    "examples": 1000,
+    "l2": 0.002,
+    "learning_rate": 0.42,
+    "training_accuracy": 1.0,
+    "training_false_escalation_rate": 0.0,
+    "training_precision": 1.0,
+    "training_recall": 1.0
+  },
+  "version": "astraea_logreg_v1",
+  "weights": [
+    -4.8793900493,
+    0.488654054,
+    0.3666396426,
+    3.0346337914,
+    5.7010310376,
+    1.3394756186,
+    1.1680168647,
+    1.0421252497,
+    2.7862843911,
+    -1.108698457,
+    2.148026971,
+    -3.2705340234,
+    0.5086621642,
+    -0.2545115542,
+    -0.5114774921
+  ]
+}

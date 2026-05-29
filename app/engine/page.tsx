@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import {
   ArrowLeft,
   Spinner,
@@ -21,8 +22,9 @@ import {
   X,
   MagnifyingGlass,
   CaretDown,
+  LockKey,
 } from '@phosphor-icons/react';
-import { fetchCases, replayCase, runDemoMode, PipelineResult } from '@/lib/data';
+import { fetchCases, verifyReplay, runDemoMode, PipelineResult, ReplayVerification } from '@/lib/data';
 
 type RemoteData<T> =
   | { status: 'idle' }
@@ -44,7 +46,7 @@ const sortOptions = [
 export default function EnginePage() {
   const [cases, setCases] = useState<RemoteData<PipelineResult[]>>({ status: 'idle' });
   const [selectedCase, setSelectedCase] = useState<PipelineResult | null>(null);
-  const [replayResult, setReplayResult] = useState<PipelineResult | null>(null);
+  const [replayResult, setReplayResult] = useState<ReplayVerification | null>(null);
   const [isReplaying, setIsReplaying] = useState(false);
   const [filterSeverity, setFilterSeverity] = useState<string>('all');
   const [filterMachine, setFilterMachine] = useState<string>('all');
@@ -128,7 +130,7 @@ export default function EnginePage() {
     setIsReplaying(true);
     setReplayResult(null);
     try {
-      const result = await replayCase(caseId);
+      const result = await verifyReplay(caseId);
       if (result) setReplayResult(result);
     } catch (err) {
       console.error('Replay failed:', err);
@@ -357,26 +359,95 @@ export default function EnginePage() {
 
                 <TraceGraph result={selectedCase} />
 
-                {replayResult && (
-                  <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="panel border border-amber/30 p-1">
-                    <div className="border border-amber/20 bg-amber/5 p-6">
-                      <div className="mb-4 flex items-center gap-3">
-                        <ArrowClockwise className="h-5 w-5 text-amber" />
-                        <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-amber">Replay Verification</span>
+                {/* Stage-by-Stage Cryptographic Replay Rail */}
+                <div className="panel border border-white/6 bg-surface p-1">
+                  <div className="border border-white/5 bg-black/60 p-6 space-y-6">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                      <div className="flex items-center gap-3">
+                        <LockKey className="h-5 w-5 text-amber" />
+                        <div>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-amber block">Stage-by-Stage Cryptographic Replay Rail</span>
+                          <span className="text-[11px] text-text-muted mt-0.5 block">
+                            Rerunning original event telemetry through in-process pipeline state builders
+                          </span>
+                        </div>
                       </div>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <ReplayValue label="Original hash" value={`${selectedCase.audit.deterministic_hash.slice(0, 24)}...`} />
-                        <ReplayValue label="Replay hash" value={`${replayResult.audit.deterministic_hash.slice(0, 24)}...`} />
-                      </div>
-                      <div className="mt-4 flex items-center gap-3 border border-amber/20 bg-black/30 px-4 py-3">
-                        <CheckCircle className="h-4 w-4 text-amber" weight="fill" />
-                        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber">
-                          Hash match: {selectedCase.audit.deterministic_hash === replayResult.audit.deterministic_hash ? 'TRUE' : 'FALSE'}
-                        </span>
-                      </div>
+                      {replayResult && (
+                        <div className="flex items-center gap-4 font-mono text-[10px]">
+                          <span className="border border-white/10 bg-white/[0.02] px-2 py-1 text-text-muted">
+                            DURATION: <strong className="text-white">{replayResult.replay_duration_ms.toFixed(2)}ms</strong>
+                          </span>
+                          <span className={cn(
+                            "px-2.5 py-1 font-bold uppercase",
+                            replayResult.verified ? "border border-success/30 bg-success/15 text-success" : "border border-danger/30 bg-danger/15 text-danger"
+                          )}>
+                            {replayResult.verified ? "VERIFICATION PASS" : "HASH MISMATCH"}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </motion.div>
-                )}
+
+                    <div className="space-y-4">
+                      {[
+                        { id: 'event', label: 'Signal Intake (Event)' },
+                        { id: 'features', label: 'Feature Extraction' },
+                        { id: 'assessment', label: 'Anomaly Scoring' },
+                        { id: 'prioritization', label: 'Prioritization Routing' },
+                        { id: 'decision', label: 'Decision Dispatch' },
+                        { id: 'execution', label: 'Action Execution' },
+                      ].map((stage) => {
+                        const origHash = selectedCase.audit?.stage_hashes?.[stage.id] || selectedCase.audit?.deterministic_hash || '';
+                        const repHash = replayResult?.replay_result?.audit?.stage_hashes?.[stage.id] || replayResult?.replay_result?.audit?.deterministic_hash || '';
+                        const isMatched = replayResult ? (!replayResult.stage_diffs.some((d) => d.stage === stage.id)) : false;
+
+                        return (
+                          <div key={stage.id} className="grid md:grid-cols-[200px_minmax(0,1fr)_120px] items-center gap-4 border border-white/5 bg-black/30 p-3">
+                            <div className="flex flex-col">
+                              <span className="font-mono text-[9px] uppercase tracking-[0.15em] text-white font-bold">
+                                {stage.label}
+                              </span>
+                              <span className="font-mono text-[8px] text-text-dim mt-0.5 uppercase">
+                                STAGE_{stage.id.toUpperCase()}
+                              </span>
+                            </div>
+
+                            <div className="grid sm:grid-cols-2 gap-3 font-mono text-[9px]">
+                              <div>
+                                <span className="text-text-dim text-[8px] uppercase tracking-wider block mb-1">ORIGINAL</span>
+                                <div className="bg-black/50 border border-white/5 px-2 py-1 truncate text-white select-all">
+                                  {origHash ? `sha256:${origHash.slice(0, 16)}...` : 'n/a'}
+                                </div>
+                              </div>
+                              <div>
+                                <span className="text-text-dim text-[8px] uppercase tracking-wider block mb-1">REPLAY</span>
+                                <div className={cn(
+                                  "border px-2 py-1 truncate select-all",
+                                  replayResult 
+                                    ? (isMatched ? "border-success/20 bg-success/5 text-success" : "border-danger/20 bg-danger/5 text-danger")
+                                    : "bg-black/50 border border-white/5 text-text-dim"
+                                )}>
+                                  {replayResult ? (repHash ? `sha256:${repHash.slice(0, 16)}...` : 'n/a') : 'AWAITING VERIFICATION...'}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex justify-end">
+                              <span className={cn(
+                                "font-mono text-[8px] px-2 py-0.5 uppercase tracking-wider",
+                                replayResult
+                                  ? (isMatched ? "border border-success/30 bg-success/15 text-success" : "border border-danger/30 bg-danger/15 text-danger")
+                                  : "border border-white/10 bg-white/[0.02] text-text-dim"
+                              )}>
+                                {replayResult ? (isMatched ? "MATCH" : "MISMATCH") : "PENDING"}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
 
                 <div className="panel border border-white/5 bg-surface-low p-6">
                   <div className="mb-4 flex items-center justify-between">

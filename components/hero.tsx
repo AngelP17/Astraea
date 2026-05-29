@@ -11,16 +11,16 @@ import {
   GitBranch,
   ArrowRight,
   Play,
-  Gauge,
+  Clock,
   ShieldCheck,
   Warning,
-  CaretRight,
+  Info,
 } from '@phosphor-icons/react';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   fetchCases,
   runLivePipeline,
-  replayCase,
+  verifyReplay,
   runDemoMode,
   streamDemoStages,
   PipelineResult,
@@ -28,8 +28,17 @@ import {
   StageProgressEvent,
 } from '@/lib/data';
 import { DemoWalkthrough } from '@/components/demo-walkthrough';
+import { cn } from '@/lib/utils';
 
-const STAGES = ['INGESTION', 'FEATURE', 'MODEL', 'DECISION', 'AUDIT'] as const;
+const STAGES = [
+  { id: 'ingestion', label: 'INGEST' },
+  { id: 'feature_extraction', label: 'FEATURE' },
+  { id: 'scoring', label: 'SCORE' },
+  { id: 'prioritization', label: 'PRIORITIZE' },
+  { id: 'execution', label: 'EXECUTE' },
+  { id: 'consequence', label: 'IMPACT' },
+  { id: 'audit', label: 'AUDIT' },
+] as const;
 
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text);
@@ -47,66 +56,33 @@ function formatCurrency(value: number | undefined) {
 function formatDowntime(minutes: number | undefined) {
   if (minutes === undefined) return 'n/a';
   if (minutes >= 60) {
-    const hrs = (minutes / 60).toFixed(1);
-    return `${hrs} hrs`;
+    return `${(minutes / 60).toFixed(1)} hrs`;
   }
   return `${minutes} min`;
 }
 
 function getActiveStageFromResult(result: PipelineResult | null): number {
   if (!result) return 0;
-  if (result.audit) return 4;
-  if (result.decision) return 3;
-  if (result.prioritized_case) return 2;
-  if (result.assessment) return 2;
-  if (result.features) return 1;
+  if (result.audit) return 6;
+  if (result.decision) return 5;
+  if (result.prioritized_case) return 4;
+  if (result.assessment) return 3;
+  if (result.features) return 2;
+  if (result.event) return 1;
   return 0;
 }
 
 function HeroHeadline() {
-  const prefersReducedMotion = useReducedMotion();
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: prefersReducedMotion ? 0 : 0.05,
-        delayChildren: prefersReducedMotion ? 0 : 0.1,
-      },
-    },
-  };
-  const itemVariants = {
-    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 16 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: prefersReducedMotion ? 0.1 : 0.4, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-      <motion.div variants={itemVariants} className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-amber" />
-        <span className="font-display text-label font-medium uppercase tracking-[0.1em] text-amber">
-          Deterministic Decision Infrastructure
-        </span>
-      </motion.div>
+    <div className="space-y-4">
+      <h1 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-5xl lg:text-6xl leading-[1.05]">
+        Deterministic decisions with replayable proof
+      </h1>
 
-      <motion.h1
-        variants={itemVariants}
-        className="font-display text-display-xl font-extrabold tracking-[-0.03em] text-white"
-      >
-        Astraea
-      </motion.h1>
-
-      <motion.p variants={itemVariants} className="max-w-[520px] font-body text-body-lg text-text-muted leading-[1.5]">
-        Raw telemetry enters. Astraea produces an explainable action, a replayable proof bundle, and an audit hash.
-      </motion.p>
-
-      <motion.p variants={itemVariants} className="max-w-[44rem] text-sm leading-7 text-text-muted md:text-base">
-        Process volatile telemetry, quantify uncertainty, and route high-stakes actions with a proof bundle that your operators, customers, and investors can actually inspect.
-      </motion.p>
-    </motion.div>
+      <p className="max-w-[520px] font-body text-sm leading-relaxed text-text-muted md:text-base">
+        Turn machine telemetry into explainable actions, stage hashes, and replay verification.
+      </p>
+    </div>
   );
 }
 
@@ -120,58 +96,44 @@ interface HeroCTAsProps {
 }
 
 function HeroCTAs({ onRunLive, onRunDemo, isRunning, isDemoRunning, liveProgress, demoProgress }: HeroCTAsProps) {
-  const prefersReducedMotion = useReducedMotion();
-  const containerVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.05, delayChildren: prefersReducedMotion ? 0 : 0.3 } },
-  };
-  const itemVariants = {
-    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 12 },
-    visible: { opacity: 1, y: 0, transition: { duration: prefersReducedMotion ? 0.1 : 0.4, ease: [0.16, 1, 0.3, 1] } },
-  };
-
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-wrap items-center gap-3">
-      <motion.div variants={itemVariants}>
-        <button
-          onClick={onRunLive}
-          disabled={isRunning || isDemoRunning}
-          className="inline-flex items-center justify-center gap-2 px-8 py-4 font-display text-sm font-bold uppercase tracking-[0.22em] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed bg-amber text-zinc-950 hover:-translate-y-0.5 hover:shadow-[0_0_24px_rgba(217,119,6,0.35)] active:translate-y-0"
-        >
-          {isRunning ? (
-            <>
-              <Spinner className="h-4 w-4 animate-spin" />
-              EXECUTING {liveProgress}%
-            </>
-          ) : (
-            <>
-              <Lightning className="h-4 w-4" weight="fill" />
-              RUN LIVE PIPELINE
-            </>
-          )}
-        </button>
-      </motion.div>
+    <div className="flex flex-wrap items-center gap-3">
+      <button
+        onClick={onRunLive}
+        disabled={isRunning || isDemoRunning}
+        className="inline-flex items-center justify-center gap-2 border border-amber/40 bg-amber px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest text-zinc-950 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-amber-hover hover:border-amber-hover active:scale-[0.98]"
+      >
+        {isRunning ? (
+          <>
+            <Spinner className="h-3.5 w-3.5 animate-spin" />
+            EXECUTING {liveProgress}%
+          </>
+        ) : (
+          <>
+            <Lightning className="h-3.5 w-3.5" weight="fill" />
+            RUN LIVE PIPELINE
+          </>
+        )}
+      </button>
 
-      <motion.div variants={itemVariants}>
-        <button
-          onClick={onRunDemo}
-          disabled={isDemoRunning || isRunning}
-          className="inline-flex items-center justify-center gap-2 border border-white/10 bg-white/5 px-8 py-4 font-display text-sm font-bold uppercase tracking-[0.22em] text-white transition-all duration-150 hover:-translate-y-0.5 hover:bg-white/[0.08] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isDemoRunning ? (
-            <>
-              <Spinner className="h-4 w-4 animate-spin" />
-              STREAMING {demoProgress}%
-            </>
-          ) : (
-            <>
-              <Waves className="h-4 w-4" />
-              RUN DEMO
-            </>
-          )}
-        </button>
-      </motion.div>
-    </motion.div>
+      <button
+        onClick={onRunDemo}
+        disabled={isDemoRunning || isRunning}
+        className="inline-flex items-center justify-center gap-2 border border-white/10 bg-white/5 px-6 py-3 font-mono text-xs font-bold uppercase tracking-widest text-white transition-all duration-150 hover:bg-white/[0.08] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isDemoRunning ? (
+          <>
+            <Spinner className="h-3.5 w-3.5 animate-spin" />
+            STREAMING {demoProgress}%
+          </>
+        ) : (
+          <>
+            <Waves className="h-3.5 w-3.5" />
+            RUN DEMO
+          </>
+        )}
+      </button>
+    </div>
   );
 }
 
@@ -182,32 +144,24 @@ interface StageProgressBarProps {
 
 function StageProgressBar({ activeStage, isRunning }: StageProgressBarProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="grid grid-cols-7 gap-1 border border-white/5 bg-black/40 p-2">
       {STAGES.map((stage, index) => {
         const isActive = index <= activeStage;
         const isCurrent = index === activeStage;
         return (
-          <div key={stage} className="flex items-center gap-2">
-            <div className="flex flex-col items-center gap-1.5">
+          <div key={stage.id} className="flex flex-col items-center justify-between text-center gap-1.5">
+            <div className="relative w-full h-1 bg-white/10 overflow-hidden">
               <motion.div
-                className={`h-3 w-3 rounded-full border-2 transition-colors duration-200 ${
-                  isActive ? 'border-amber bg-amber' : 'border-white/20 bg-transparent'
-                }`}
-                animate={isCurrent && isRunning ? { scale: [1, 1.2, 1], transition: { duration: 0.6, repeat: Infinity } } : {}}
+                className={cn("h-full", isActive ? 'bg-amber' : 'bg-transparent')}
+                animate={isCurrent && isRunning ? { opacity: [0.3, 1, 0.3], transition: { duration: 0.8, repeat: Infinity } } : {}}
               />
-              <span className={`font-mono text-[9px] uppercase tracking-[0.12em] ${isActive ? 'text-amber' : 'text-text-muted'}`}>
-                {stage}
-              </span>
             </div>
-            {index < STAGES.length - 1 && (
-              <motion.div
-                className="h-px w-8 bg-white/10"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: isActive ? 1 : 0 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                style={{ originX: 0 }}
-              />
-            )}
+            <span className={cn(
+              "font-mono text-[8px] tracking-wider truncate w-full",
+              isActive ? 'text-amber font-bold' : 'text-text-dim'
+            )}>
+              {stage.label}
+            </span>
           </div>
         );
       })}
@@ -233,66 +187,58 @@ function DecisionPanel({ result, isRunning, isDemoRunning, showReplay, replayRes
     if (activeResult?.audit?.deterministic_hash) {
       copyToClipboard(activeResult.audit.deterministic_hash);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 1500);
     }
   }, [activeResult]);
 
   if (!activeResult && !isRunning && !isDemoRunning) {
     return (
-      <div className="panel border border-white/5 p-6">
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Play className="h-10 w-10 text-text-muted" />
-          <div className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-text-muted">
-            Run pipeline to see decisions
-          </div>
+      <div className="border border-white/6 bg-surface/50 p-6 flex flex-col items-center justify-center py-10 text-center">
+        <Play className="h-6 w-6 text-text-dim" />
+        <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim">
+          Run pipeline to activate the proof console
         </div>
       </div>
     );
   }
 
   if (showReplay && replayResult) {
+    const isMatched = result?.audit?.deterministic_hash === replayResult.audit?.deterministic_hash;
     return (
-      <div className="panel overflow-hidden border border-white/5">
-        <div className="border-b border-white/5 bg-surface-2/50 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <GitBranch className="h-4 w-4 text-amber" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-amber">REPLAY RESULT</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-amber" />
-              <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-amber">VERIFIED</span>
-            </div>
+      <div className="border border-amber/20 bg-amber/5 overflow-hidden">
+        <div className="border-b border-amber/10 bg-amber/10 p-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <GitBranch className="h-3.5 w-3.5 text-amber" />
+            <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-amber font-bold">REPLAY VERIFIED</span>
           </div>
+          <span className="font-mono text-[9px] uppercase tracking-[0.12em] border border-amber/30 bg-amber/20 px-2 py-0.5 text-amber">
+            MATCH OK
+          </span>
         </div>
-        <div className="p-5 space-y-5">
-          <div className="grid grid-cols-2 gap-4">
-            <InfoCell label="CASE_ID" value={replayResult.case_id} valueClass="text-amber" />
+        <div className="p-4 space-y-4">
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <InfoCell label="CASE ID" value={replayResult.case_id} valueClass="text-amber font-mono text-xs" />
             <InfoCell label="SEVERITY" value={replayResult.prioritized_case.severity.toUpperCase()} valueClass={severityColor(replayResult.prioritized_case.severity)} />
-            <InfoCell label="PRIORITY" value={replayResult.prioritized_case.priority_score.toFixed(3)} />
-            <InfoCell label="CONFIDENCE" value={replayResult.assessment.confidence.toFixed(3)} />
+            <InfoCell label="PRIORITY" value={replayResult.prioritized_case.priority_score.toFixed(3)} valueClass="font-mono" />
+            <InfoCell label="PROVENANCE" value={replayResult.provenance?.toUpperCase() || 'REPLAYED'} valueClass="text-amber font-mono" />
           </div>
-          <div className="border border-white/5 bg-surface p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <CheckCircle className="h-4 w-4 text-amber" weight="fill" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber">REPLAY VERIFIED</span>
+
+          <div className="border border-white/5 bg-black/60 p-3 space-y-2">
+            <div className="flex justify-between items-center border-b border-white/5 pb-2 font-mono text-[9px] text-text-muted">
+              <span>ORIGINAL HASH</span>
+              <span className="text-white truncate max-w-[200px]">{result?.audit?.deterministic_hash.slice(0, 24)}...</span>
             </div>
-            <div className="space-y-2 font-mono text-xs text-text-muted">
-              <div className="flex items-center gap-2">
-                <span className="text-amber shrink-0">[HASH]</span>
-                <span>{replayResult.audit.deterministic_hash.slice(0, 24)}...</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-amber shrink-0">[RATIONALE]</span>
-                <span>{replayResult.prioritized_case.rationale.length} factors</span>
-              </div>
+            <div className="flex justify-between items-center font-mono text-[9px] text-amber">
+              <span>REPLAY HASH</span>
+              <span className="truncate max-w-[200px]">{replayResult.audit?.deterministic_hash.slice(0, 24)}...</span>
             </div>
           </div>
+
           <button
             onClick={onBackToLive}
-            className="w-full border border-white/10 bg-white/[0.02] px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted transition-colors hover:bg-white/[0.06]"
+            className="w-full border border-white/10 bg-white/[0.02] px-4 py-2 font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted transition-colors hover:bg-white/[0.06] hover:text-white"
           >
-            Back to Live Output
+            Return to Live Feed
           </button>
         </div>
       </div>
@@ -300,90 +246,84 @@ function DecisionPanel({ result, isRunning, isDemoRunning, showReplay, replayRes
   }
 
   return (
-    <div className="panel overflow-hidden border border-white/5">
-      <div className="border-b border-white/5 bg-surface p-4">
+    <div className="border border-white/6 bg-surface overflow-hidden">
+      <div className="border-b border-white/6 bg-black/20 p-3 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-text-muted">
-            {activeResult?.case_id ?? 'PROCESSING...'}
+          <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-text-muted font-bold">
+            {activeResult?.case_id ?? 'INITIALIZING...'}
           </span>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-amber" />
-              <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-amber">AUDIT</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber animate-pulse" />
+            <span className="font-mono text-[8px] uppercase tracking-[0.16em] text-amber">
+              {activeResult?.provenance?.toUpperCase() || 'REAL'}
+            </span>
           </div>
         </div>
-        <div className="mt-4">
-          <StageProgressBar activeStage={activeStage} isRunning={isRunning || isDemoRunning} />
-        </div>
+        <StageProgressBar activeStage={activeStage} isRunning={isRunning || isDemoRunning} />
       </div>
 
-      <div className="p-5 space-y-5">
+      <div className="p-4 space-y-4">
         {activeResult && (
           <>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-              <InfoCell label="MACHINE" value={`${activeResult.event.machine_id} · ${activeResult.event.line_id}`} />
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <InfoCell label="TELEMETRY SOURCE" value={`${activeResult.event.machine_id} [${activeResult.event.line_id}]`} valueClass="font-mono" />
               <InfoCell label="SEVERITY" value={activeResult.prioritized_case.severity.toUpperCase()} valueClass={severityColor(activeResult.prioritized_case.severity)} />
-              <InfoCell label="PRIORITY" value={`${activeResult.prioritized_case.priority_score.toFixed(0)} / 100`} />
+              <InfoCell label="PRIORITY SCORE" value={`${activeResult.prioritized_case.priority_score.toFixed(1)} / 100`} valueClass="font-mono" />
               <div className="flex flex-col">
-                <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-muted">CONFIDENCE</span>
-                <div className="mt-2 flex items-center gap-3">
-                  <div className="h-2 flex-1 bg-white/10 overflow-hidden rounded-full">
+                <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-dim">CONFIDENCE BOUND</span>
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="h-1.5 flex-1 bg-white/5 overflow-hidden">
                     <motion.div
-                      className="h-full bg-amber rounded-full"
+                      className="h-full bg-amber"
                       initial={{ width: 0 }}
                       animate={{ width: `${(activeResult.assessment.confidence * 100).toFixed(0)}%` }}
-                      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.4, ease: 'easeOut' }}
                     />
                   </div>
-                  <span className="font-display text-sm font-bold text-amber">
+                  <span className="font-mono text-xs font-bold text-amber">
                     {(activeResult.assessment.confidence * 100).toFixed(0)}%
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-white/5 pt-5">
-              <div className="mb-3 font-mono text-[10px] uppercase tracking-[0.24em] text-amber">
-                DECISION: {activeResult.decision.recommendation}
+            <div className="border-t border-white/5 pt-3">
+              <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-amber font-bold">
+                RECOMMENDED ACTION
               </div>
-              <div className="flex flex-wrap gap-2">
-                {['INGESTION', 'FEATURE', 'MODEL', 'DECISION', 'AUDIT'].map((stage, i) => (
-                  <span
-                    key={stage}
-                    className={`border px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.14em] transition-colors ${
-                      i <= activeStage
-                        ? 'border-amber/30 bg-amber/10 text-amber'
-                        : 'border-white/10 bg-white/[0.02] text-text-muted'
-                    }`}
-                  >
-                    {stage}
-                  </span>
-                ))}
+              <div className="mt-1 font-body text-xs text-white leading-relaxed">
+                {activeResult.decision.recommendation}
               </div>
             </div>
 
             {activeResult.consequence && (
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-white/5 pt-5 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-amber" />
-                  <span className="text-text-muted">{formatDowntime(activeResult.consequence.downtime_avoided_minutes)} downtime avoided</span>
+              <div className="flex justify-between border-t border-white/5 pt-3 text-[10px] font-mono">
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-3 w-3 text-amber" />
+                  <span className="text-text-muted">{formatDowntime(activeResult.consequence.downtime_avoided_minutes)} Downtime Avoided</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-danger" />
-                  <span className="text-text-muted">{formatCurrency(activeResult.consequence.cost_estimate_usd)} prevented</span>
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="h-3 w-3 text-success" />
+                  <span className="text-text-muted">{formatCurrency(activeResult.consequence.cost_estimate_usd)} Est. Prevented</span>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center justify-between border-t border-white/5 pt-4">
-              <div className="flex items-center gap-2 font-mono text-[10px] text-text-muted">
-                <span className="text-amber/60">sha256:</span>
-                <span>{activeResult.audit.deterministic_hash.slice(0, 16)}...</span>
+            {activeResult.stage_timings?.total && (
+              <div className="flex justify-between border-t border-white/5 pt-3 font-mono text-[9px] text-text-dim">
+                <span>PIPELINE LATENCY:</span>
+                <span className="text-white font-bold">{activeResult.stage_timings.total.toFixed(3)} ms</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between border-t border-white/5 pt-3">
+              <div className="flex items-center gap-1.5 font-mono text-[9px] text-text-dim">
+                <span className="text-amber/70 font-bold">sha256:</span>
+                <span className="truncate max-w-[140px] text-white">{activeResult.audit.deterministic_hash}</span>
               </div>
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1.5 border border-white/10 bg-white/[0.02] px-2.5 py-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-text-muted transition-colors hover:bg-white/[0.06] hover:text-white"
+                className="flex items-center gap-1 border border-white/10 bg-white/[0.02] px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider text-text-muted transition-colors hover:bg-white/[0.06] hover:text-white"
               >
                 {copied ? (
                   <>
@@ -393,7 +333,7 @@ function DecisionPanel({ result, isRunning, isDemoRunning, showReplay, replayRes
                 ) : (
                   <>
                     <Copy className="h-3 w-3" />
-                    COPY
+                    COPY HASH
                   </>
                 )}
               </button>
@@ -402,10 +342,10 @@ function DecisionPanel({ result, isRunning, isDemoRunning, showReplay, replayRes
         )}
 
         {(isRunning || isDemoRunning) && !activeResult && (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Spinner className="h-8 w-8 animate-spin text-amber" />
-            <div className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-text-muted">
-              {isRunning ? 'Executing live pipeline...' : 'Streaming demo events...'}
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Spinner className="h-5 w-5 animate-spin text-amber" />
+            <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-text-dim">
+              {isRunning ? 'Processing Live telemetry frame...' : 'Streaming multi-event pipeline simulation...'}
             </div>
           </div>
         )}
@@ -417,15 +357,15 @@ function DecisionPanel({ result, isRunning, isDemoRunning, showReplay, replayRes
 function InfoCell({ label, value, valueClass = 'text-white' }: { label: string; value: string; valueClass?: string }) {
   return (
     <div className="flex flex-col">
-      <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-text-muted">{label}</span>
-      <span className={`mt-1.5 font-display text-base font-bold uppercase tracking-tight ${valueClass}`}>{value}</span>
+      <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-dim">{label}</span>
+      <span className={cn("mt-1 font-display font-semibold tracking-tight", valueClass)}>{value}</span>
     </div>
   );
 }
 
 function severityColor(severity: string) {
-  if (severity === 'critical') return 'text-danger';
-  if (severity === 'high') return 'text-amber';
+  if (severity === 'critical') return 'text-danger font-bold';
+  if (severity === 'high') return 'text-amber font-bold';
   return 'text-white';
 }
 
@@ -457,12 +397,12 @@ export function Hero() {
   const handleRunLive = async () => {
     setError(null);
     setIsRunning(true);
-    setLiveProgress(8);
+    setLiveProgress(5);
     setShowReplay(false);
     setShowDemoResults(false);
     setStreamingEvent(null);
     try {
-      const progressInterval = setInterval(() => setLiveProgress((c) => Math.min(c + 18, 92)), 180);
+      const progressInterval = setInterval(() => setLiveProgress((c) => Math.min(c + 15, 95)), 120);
       const result = await runLivePipeline();
       clearInterval(progressInterval);
       setLiveProgress(100);
@@ -477,7 +417,7 @@ export function Hero() {
         setActiveIndex(nextIndex);
         setHasRunLive(true);
       } else {
-        setError('Pipeline execution failed - check backend is running');
+        setError('Pipeline execution failed. Verify FastAPI backend status.');
       }
     } catch (err) {
       console.error('handleRunLive error:', err);
@@ -493,11 +433,11 @@ export function Hero() {
     setShowReplay(true);
     setLiveProgress(10);
     try {
-      const progressInterval = setInterval(() => setLiveProgress((c) => Math.min(c + 22, 94)), 180);
-      const result = await replayCase(active.case_id);
+      const progressInterval = setInterval(() => setLiveProgress((c) => Math.min(c + 20, 95)), 120);
+      const result = await verifyReplay(active.case_id);
       clearInterval(progressInterval);
       setLiveProgress(100);
-      if (result) setReplayResult(result);
+      if (result) setReplayResult(result.replay_result);
     } finally {
       setIsReplaying(false);
     }
@@ -529,7 +469,7 @@ export function Hero() {
         setShowDemoResults(true);
         setHasRunLive(true);
       } else {
-        setError('Demo execution failed - check backend is running');
+        setError('Demo stream initialization failed. Verify backend services.');
       }
     } finally {
       cleanup();
@@ -553,15 +493,12 @@ export function Hero() {
   const loadedCases = showDemoResults && demoResult ? demoResult.count : cases.length;
 
   return (
-    <section id="top" className="relative overflow-hidden border-b border-white/5 pt-24 md:pt-32">
-      <div className="absolute inset-0 grid-bg opacity-40" />
-      <div className="absolute left-[5%] top-[10%] h-72 w-72 rounded-full bg-amber/8 blur-[140px]" />
-      <div className="absolute right-[8%] top-[25%] h-96 w-96 rounded-full bg-amber/5 blur-[160px]" />
-      <div className="absolute bottom-[10%] left-[25%] h-64 w-64 rounded-full bg-zinc-500/5 blur-[120px]" />
-
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 pt-6 lg:px-10">
-        <div className="grid min-h-[calc(100dvh-8rem)] gap-12 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="flex flex-col justify-center space-y-10">
+    <section id="system" className="relative border-b border-white/5 pt-16 md:pt-20">
+      <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
+      
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-12 pt-4 lg:px-10">
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
+          <div className="flex flex-col justify-center space-y-6">
             <HeroHeadline />
             <HeroCTAs
               onRunLive={handleRunLive}
@@ -580,43 +517,33 @@ export function Hero() {
               onBackToLive={() => setShowReplay(false)}
             />
             {error && (
-              <div className="rounded border border-danger/30 bg-danger/10 p-3 text-danger text-sm">
-                {error}
+              <div className="border border-danger/20 bg-danger/10 p-3 text-danger text-xs font-mono">
+                [ERROR] {error}
               </div>
             )}
-            <div className="flex flex-wrap items-center justify-start gap-6 font-mono text-[10px] uppercase tracking-[0.16em] text-text-muted">
-              <span>100% Deterministic</span>
-              <span className="text-white/20">|</span>
-              <span>Replay Verified</span>
-              <span className="text-white/20">|</span>
-              <span>SHA256 Hash</span>
-            </div>
-            <div className="flex flex-wrap items-center gap-4 border-t border-white/5 pt-6">
+            
+            <div className="flex flex-wrap items-center gap-4 border-t border-white/5 pt-4">
               {displayResult ? (
                 <button
                   onClick={handleReplay}
                   disabled={isReplaying}
-                  className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-amber transition-colors hover:text-white disabled:opacity-50"
+                  className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-amber transition-colors hover:text-white disabled:opacity-50"
                 >
                   <GitBranch className="h-3.5 w-3.5" />
-                  {isReplaying ? 'Replaying latest proof' : 'Replay latest proof'}
+                  {isReplaying ? 'VERIFYING DECISION...' : 'REPLAY & VERIFY HASH'}
                 </button>
               ) : null}
               <Link
                 href="/engine"
-                className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white/70 transition-colors hover:text-white"
+                className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white/70 transition-colors hover:text-white"
               >
-                Open Command Deck
+                OPEN ENGINE WORKSPACE
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
-              <span className="hidden h-3 w-px bg-white/10 md:block" />
-              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-text-muted">
-                {hasRunLive ? 'Live proof bundle available below' : 'Run a live trace or demo batch to activate the walkthrough'}
-              </span>
             </div>
           </div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.3 }}>
+          <div className="lg:sticky lg:top-24">
             <DemoWalkthrough
               result={streamingEvent?.partial_result as PipelineResult ?? displayResult}
               totalCases={loadedCases}
@@ -625,7 +552,7 @@ export function Hero() {
               mode={walkthroughMode}
               onStreamStage={handleStreamStage}
             />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

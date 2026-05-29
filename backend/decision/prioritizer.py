@@ -12,15 +12,20 @@ class TemporalPatternDetector:
         self.window_size = window_size
         self.event_history: dict[str, deque] = {}
 
-    def record_event(self, event: Event) -> None:
+    def record_event(self, event: Event, assessment: ModelAssessment | None = None) -> None:
         machine_key = f"{event.line_id}:{event.machine_id}"
         if machine_key not in self.event_history:
             self.event_history[machine_key] = deque(maxlen=self.window_size)
+        
+        anomaly_score = assessment.anomaly_score if assessment is not None else 0.0
+        failure_prob = assessment.failure_probability if assessment is not None else 0.0
+        
         self.event_history[machine_key].append(
             {
                 "timestamp": event.timestamp,
                 "event_type": event.event_type,
-                "anomaly_score": 0.0,
+                "anomaly_score": anomaly_score,
+                "failure_probability": failure_prob,
             }
         )
 
@@ -223,7 +228,7 @@ class DecisionPrioritizationEngine:
         self._line_event_cache: dict[str, list[str]] = {}
 
     def prioritize(self, event: Event, assessment: ModelAssessment) -> PrioritizedCase:
-        self.temporal_detector.record_event(event)
+        self.temporal_detector.record_event(event, assessment)
         self._update_line_cache(event)
 
         machine_key = f"{event.line_id}:{event.machine_id}"
@@ -248,6 +253,7 @@ class DecisionPrioritizationEngine:
             correlation_score=correlation_score,
             velocity_score=velocity_score,
         )
+        priority_score = self._apply_event_floor(event, priority_score)
 
         confidence_band = self._confidence_band(assessment)
         severity = self._severity_label(priority_score)
@@ -264,6 +270,8 @@ class DecisionPrioritizationEngine:
             correlation_score,
         )
 
+        requires_action = self._requires_action(severity, assessment)
+
         return PrioritizedCase(
             case_id=f"case_{event.event_id}",
             event_id=event.event_id,
@@ -271,7 +279,7 @@ class DecisionPrioritizationEngine:
             confidence_band=confidence_band,
             severity=severity,
             rationale=rationale,
-            requires_action=severity in {"critical", "high", "medium"},
+            requires_action=requires_action,
             review_required=review_required,
             routing_bucket=routing_bucket,
         )
@@ -338,6 +346,21 @@ class DecisionPrioritizationEngine:
         if severity == "medium":
             return "scheduled_followup"
         return "monitor_only"
+
+    def _requires_action(self, severity: str, assessment: ModelAssessment) -> bool:
+        if severity in {"critical", "high"}:
+            return True
+        if severity == "medium":
+            return assessment.failure_probability >= 0.55 or assessment.anomaly_score >= 0.65
+        return False
+
+    def _apply_event_floor(self, event: Event, score: float) -> float:
+        if event.event_type == "vibration_spike" and (
+            event.raw_values.get("vibration_rms", 0.0) > 8.0
+            or event.raw_values.get("vibration_peak", 0.0) > 20.0
+        ):
+            return max(score, 0.45)
+        return score
 
     def _rationale(
         self,

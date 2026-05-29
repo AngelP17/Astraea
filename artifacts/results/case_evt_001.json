@@ -296,7 +296,43 @@
         "Case case_evt_001 queued for human review"
       ]
     },
-    "deterministic_hash": "ac8e8869b151e52b8ddec47add5c197e61416e3dc94942f8edbc651dafc45c22",
-    "timestamp": "2026-03-24T21:53:49.065259+00:00"
-  }
+    "consequence_snapshot": {
+      "case_id": "case_evt_001",
+      "downtime_avoided_minutes": 9.4,
+      "risk_level": "HIGH",
+      "escalation_required": true,
+      "safety_impact": "MEDIUM",
+      "production_impact": "HIGH",
+      "cost_estimate_usd": 1950.0,
+      "mtbf_impact_hours": 2,
+      "reasoning": [
+        "Based on medium severity classification",
+        "Elevated risk warrants proactive inspection",
+        "Escalation triggered per safety protocol"
+      ]
+    },
+    "deterministic_hash": "dceb8ecec12d51789fa27420706da133272f7eb29032dc75f2822e5141c95888",
+    "timestamp": "2026-05-29T15:56:08.199886+00:00",
+    "stage_hashes": {
+      "event": "2396bf02337c117e36be2dcd55402e26f41852127566145854bb0638d5ed4c21",
+      "features": "6ff89c7ba7579e843c4604235b36cead14827fbcbb756af04b4e6b68ed50bcdf",
+      "assessment": "92c98b7664b816a2c21f8f1abb21adaac6d8fe51a3a44920c91bfbf445fd9f76",
+      "prioritization": "d34554b85f5d5406dc06c3341fef466b774d78e8ee377041ea3abed555647674",
+      "decision": "4461fb202ca646e1265072c41424b42e4756c3b9df19cdeb2a3e91664a3c2a0a",
+      "execution": "5ac116742786caaa2f5751a10069cb8d7075916a227de749d135f86d7f34fb61",
+      "consequence": "ed28d787f58114b3b237bd1d61bdb5986503df3389e6b0e7f69b1a0263e0fd2f"
+    }
+  },
+  "provenance": "real",
+  "stage_timings": {
+    "event_capture": 0.01,
+    "normalization": 0.02,
+    "feature_extraction": 0.0152,
+    "anomaly_scoring": 0.0178,
+    "prioritization": 0.1054,
+    "decision_dispatch": 0.0033,
+    "audit_proof": 0.1482,
+    "total": 0.3209
+  },
+  "graph_context": null
 }

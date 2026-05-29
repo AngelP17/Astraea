@@ -84,38 +84,34 @@
   "prioritized_case": {
     "case_id": "case_evt_002",
     "event_id": "evt_002",
-    "priority_score": 0.4661,
+    "priority_score": 0.4171,
     "confidence_band": "low",
-    "severity": "medium",
+    "severity": "low",
     "rationale": [
       "manual review required due to uncertainty band",
-      "strong correlation with recent events (0.70)"
+      "below active intervention threshold"
     ],
-    "requires_action": true,
+    "requires_action": false,
     "review_required": true,
     "routing_bucket": "human_review"
   },
   "decision": {
     "case_id": "case_evt_002",
-    "recommendation": "Plan intervention during next maintenance window",
-    "urgency": "medium",
+    "recommendation": "Monitor only",
+    "urgency": "low",
     "owner": "reliability_engineer",
     "justification": [
       "manual review required due to uncertainty band",
-      "strong correlation with recent events (0.70)"
+      "below active intervention threshold"
     ],
     "next_steps": [
-      "Add to maintenance queue",
-      "Review trend progression"
+      "Continue passive monitoring",
+      "Re-evaluate if signal worsens"
     ],
     "action_plan": [
       {
-        "step": "queue_maintenance",
-        "status": "pending"
-      },
-      {
-        "step": "review_trend",
-        "status": "pending"
+        "step": "monitor_only",
+        "status": "passive"
       }
     ]
   },
@@ -133,15 +129,15 @@
   },
   "consequence": {
     "case_id": "case_evt_002",
-    "downtime_avoided_minutes": 7.2,
+    "downtime_avoided_minutes": 1.8,
     "risk_level": "MODERATE",
     "escalation_required": true,
     "safety_impact": "HIGH",
     "production_impact": "MEDIUM",
-    "cost_estimate_usd": 1500,
-    "mtbf_impact_hours": 2,
+    "cost_estimate_usd": 200,
+    "mtbf_impact_hours": 0.5,
     "reasoning": [
-      "Based on medium severity classification",
+      "Based on low severity classification",
       "Escalation triggered per safety protocol",
       "Safety impact: HIGH - personnel risk present"
     ]
@@ -231,38 +227,34 @@
     "prioritization_snapshot": {
       "case_id": "case_evt_002",
       "event_id": "evt_002",
-      "priority_score": 0.4661,
+      "priority_score": 0.4171,
       "confidence_band": "low",
-      "severity": "medium",
+      "severity": "low",
       "rationale": [
         "manual review required due to uncertainty band",
-        "strong correlation with recent events (0.70)"
+        "below active intervention threshold"
       ],
-      "requires_action": true,
+      "requires_action": false,
       "review_required": true,
       "routing_bucket": "human_review"
     },
     "decision_snapshot": {
       "case_id": "case_evt_002",
-      "recommendation": "Plan intervention during next maintenance window",
-      "urgency": "medium",
+      "recommendation": "Monitor only",
+      "urgency": "low",
       "owner": "reliability_engineer",
       "justification": [
         "manual review required due to uncertainty band",
-        "strong correlation with recent events (0.70)"
+        "below active intervention threshold"
       ],
       "next_steps": [
-        "Add to maintenance queue",
-        "Review trend progression"
+        "Continue passive monitoring",
+        "Re-evaluate if signal worsens"
       ],
       "action_plan": [
         {
-          "step": "queue_maintenance",
-          "status": "pending"
-        },
-        {
-          "step": "review_trend",
-          "status": "pending"
+          "step": "monitor_only",
+          "status": "passive"
         }
       ]
     },
@@ -278,7 +270,43 @@
         "Case case_evt_002 queued for human review"
       ]
     },
-    "deterministic_hash": "9e8950c37d0018aa033c9a3c97b2c1d7e55ef0add48900579f6ceb637dbd09cb",
-    "timestamp": "2026-03-24T21:53:49.065843+00:00"
-  }
+    "consequence_snapshot": {
+      "case_id": "case_evt_002",
+      "downtime_avoided_minutes": 1.8,
+      "risk_level": "MODERATE",
+      "escalation_required": true,
+      "safety_impact": "HIGH",
+      "production_impact": "MEDIUM",
+      "cost_estimate_usd": 200,
+      "mtbf_impact_hours": 0.5,
+      "reasoning": [
+        "Based on low severity classification",
+        "Escalation triggered per safety protocol",
+        "Safety impact: HIGH - personnel risk present"
+      ]
+    },
+    "deterministic_hash": "1dfa76257ebced12b812a7619541dc4b24dffb80fa3d0462ec4170c470824639",
+    "timestamp": "2026-05-29T15:56:08.200660+00:00",
+    "stage_hashes": {
+      "event": "d53983e8488d2290a87046ebfe7d08927882ff97bd4acbba53445778b3462b1e",
+      "features": "45d514ae523fa328419c926278fe44c33d16dd38af36af0ea6fa551155241db4",
+      "assessment": "2b030cf2ec78e0246b9efb9520eeb9a2394a0dd43e9ce8b8233e500f1d852b1d",
+      "prioritization": "3edfc554b38c27a4c571ed8c0a6615aca5d97a57b314a774618b0f8a3b25d862",
+      "decision": "178ea18643cd7637e0919a8fa93ef9e4494e091d2f0d91804f6a37a4e8fbd006",
+      "execution": "51bbde4aae0c2f796a1806a3ac42f7909e69365d45549c035396d96b8e80e51c",
+      "consequence": "250fcba1a00b36f948453e0d857e1d9213449d1e7b051a47eefe712e4f6bc6d9"
+    }
+  },
+  "provenance": "real",
+  "stage_timings": {
+    "event_capture": 0.01,
+    "normalization": 0.02,
+    "feature_extraction": 0.0108,
+    "anomaly_scoring": 0.0125,
+    "prioritization": 0.0145,
+    "decision_dispatch": 0.0026,
+    "audit_proof": 0.091,
+    "total": 0.1623
+  },
+  "graph_context": null
 }

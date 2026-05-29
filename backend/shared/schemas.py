@@ -119,8 +119,10 @@ class AuditRecord:
     prioritization_snapshot: dict[str, Any]
     decision_snapshot: dict[str, Any]
     execution_snapshot: dict[str, Any]
+    consequence_snapshot: dict[str, Any]
     deterministic_hash: str
     timestamp: datetime
+    stage_hashes: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -140,6 +142,9 @@ class PipelineResult:
     execution: dict[str, Any]
     consequence: dict[str, Any]
     audit: dict[str, Any]
+    provenance: str = "real"
+    stage_timings: dict[str, float] = field(default_factory=dict)
+    graph_context: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

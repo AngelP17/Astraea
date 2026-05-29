@@ -3,6 +3,8 @@ import { requestJson, buildApiUrl } from './api';
 export interface PipelineResult {
   event_id: string;
   case_id: string;
+  provenance?: string;
+  stage_timings?: Record<string, number>;
   event: {
     event_id: string;
     machine_id: string;
@@ -77,9 +79,23 @@ export interface PipelineResult {
     prioritization_snapshot: Record<string, unknown>;
     decision_snapshot: Record<string, unknown>;
     execution_snapshot: Record<string, unknown>;
+    consequence_snapshot: Record<string, unknown>;
     deterministic_hash: string;
+    stage_hashes?: Record<string, string>;
     timestamp: string;
   };
+  graph_context?: {
+    root_cause_id: string | null;
+    cascade_path: string[];
+    affected_machines: string[];
+    affected_lines: string[];
+    graph_anomaly_score: number;
+    inference_confidence: number;
+    propagation_risk: number;
+    recommendations: string[];
+    reasoning_chain: string[];
+    timestamp: string;
+  } | null;
 }
 
 export const narrativeSteps = [
@@ -106,7 +122,7 @@ export const narrativeSteps = [
     title: "Anomaly + Uncertainty",
     eyebrow: "MODEL_ASSESSMENT",
     description:
-      "The scoring layer produces anomaly probability, failure likelihood, confidence, and uncertainty interval in a deterministic pass.",
+      "The frozen model produces anomaly probability, failure likelihood, confidence, and uncertainty interval in a deterministic pass.",
     accent: "danger",
     metrics: ["ANOMALY_SCORE", "FAILURE_PROBABILITY", "UNCERTAINTY_INTERVAL"],
   },
@@ -201,6 +217,7 @@ export async function replayCase(caseId: string): Promise<PipelineResult | null>
 export interface DemoResult {
   count: number;
   results: PipelineResult[];
+  graph_context?: PipelineResult['graph_context'];
 }
 
 export type WalkthroughAccent = 'primary' | 'secondary' | 'danger' | 'tertiary';
@@ -337,7 +354,7 @@ function placeholderSteps(): PipelineWalkthroughStep[] {
       supportLabel: 'confidence',
       supportValue: 'pending',
       bullets: [
-        'The scoring layer emits anomaly intensity and failure likelihood.',
+        'The frozen model emits anomaly intensity and failure likelihood.',
         'Confidence and uncertainty are exposed as first-class outputs.',
         'Top features and explanation factors remain attached to the case.',
       ],
@@ -541,7 +558,7 @@ export function buildStepsFromPartial(partial: PartialResult): PipelineWalkthrou
       title: 'Anomaly Scoring',
       eyebrow: 'RISK_MODEL',
       accent: 'danger',
-      summary: 'The scoring layer quantifies anomaly intensity, failure likelihood, confidence, and uncertainty so every recommendation has a visible confidence envelope.',
+      summary: 'The frozen model quantifies anomaly intensity, failure likelihood, confidence, and uncertainty so every recommendation has a visible confidence envelope.',
       metricLabel: 'anomaly',
       metricValue: assessment?.anomaly_score !== undefined ? formatDecimal(assessment.anomaly_score) : 'waiting',
       supportLabel: 'confidence',
@@ -707,4 +724,28 @@ export function streamDemoStages(
     eventSource.close();
     onDone?.();
   };
+}
+
+export interface ReplayVerification {
+  case_id: string;
+  verified: boolean;
+  original_hash: string;
+  replay_hash: string;
+  original_case_id: string;
+  replay_case_id: string;
+  stage_outputs_match: boolean;
+  replay_result: PipelineResult;
+  stage_diffs: Array<{ stage: string; original_hash: string; replay_hash: string; match: boolean }>;
+  replay_duration_ms: number;
+}
+
+export async function verifyReplay(caseId: string): Promise<ReplayVerification | null> {
+  try {
+    return await requestJson<ReplayVerification>(`/api/replay/${caseId}`, {
+      method: "POST",
+      cache: "no-store",
+    });
+  } catch {
+    return null;
+  }
 }

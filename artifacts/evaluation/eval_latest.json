@@ -1,0 +1,84 @@
+{
+  "timestamp": "2026-05-29T16:21:47.436350+00:00",
+  "dataset": "generated_labeled_synthetic_v1",
+  "total_evaluated_cases": 500,
+  "hash_consistency_rate": 1.0,
+  "replay_pass_rate": 1.0,
+  "audit_completeness_rate": 1.0,
+  "mean_rationale_count": 3.3,
+  "rationale_coverage_rate": 1.0,
+  "mean_explanation_factor_count": 3,
+  "routing_distribution": {
+    "human_review": 0.5,
+    "incident_now": 0.45,
+    "maintenance_priority": 0.05
+  },
+  "severity_distribution": {
+    "medium": 0.2,
+    "low": 0.3,
+    "critical": 0.45,
+    "high": 0.05
+  },
+  "priority_score_variance": 0.069081,
+  "throughput_events_per_sec": 6160.12,
+  "latency_mean_ms": 0.1623,
+  "latency_p99_ms": 0.2469,
+  "baselines": {
+    "threshold_only": {
+      "name": "Static Threshold Alerter",
+      "downtime_avoided_minutes": 4500,
+      "usd_exposure_prevented": 3375000,
+      "precision": 0.625,
+      "recall": 1.0,
+      "routing_accuracy": 0.7,
+      "false_escalation_rate": 0.6
+    },
+    "scoring_only": {
+      "name": "Deterministic Scoring Only",
+      "downtime_avoided_minutes": 4500,
+      "usd_exposure_prevented": 3375000,
+      "precision": 0.8333,
+      "recall": 1.0,
+      "routing_accuracy": 0.9,
+      "false_escalation_rate": 0.2
+    },
+    "model_only": {
+      "name": "Frozen Logistic Model",
+      "downtime_avoided_minutes": 4500,
+      "usd_exposure_prevented": 3375000,
+      "precision": 1.0,
+      "recall": 1.0,
+      "routing_accuracy": 1.0,
+      "false_escalation_rate": 0.0,
+      "pr_auc": 1.0
+    },
+    "astraea": {
+      "name": "Astraea Decision Engine",
+      "downtime_avoided_minutes": 4500,
+      "usd_exposure_prevented": 3375000,
+      "precision": 1.0,
+      "recall": 1.0,
+      "routing_accuracy": 1.0,
+      "false_escalation_rate": 0.0,
+      "pr_auc": 1.0
+    }
+  },
+  "model": {
+    "version": "astraea_logreg_v1",
+    "artifact_path": "artifacts/model/astraea_logreg_v1.json",
+    "threshold": 0.2,
+    "training": {
+      "algorithm": "logistic_regression_gradient_descent",
+      "dataset": "generated_labeled_synthetic_v1",
+      "epochs": 2400,
+      "examples": 1000,
+      "l2": 0.002,
+      "learning_rate": 0.42,
+      "training_accuracy": 1.0,
+      "training_false_escalation_rate": 0.0,
+      "training_precision": 1.0,
+      "training_recall": 1.0
+    }
+  },
+  "verdict": "Measured from generated labeled synthetic evaluation set"
+}

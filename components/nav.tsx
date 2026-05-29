@@ -4,19 +4,32 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { List, X } from '@phosphor-icons/react';
 import Link from 'next/link';
+import { checkApiHealth } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 const links = [
-  { label: 'Overview', href: '#system' },
-  { label: 'Walkthrough', href: '#walkthrough' },
-  { label: 'Pipeline', href: '#pipeline' },
-  { label: 'Audit', href: '#audit' },
+  { label: 'Console', href: '/#hero' },
+  { label: 'Replay Proof', href: '/#replay' },
+  { label: 'Stance Gate', href: '/#stances' },
+  { label: 'Evaluation', href: '/evaluation' },
+  { label: 'Architecture', href: '/architecture' },
 ];
 
 export function Nav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [isHealthy, setIsHealthy] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const fetchHealth = async () => {
+      const healthy = await checkApiHealth();
+      setIsHealthy(healthy);
+    };
+    fetchHealth();
+    const interval = setInterval(fetchHealth, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -25,17 +38,19 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    const sections = links.map(l => l.href.slice(1));
     const observers: IntersectionObserver[] = [];
-    sections.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { rootMargin: '-40% 0px -40% 0px' }
-      );
-      observer.observe(el);
-      observers.push(observer);
+    links.forEach(link => {
+      if (link.href.startsWith('/#')) {
+        const id = link.href.slice(2);
+        const el = document.getElementById(id);
+        if (!el) return;
+        const observer = new IntersectionObserver(
+          ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+          { rootMargin: '-40% 0px -40% 0px' }
+        );
+        observer.observe(el);
+        observers.push(observer);
+      }
     });
     return () => observers.forEach(o => o.disconnect());
   }, []);
@@ -55,13 +70,17 @@ export function Nav() {
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex items-center justify-between">
-            <a href="#top" className="font-display text-lg font-bold tracking-tight text-white">
+            <a href="#top" className="flex items-center gap-3 font-display text-lg font-bold tracking-tight text-white">
               ASTRAEA
+              <span className="flex items-center gap-1.5 border border-white/6 bg-black/40 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-neutral-400">
+                <span className={cn("h-1.5 w-1.5 rounded-full", isHealthy === null ? "bg-zinc-500" : isHealthy ? "bg-green-500 animate-pulse" : "bg-red-500")} />
+                {isHealthy === null ? "CONN..." : isHealthy ? "ONLINE" : "OFFLINE"}
+              </span>
             </a>
 
             <div className="hidden items-center gap-8 md:flex">
               {links.map((link) => (
-                <a
+                <Link
                   key={link.label}
                   href={link.href}
                   className="group relative font-mono text-xs font-medium uppercase tracking-[0.15em] text-neutral-400 transition-colors duration-150 hover:text-white"
@@ -70,10 +89,10 @@ export function Nav() {
                   <span
                     className={cn(
                       'absolute -bottom-1 left-0 h-px bg-amber transition-all duration-200',
-                      activeSection === link.href.slice(1) ? 'w-full' : 'w-0 group-hover:w-full'
+                      link.href.startsWith('/#') && activeSection === link.href.slice(2) ? 'w-full' : 'w-0 group-hover:w-full'
                     )}
                   />
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -131,19 +150,19 @@ export function Nav() {
               </div>
               <nav className="space-y-6">
                 {links.map((link) => (
-                  <a
+                  <Link
                     key={link.label}
                     href={link.href}
                     onClick={() => setIsMobileOpen(false)}
                     className={cn(
                       'block font-mono text-sm uppercase tracking-[0.15em] transition-colors',
-                      activeSection === link.href.slice(1)
+                      link.href.startsWith('/#') && activeSection === link.href.slice(2)
                         ? 'text-amber'
                         : 'text-neutral-400 hover:text-white'
                     )}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
                 <div className="pt-6 border-t border-white/10 space-y-3">
                   <a

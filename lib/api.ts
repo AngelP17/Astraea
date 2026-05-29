@@ -62,7 +62,7 @@ export async function requestJson<T>(path: string, options: FetchOptions = {}): 
 
 export async function checkApiHealth(): Promise<boolean> {
   try {
-    const response = await fetchWithTimeout(buildApiUrl('/health'), { timeout: 5000 });
+    const response = await fetchWithTimeout(buildApiUrl('/api/health/deep'), { timeout: 5000 });
     return response.ok;
   } catch {
     return false;

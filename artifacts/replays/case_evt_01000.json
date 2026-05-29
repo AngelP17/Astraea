@@ -63,18 +63,18 @@
   },
   "assessment": {
     "event_id": "evt_01000",
-    "anomaly_score": 0.6185,
-    "failure_probability": 0.4103,
-    "confidence": 0.502,
-    "uncertainty_low": 0.4691,
-    "uncertainty_high": 0.7679,
-    "model_version": "astraea_det_v2",
+    "anomaly_score": 0.1932,
+    "failure_probability": 0.0111,
+    "confidence": 0.2256,
+    "uncertainty_low": 0.0,
+    "uncertainty_high": 0.4255,
+    "model_version": "astraea_logreg_v1",
     "top_features": [
-      "raw_rpm",
-      "delta_rpm",
-      "duration_seconds",
-      "delta_mean",
-      "raw_temperature_c"
+      "event_vibration_spike",
+      "duration_scaled",
+      "rpm_low",
+      "baseline_severity",
+      "vibration_ratio"
     ],
     "explanation_factors": [
       "vibration_rms above threshold",
@@ -84,14 +84,14 @@
   "prioritized_case": {
     "case_id": "case_evt_01000",
     "event_id": "evt_01000",
-    "priority_score": 0.5561,
+    "priority_score": 0.45,
     "confidence_band": "low",
     "severity": "medium",
     "rationale": [
       "critical event type: vibration_spike",
       "manual review required due to uncertainty band"
     ],
-    "requires_action": true,
+    "requires_action": false,
     "review_required": true,
     "routing_bucket": "human_review"
   },
@@ -129,6 +129,20 @@
     ],
     "notifications": [
       "Case case_evt_01000 queued for human review"
+    ]
+  },
+  "consequence": {
+    "case_id": "case_evt_01000",
+    "downtime_avoided_minutes": 7.2,
+    "risk_level": "MODERATE",
+    "escalation_required": true,
+    "safety_impact": "MEDIUM",
+    "production_impact": "HIGH",
+    "cost_estimate_usd": 1950.0,
+    "mtbf_impact_hours": 2,
+    "reasoning": [
+      "Based on medium severity classification",
+      "Escalation triggered per safety protocol"
     ]
   },
   "audit": {
@@ -195,18 +209,18 @@
     },
     "model_snapshot": {
       "event_id": "evt_01000",
-      "anomaly_score": 0.6185,
-      "failure_probability": 0.4103,
-      "confidence": 0.502,
-      "uncertainty_low": 0.4691,
-      "uncertainty_high": 0.7679,
-      "model_version": "astraea_det_v2",
+      "anomaly_score": 0.1932,
+      "failure_probability": 0.0111,
+      "confidence": 0.2256,
+      "uncertainty_low": 0.0,
+      "uncertainty_high": 0.4255,
+      "model_version": "astraea_logreg_v1",
       "top_features": [
-        "raw_rpm",
-        "delta_rpm",
-        "duration_seconds",
-        "delta_mean",
-        "raw_temperature_c"
+        "event_vibration_spike",
+        "duration_scaled",
+        "rpm_low",
+        "baseline_severity",
+        "vibration_ratio"
       ],
       "explanation_factors": [
         "vibration_rms above threshold",
@@ -216,14 +230,14 @@
     "prioritization_snapshot": {
       "case_id": "case_evt_01000",
       "event_id": "evt_01000",
-      "priority_score": 0.5561,
+      "priority_score": 0.45,
       "confidence_band": "low",
       "severity": "medium",
       "rationale": [
         "critical event type: vibration_spike",
         "manual review required due to uncertainty band"
       ],
-      "requires_action": true,
+      "requires_action": false,
       "review_required": true,
       "routing_bucket": "human_review"
     },
@@ -263,7 +277,42 @@
         "Case case_evt_01000 queued for human review"
       ]
     },
-    "deterministic_hash": "57e7feafc81e25c6224e0ec65094baa653a4edcd8326b9e1f671e433beba16e6",
-    "timestamp": "2026-03-24T15:31:27.396624+00:00"
-  }
+    "consequence_snapshot": {
+      "case_id": "case_evt_01000",
+      "downtime_avoided_minutes": 7.2,
+      "risk_level": "MODERATE",
+      "escalation_required": true,
+      "safety_impact": "MEDIUM",
+      "production_impact": "HIGH",
+      "cost_estimate_usd": 1950.0,
+      "mtbf_impact_hours": 2,
+      "reasoning": [
+        "Based on medium severity classification",
+        "Escalation triggered per safety protocol"
+      ]
+    },
+    "deterministic_hash": "3cf3a82c9b3b44149342d9aa821e80ea2efabc5e79ef5927d8951d34fc28a8cb",
+    "timestamp": "2026-05-29T16:43:12.875921+00:00",
+    "stage_hashes": {
+      "event": "80ba5004ca19dc0c2f5134efd81614859c0c2508dbdd94fd5627213ffda8450b",
+      "features": "bfb15d999a71ab03e641f6af04f283dc7773fd32a236589dbfced43e53449e41",
+      "assessment": "4778300a9422fb343ca6835f53bc37cd28fe23b168f500e9726e45a1b2f2f125",
+      "prioritization": "12e97594f5ab15456b20d41ce963652e0dc49943ae7037a4f0ae76f81c6f1d65",
+      "decision": "634898ee0afffd1f2d5e624719b38eba4deee840e53aadbfc44c3f8c88e05c63",
+      "execution": "d609fae55a36614c518050b5bbfd965bc409a14b2bcf27f1f0682772fa154a44",
+      "consequence": "00f9ba714d0ac654d3671260b87a5cbc4a4e1ab088a6221b8eec65f24a463e61"
+    }
+  },
+  "provenance": "real",
+  "stage_timings": {
+    "event_capture": 0.01,
+    "normalization": 0.02,
+    "feature_extraction": 0.007,
+    "anomaly_scoring": 0.0127,
+    "prioritization": 0.0079,
+    "decision_dispatch": 0.0013,
+    "audit_proof": 0.0785,
+    "total": 0.1379
+  },
+  "graph_context": null
 }

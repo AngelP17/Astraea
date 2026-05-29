@@ -19,7 +19,6 @@ const config: Config = {
           DEFAULT: '#D97706',
           hover: '#F59E0B',
           muted: '#92400E',
-          glow: 'rgba(217, 119, 6, 0.12)',
         },
         zinc: {
           50: '#FAFAFA',
@@ -68,14 +67,12 @@ const config: Config = {
         'fade-up': { '0%': { opacity: '0', transform: 'translateY(16px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
         'scale-in': { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
         'slide-in-right': { '0%': { opacity: '0', transform: 'translateX(16px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
-        'marquee': { '0%': { transform: 'translateX(0%)' }, '100%': { transform: 'translateX(-50%)' } },
       },
       animation: {
         'fade-in': 'fade-in 400ms var(--ease-out-expo) forwards',
         'fade-up': 'fade-up 400ms var(--ease-out-expo) forwards',
         'scale-in': 'scale-in 200ms var(--ease-out-quart) forwards',
         'slide-in-right': 'slide-in-right 300ms var(--ease-out-expo) forwards',
-        'marquee': 'marquee 30s linear infinite',
       },
     },
   },

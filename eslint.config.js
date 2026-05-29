@@ -2,7 +2,7 @@ import eslintConfigNext from 'eslint-config-next';
 
 const config = [
   {
-    ignores: ['.next/**', 'node_modules/**', 'playwright.config.ts', 'tests/**'],
+    ignores: ['.next/**', 'node_modules/**', '.claude/**', 'playwright.config.ts', 'tests/**'],
   },
   ...eslintConfigNext,
   {

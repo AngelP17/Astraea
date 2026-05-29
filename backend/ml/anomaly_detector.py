@@ -1,23 +1,34 @@
 from __future__ import annotations
 
+from backend.ml.model import FrozenLogisticModel, load_model
 from backend.shared.schemas import FeatureVector, ModelAssessment
 
 
 class AnomalyDetector:
     VERSION = "astraea_det_v2"
 
-    def __init__(self, alpha: float = 0.10):
+    def __init__(self, alpha: float = 0.10, model: FrozenLogisticModel | None = None):
         self.alpha = alpha
+        self.model = model if model is not None else load_model()
 
     def assess(self, fv: FeatureVector) -> ModelAssessment:
-        anomaly_score = self._score_anomaly(fv)
-        failure_probability = self._score_failure(fv)
+        if self.model is not None:
+            failure_probability = self.model.predict_proba(fv)
+            anomaly_score = self._blend_model_signal(fv, failure_probability)
+            model_version = self.model.version
+        else:
+            anomaly_score = self._score_anomaly(fv)
+            failure_probability = self._score_failure(fv)
+            model_version = self.VERSION
+
         confidence = self._score_confidence(fv, anomaly_score, failure_probability)
         interval_low, interval_high = self._uncertainty_interval(
             anomaly_score=anomaly_score,
             confidence=confidence,
         )
         top_features = self._top_features(fv)
+        if self.model is not None:
+            top_features = self.model.top_contributors(fv)
         explanation_factors = self._explanation_factors(
             fv, anomaly_score, failure_probability
         )
@@ -29,10 +40,16 @@ class AnomalyDetector:
             confidence=round(confidence, 4),
             uncertainty_low=round(interval_low, 4),
             uncertainty_high=round(interval_high, 4),
-            model_version=self.VERSION,
+            model_version=model_version,
             top_features=top_features,
             explanation_factors=explanation_factors,
         )
+
+    def _blend_model_signal(self, fv: FeatureVector, probability: float) -> float:
+        threshold_signal = self._score_anomaly(fv)
+        ratio_signal = min(float(fv.features.get("ratio_max", 0.0)) / 2.0, 1.0)
+        blended = (0.70 * probability) + (0.20 * threshold_signal) + (0.10 * ratio_signal)
+        return min(max(blended, 0.0), 1.0)
 
     def _score_anomaly(self, fv: FeatureVector) -> float:
         triggered = [
