@@ -647,7 +647,7 @@ async def get_claims():
         {
             "claim": "Replay verified",
             "evidence_file": "backend/core/replay_engine.py",
-            "demo_surface": "Replay Diff View",
+            "demo_surface": "Engine Replay Diff Panel",
             "test": "test_true_replay_hash_match",
             "status": "Verified"
         },
@@ -659,23 +659,16 @@ async def get_claims():
             "status": "Verified"
         },
         {
-            "claim": "Graph-lite cascade reasoning",
-            "evidence_file": "backend/reasoning/graph.py",
-            "demo_surface": "Architecture Topology View",
-            "test": "test_demo_returns_graph_context",
-            "status": "Partial"
-        },
-        {
-            "claim": "Streaming Mode",
+            "claim": "Streaming telemetry ingest",
             "evidence_file": "backend/api/main.py",
-            "demo_surface": "Live Trace Console / SSE Progress",
+            "demo_surface": "Hero live trace",
             "test": "test_public_demo_endpoints_work_without_login",
             "status": "Measured"
         },
         {
             "claim": "Benchmark metrics",
-            "evidence_file": "artifacts/evaluation/eval_latest.json",
-            "demo_surface": "Verification Suite Cockpit",
+            "evidence_file": "backend/evaluation/run_eval.py",
+            "demo_surface": "/evaluation",
             "test": "test_evaluation_artifacts_exist_and_valid",
             "status": "Measured"
         },
@@ -687,9 +680,16 @@ async def get_claims():
             "status": "Verified"
         },
         {
-            "claim": "Floci Local Cloud Emulation",
+            "claim": "Graph-lite cascade reasoning",
+            "evidence_file": "backend/reasoning/graph.py",
+            "demo_surface": "/architecture",
+            "test": "test_demo_returns_graph_context",
+            "status": "Partial"
+        },
+        {
+            "claim": "Floci local cloud emulation",
             "evidence_file": "backend/core/floci.py",
-            "demo_surface": "Architecture Topology View",
+            "demo_surface": "/architecture",
             "test": "test_floci_smoke",
             "status": "Partial"
         }
