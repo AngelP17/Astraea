@@ -94,7 +94,13 @@ flowchart TB
 - `/evaluation` renders measured evaluation output and the claim-to-proof matrix.
 - `/architecture` shows topology, health, and graph/session context.
 
+| Landing | Engine | Evaluation | Architecture |
+|---------|--------|------------|--------------|
+| ![Home](screenshots/01-home-proof-console.png) | ![Engine](screenshots/02-engine-replay.png) | ![Evaluation](screenshots/03-evaluation-proof-room.png) | ![Architecture](screenshots/04-architecture-topology.png) |
+
 If the backend is offline, the frontend shows an explicit offline state. It should not fabricate hashes, replay results, or benchmark numbers.
+
+To regenerate these screenshots, start the frontend and backend, then run `node scripts/capture-screenshots.mjs`.
 
 ## Measured Evaluation
 

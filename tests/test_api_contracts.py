@@ -160,9 +160,8 @@ def test_replay_endpoint_returns_verified_status(monkeypatch, tmp_path):
     monkeypatch.setattr("backend.api.main.DB_AVAILABLE", False)
 
     from backend.api.main import app
-    from tests.test_comprehensive import generate_realistic_events
-
     from backend.ingestion.normalizer import normalize_event
+    from tests.test_comprehensive import generate_realistic_events
 
     (tmp_path / "artifacts" / "results").mkdir(parents=True, exist_ok=True)
     (tmp_path / "artifacts" / "replays").mkdir(parents=True, exist_ok=True)
