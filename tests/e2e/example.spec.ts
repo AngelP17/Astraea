@@ -36,7 +36,7 @@ test('architecture page loads', async ({ page }) => {
 test('homepage navigation links work', async ({ page }) => {
   await page.goto('/');
   
-  const engineLink = page.getByRole('link', { name: /ENGINE/i });
+  const engineLink = page.getByRole('link', { name: /ENGINE/i }).first();
   if (await engineLink.isVisible()) {
     await engineLink.click();
     await expect(page).toHaveURL(/\/engine/);
